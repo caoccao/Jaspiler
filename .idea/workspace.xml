@@ -1,0 +1,603 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="89de9db1-e9f2-405a-9693-79809c90a042" name="Default Changelist" comment="✨ feat(Jar): Add Automatic-Module-Name" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CodeStyleSettingsInfer">
+    <option name="done" value="true" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="javet" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="AnnotationType" />
+        <option value="Interface" />
+        <option value="Class" />
+        <option value="Enum" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
+  <component name="GitToolBoxStore">
+    <option name="projectConfigVersion" value="5" />
+    <option name="recentBranches">
+      <RecentBranches>
+        <option name="branchesForRepo">
+          <list>
+            <RecentBranchesForRepo>
+              <option name="branches">
+                <list>
+                  <RecentBranch>
+                    <option name="branchName" value="dev/2.1.2" />
+                    <option name="lastUsedInstant" value="1681291773" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="dev/2.1.1" />
+                    <option name="lastUsedInstant" value="1680496119" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="main" />
+                    <option name="lastUsedInstant" value="1672736165" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="infra/redesign_docker_build" />
+                    <option name="lastUsedInstant" value="1669865167" />
+                  </RecentBranch>
+                </list>
+              </option>
+              <option name="repositoryRootUrl" value="file://$PROJECT_DIR$" />
+            </RecentBranchesForRepo>
+          </list>
+        </option>
+      </RecentBranches>
+    </option>
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/android/gradle.properties" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/com/caoccao/javet/enums/JSRuntimeType.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/com/caoccao/javet/interop/V8Host.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/com/caoccao/javet/interop/V8ScriptOrigin.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/com/caoccao/javet/interop/engine/JavetEnginePool.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/com/caoccao/javet/interop/executors/IV8Executor.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/com/caoccao/javet/interop/executors/V8PathExecutor.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/com/caoccao/javet/node/modules/NodeModuleModule.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/com/caoccao/javet/utils/JavetOSUtils.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/com/caoccao/javet/values/reference/V8ValueArray.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/com/caoccao/javet/values/reference/V8ValueTypedArray.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/com/caoccao/javet/values/reference/V8ValueWeakMap.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/main/java/com/caoccao/javet/values/reference/V8ValueWeakSet.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/test/java/com/caoccao/javet/interop/TestV8Native.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/test/java/com/caoccao/javet/interop/TestV8Runtime.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/test/java/com/caoccao/javet/interop/engine/TestJavetEnginePool.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/test/java/com/caoccao/javet/tutorial/DecimalJavetInNodeJSMode.java" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/test/java/com/caoccao/javet/values/reference/TestV8ValueTypedArray.java" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="2" />
+  </component>
+  <component name="ProjectId" id="1pT9R5rZApudGMWztqxG6WhDVkQ" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_directory_selection&quot;: &quot;C:/home/coding/public/Javet/src/main/java/com/caoccao/javet/interop/binding&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\home\coding\public\Javet\src\main\java\com\caoccao\javet\interop\engine\observers" />
+      <recent name="C:\home\coding\public\Javet\src\main\java\com\caoccao\javet\interop\loader" />
+      <recent name="C:\home\coding\public\Javet\src\main\java\com\caoccao\javet\interop\monitoring" />
+    </key>
+    <key name="MoveMembersDialog.RECENTS_KEY">
+      <recent name="com.caoccao.javet.interop.proxy.ScoredExecutable" />
+    </key>
+    <key name="ExtractSuperBase.RECENT_KEYS">
+      <recent name="com.caoccao.javet.interop" />
+      <recent name="com.caoccao.javet.values.reference" />
+    </key>
+    <key name="MoveInnerDialog.RECENTS_KEY">
+      <recent name="com.caoccao.javet.interop.proxy" />
+      <recent name="com.caoccao.javet.interop.binding" />
+      <recent name="com.caoccao.javet.enums" />
+      <recent name="com.caoccao.javet.tutorial.devtools" />
+      <recent name="com.caoccao.javet.tutorial" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="" />
+      <recent name="com" />
+      <recent name="com.caoccao.javet.utils" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.caoccao.javet.interop.executors" />
+      <recent name="com.caoccao.javet.values.reference" />
+      <recent name="com.caoccao.javet.enums" />
+      <recent name="com.caoccao.javet.utils" />
+      <recent name="com.caoccao.javet.annotations" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Gradle.TestV8ValueBoolean.testBoolean">
+    <configuration name="Javet [test]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="test" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <ForceTestExec>false</ForceTestExec>
+      <method v="2" />
+    </configuration>
+    <configuration name="TestV8HeapStatistics.testGetV8HeapStatistics" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;com.caoccao.javet.interop.monitoring.TestV8HeapStatistics.testGetV8HeapStatistics&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <ForceTestExec>false</ForceTestExec>
+      <method v="2" />
+    </configuration>
+    <configuration name="TestV8Runtime.testAllowEval" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;com.caoccao.javet.interop.TestV8Runtime.testAllowEval&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <ForceTestExec>true</ForceTestExec>
+      <method v="2" />
+    </configuration>
+    <configuration name="TestV8ValueBoolean.testBoolean" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;com.caoccao.javet.values.primitive.TestV8ValueBoolean.testBoolean&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <ForceTestExec>true</ForceTestExec>
+      <method v="2" />
+    </configuration>
+    <configuration name="TestV8ValueFunction.zzz" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;com.caoccao.javet.values.reference.TestV8ValueFunction.zzz&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <ForceTestExec>true</ForceTestExec>
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Gradle.TestV8ValueBoolean.testBoolean" />
+      <item itemvalue="Gradle.TestV8ValueFunction.zzz" />
+      <item itemvalue="Gradle.TestV8Runtime.testAllowEval" />
+      <item itemvalue="Gradle.TestV8HeapStatistics.testGetV8HeapStatistics" />
+      <item itemvalue="Gradle.Javet [test]" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Gradle.TestV8ValueBoolean.testBoolean" />
+        <item itemvalue="Gradle.TestV8ValueFunction.zzz" />
+        <item itemvalue="Gradle.TestV8Runtime.testAllowEval" />
+        <item itemvalue="Gradle.TestV8HeapStatistics.testGetV8HeapStatistics" />
+        <item itemvalue="Gradle.Javet [test]" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="89de9db1-e9f2-405a-9693-79809c90a042" name="Default Changelist" comment="" />
+      <created>1615196201474</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1615196201474</updated>
+      <workItem from="1615196202702" duration="608000" />
+      <workItem from="1615196839647" duration="32832000" />
+      <workItem from="1615339473080" duration="134484000" />
+      <workItem from="1616118589457" duration="11910000" />
+      <workItem from="1616378528861" duration="15759000" />
+      <workItem from="1616459750242" duration="43695000" />
+      <workItem from="1616718900041" duration="27994000" />
+      <workItem from="1617007487717" duration="153000" />
+      <workItem from="1617007661256" duration="12846000" />
+      <workItem from="1617094575955" duration="14289000" />
+      <workItem from="1617323062700" duration="8213000" />
+      <workItem from="1617669928313" duration="1214000" />
+      <workItem from="1617671719584" duration="82771000" />
+      <workItem from="1617944529093" duration="1804000" />
+      <workItem from="1617949055918" duration="5436000" />
+      <workItem from="1617960896857" duration="31742000" />
+      <workItem from="1618291573077" duration="3626000" />
+      <workItem from="1618370647001" duration="717000" />
+      <workItem from="1618371976052" duration="663000" />
+      <workItem from="1618376299905" duration="1787000" />
+      <workItem from="1618379176965" duration="4777000" />
+      <workItem from="1618450191326" duration="1287000" />
+      <workItem from="1618459533095" duration="2095000" />
+      <workItem from="1618462283964" duration="1201000" />
+      <workItem from="1618467209680" duration="47000" />
+      <workItem from="1618467490797" duration="14995000" />
+      <workItem from="1618879337744" duration="104275000" />
+      <workItem from="1619493047088" duration="24617000" />
+      <workItem from="1619761809118" duration="11007000" />
+      <workItem from="1620369364945" duration="5379000" />
+      <workItem from="1620618461510" duration="1270000" />
+      <workItem from="1620709209654" duration="3476000" />
+      <workItem from="1620779484886" duration="584000" />
+      <workItem from="1620782519507" duration="14774000" />
+      <workItem from="1620865443167" duration="33105000" />
+      <workItem from="1620969518014" duration="33664000" />
+      <workItem from="1621297346046" duration="9230000" />
+      <workItem from="1621325898224" duration="312000" />
+      <workItem from="1621326228819" duration="871000" />
+      <workItem from="1621327126563" duration="18893000" />
+      <workItem from="1621487326199" duration="922000" />
+      <workItem from="1621558506172" duration="26892000" />
+      <workItem from="1621843356421" duration="15936000" />
+      <workItem from="1621930826874" duration="2451000" />
+      <workItem from="1621995082602" duration="7064000" />
+      <workItem from="1622168956834" duration="11359000" />
+      <workItem from="1622442592927" duration="1249000" />
+      <workItem from="1622513584668" duration="2668000" />
+      <workItem from="1622602535441" duration="595000" />
+      <workItem from="1622611485378" duration="17557000" />
+      <workItem from="1623122869073" duration="24929000" />
+      <workItem from="1623220703602" duration="11432000" />
+      <workItem from="1623391012094" duration="11377000" />
+      <workItem from="1623732536996" duration="1662000" />
+      <workItem from="1623748174093" duration="1308000" />
+      <workItem from="1623805348426" duration="5204000" />
+      <workItem from="1623822662590" duration="10575000" />
+      <workItem from="1623978082671" duration="4423000" />
+      <workItem from="1624410205230" duration="2187000" />
+      <workItem from="1624497187166" duration="2838000" />
+      <workItem from="1624593170374" duration="594000" />
+      <workItem from="1625128829374" duration="30685000" />
+      <workItem from="1625220931882" duration="781000" />
+      <workItem from="1625444686845" duration="11469000" />
+      <workItem from="1625533911850" duration="13143000" />
+      <workItem from="1625876412293" duration="871000" />
+      <workItem from="1625877313141" duration="1385000" />
+      <workItem from="1626059608834" duration="1765000" />
+      <workItem from="1626063615044" duration="15714000" />
+      <workItem from="1626147070043" duration="594000" />
+      <workItem from="1626158063361" duration="590000" />
+      <workItem from="1626239491721" duration="171000" />
+      <workItem from="1626239684153" duration="1186000" />
+      <workItem from="1626830882513" duration="3204000" />
+      <workItem from="1626842632245" duration="461000" />
+      <workItem from="1626843119419" duration="5138000" />
+      <workItem from="1627261368079" duration="66713000" />
+      <workItem from="1627457428965" duration="25229000" />
+      <workItem from="1627875077786" duration="8846000" />
+      <workItem from="1627969108751" duration="156000" />
+      <workItem from="1627969288775" duration="103000" />
+      <workItem from="1627969423161" duration="594000" />
+      <workItem from="1627970695187" duration="26682000" />
+      <workItem from="1628493648076" duration="27708000" />
+      <workItem from="1629434415009" duration="8855000" />
+      <workItem from="1629853228487" duration="31101000" />
+      <workItem from="1630026820227" duration="127000" />
+      <workItem from="1630026967756" duration="1251000" />
+      <workItem from="1630284079898" duration="13391000" />
+      <workItem from="1630383702674" duration="595000" />
+      <workItem from="1630455863029" duration="2895000" />
+      <workItem from="1630481414966" duration="60158000" />
+      <workItem from="1631234710785" duration="15554000" />
+      <workItem from="1631673506231" duration="6920000" />
+      <workItem from="1631840491248" duration="46924000" />
+      <workItem from="1632369089461" duration="593000" />
+      <workItem from="1632374622124" duration="18496000" />
+      <workItem from="1632702241414" duration="6331000" />
+      <workItem from="1632794510833" duration="1186000" />
+      <workItem from="1632818724289" duration="10796000" />
+      <workItem from="1632971208617" duration="1195000" />
+      <workItem from="1633654089098" duration="2625000" />
+      <workItem from="1633658463483" duration="30624000" />
+      <workItem from="1633756269211" duration="2790000" />
+      <workItem from="1633764752209" duration="31651000" />
+      <workItem from="1634195771244" duration="5139000" />
+      <workItem from="1634264189151" duration="16745000" />
+      <workItem from="1634629368943" duration="1297000" />
+      <workItem from="1634697182270" duration="2666000" />
+      <workItem from="1634700703251" duration="5551000" />
+      <workItem from="1634719193510" duration="6085000" />
+      <workItem from="1634776438630" duration="134000" />
+      <workItem from="1634776599757" duration="21434000" />
+      <workItem from="1634872326655" duration="10676000" />
+      <workItem from="1635225563714" duration="653000" />
+      <workItem from="1635227245556" duration="62411000" />
+      <workItem from="1636006787036" duration="175258000" />
+      <workItem from="1638146499702" duration="6114000" />
+      <workItem from="1638318718671" duration="2948000" />
+      <workItem from="1638325298898" duration="689000" />
+      <workItem from="1638326428894" duration="310000" />
+      <workItem from="1638326773170" duration="658000" />
+      <workItem from="1638331503834" duration="4006000" />
+      <workItem from="1638411140928" duration="41456000" />
+      <workItem from="1639106451765" duration="7353000" />
+      <workItem from="1639720572903" duration="1892000" />
+      <workItem from="1639723858446" duration="18295000" />
+      <workItem from="1640767130532" duration="19849000" />
+      <workItem from="1641262694947" duration="2484000" />
+      <workItem from="1641357104652" duration="1359000" />
+      <workItem from="1641371812318" duration="1189000" />
+      <workItem from="1641428515684" duration="594000" />
+      <workItem from="1641434873249" duration="2921000" />
+      <workItem from="1642138698313" duration="3598000" />
+      <workItem from="1643268557908" duration="61000" />
+      <workItem from="1644812296128" duration="1170000" />
+      <workItem from="1645496208766" duration="6219000" />
+      <workItem from="1645672747141" duration="223000" />
+      <workItem from="1646122108966" duration="685000" />
+      <workItem from="1646201877423" duration="2503000" />
+      <workItem from="1646355234775" duration="1334000" />
+      <workItem from="1647080531883" duration="2546000" />
+      <workItem from="1647242546239" duration="2941000" />
+      <workItem from="1647573730422" duration="1881000" />
+      <workItem from="1647590204406" duration="5984000" />
+      <workItem from="1647937915436" duration="267000" />
+      <workItem from="1647938206818" duration="381000" />
+      <workItem from="1654757686521" duration="775000" />
+      <workItem from="1654758575452" duration="11468000" />
+      <workItem from="1654832216830" duration="67000" />
+      <workItem from="1655710042203" duration="39351000" />
+      <workItem from="1658276842998" duration="29929000" />
+      <workItem from="1658813331301" duration="2520000" />
+      <workItem from="1658882114309" duration="188000" />
+      <workItem from="1659069787160" duration="1616000" />
+      <workItem from="1659315740919" duration="43000" />
+      <workItem from="1659596644635" duration="472000" />
+      <workItem from="1659936935931" duration="355000" />
+      <workItem from="1660121546002" duration="9215000" />
+      <workItem from="1661216926628" duration="16000" />
+      <workItem from="1661240476165" duration="36575000" />
+      <workItem from="1661829372658" duration="6000" />
+      <workItem from="1661907472968" duration="1346000" />
+      <workItem from="1661993813959" duration="1632000" />
+      <workItem from="1662001805696" duration="52478000" />
+      <workItem from="1662423667772" duration="1828000" />
+      <workItem from="1662619295689" duration="15235000" />
+      <workItem from="1663297472505" duration="599000" />
+      <workItem from="1663301895309" duration="607000" />
+      <workItem from="1663635858521" duration="2037000" />
+      <workItem from="1664156351692" duration="1892000" />
+      <workItem from="1664179207944" duration="664000" />
+      <workItem from="1664184277590" duration="673000" />
+      <workItem from="1664185503289" duration="6020000" />
+      <workItem from="1664253313556" duration="5014000" />
+      <workItem from="1664528214622" duration="6387000" />
+      <workItem from="1665193033659" duration="292000" />
+      <workItem from="1665193368077" duration="118563000" />
+      <workItem from="1666139547009" duration="75506000" />
+      <workItem from="1666926766721" duration="85832000" />
+      <workItem from="1669774751066" duration="1201000" />
+      <workItem from="1669864993413" duration="912000" />
+      <workItem from="1669941601049" duration="255000" />
+      <workItem from="1669941893867" duration="2275000" />
+      <workItem from="1670318009781" duration="871000" />
+      <workItem from="1670913014899" duration="217000" />
+      <workItem from="1670913270779" duration="37989000" />
+      <workItem from="1671152842938" duration="5802000" />
+      <workItem from="1672042664729" duration="1184000" />
+      <workItem from="1672368130388" duration="6116000" />
+      <workItem from="1672824667092" duration="599000" />
+      <workItem from="1675322880426" duration="28656000" />
+      <workItem from="1675646128114" duration="3367000" />
+      <workItem from="1676967730334" duration="1637000" />
+      <workItem from="1677632962280" duration="3361000" />
+      <workItem from="1678682455689" duration="1843000" />
+      <workItem from="1680222432380" duration="358000" />
+      <workItem from="1680223347180" duration="599000" />
+      <workItem from="1680492404587" duration="3642000" />
+      <workItem from="1680829577788" duration="526000" />
+      <workItem from="1680837566928" duration="632000" />
+      <workItem from="1681289961380" duration="2120000" />
+      <workItem from="1681371300229" duration="96000" />
+      <workItem from="1681375762356" duration="793000" />
+    </task>
+    <task id="LOCAL-00001" summary="✨ feat(Jar): Add Automatic-Module-Name">
+      <created>1676969189297</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1676969189297</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+    <option name="exactExcludedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/scripts/node/test-module/module2.d.ts" />
+        <option value="$PROJECT_DIR$/scripts/node/test-module/module2.js" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="HEAD" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="✨ feat(Jar): Add Automatic-Module-Name" />
+    <option name="LAST_COMMIT_MESSAGE" value="✨ feat(Jar): Add Automatic-Module-Name" />
+  </component>
+  <component name="XDebuggerManager">
+    <pin-to-top-manager>
+      <pinned-members>
+        <PinnedItemInfo parentTag="com.caoccao.javet.interop.NodeRuntime" memberName="callbackContextMap" />
+        <PinnedItemInfo parentTag="java.util.concurrent.ConcurrentHashMap$MapEntry" memberName="key" />
+      </pinned-members>
+    </pin-to-top-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/javet$Tests_in__com_caoccao_javet_.ic" NAME="Tests in 'com.caoccao.javet' Coverage Results" MODIFIED="1617265141557" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+  </component>
+</project>
