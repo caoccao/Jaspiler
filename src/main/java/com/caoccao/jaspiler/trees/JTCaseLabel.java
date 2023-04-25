@@ -28,7 +28,7 @@ public abstract class JTCaseLabel<
         NewTree extends JTCaseLabel<OriginalTree, NewTree>>
         extends JTTree<OriginalTree, NewTree>
         implements CaseLabelTree {
-    public JTCaseLabel(OriginalTree originalTree, JTTree<?, ?> parentTree) {
+    JTCaseLabel(OriginalTree originalTree, JTTree<?, ?> parentTree) {
         super(originalTree, parentTree);
     }
 

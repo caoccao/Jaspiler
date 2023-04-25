@@ -16,8 +16,16 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.JaspilerContract;
 import com.caoccao.jaspiler.utils.BaseLoggingObject;
+import com.sun.source.tree.IdentifierTree;
+import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.Tree;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.text.MessageFormat;
+import java.util.List;
 
 @SuppressWarnings("unchecked")
 public abstract class JTTree<
@@ -25,19 +33,69 @@ public abstract class JTTree<
         NewTree extends JTTree<OriginalTree, NewTree>>
         extends BaseLoggingObject
         implements IJTTree<OriginalTree, NewTree> {
-    protected final OriginalTree originalTree;
-    protected boolean dirty;
+    protected static final long INVALID_POSITION = -1L;
+    protected JaspilerContract.Action action;
+    protected JTPosition originalPosition;
+    protected OriginalTree originalTree;
     protected JTTree<?, ?> parentTree;
 
-    public JTTree(JTTree<?, ?> parentTree) {
-        this(null, parentTree);
+    JTTree(OriginalTree originalTree, JTTree<?, ?> parentTree) {
+        super();
+        originalPosition = JTPosition.Invalid;
+        this.originalTree = originalTree;
+        this.parentTree = parentTree;
+        setAction(JaspilerContract.Action.NoChange);
     }
 
-    public JTTree(OriginalTree originalTree, JTTree<?, ?> parentTree) {
-        super();
-        this.originalTree = originalTree;
-        setDirty(originalTree == null);
-        setParentTree(parentTree);
+    public static <T extends Tree, R extends T> R from(T tree, JTTree<?, ?> parentTree) {
+        R r = null;
+        if (tree != null) {
+            switch (tree.getKind()) {
+                case IDENTIFIER -> {
+                    r = (R) new JTIdent((IdentifierTree) tree, parentTree);
+                }
+                case MEMBER_SELECT -> {
+                    r = (R) new JTFieldAccess((MemberSelectTree) tree, parentTree);
+                }
+                default -> {
+                    throw new UnsupportedOperationException(
+                            MessageFormat.format(
+                                    "Kind {0} is not supported.",
+                                    tree.getKind().name()));
+                }
+            }
+        }
+        if (r instanceof JTTree<?, ?> jtTree) {
+            jtTree.analyze();
+        }
+        return r;
+    }
+
+    NewTree analyze() {
+        originalPosition = getCompilationUnit().getOriginalPosition(getOriginalTree());
+        return (NewTree) this;
+    }
+
+    @Override
+    public JaspilerContract.Action getAction() {
+        return action;
+    }
+
+    protected int getLineSeparatorCount() {
+        return 0;
+    }
+
+    protected long getOptionalEndPosition(long position) {
+        return getOriginalPosition().isValid() ? getOriginalPosition().endPosition() : position;
+    }
+
+    public String getOriginalCode() throws IOException {
+        return getCompilationUnit().getOriginalCode();
+    }
+
+    @Override
+    public JTPosition getOriginalPosition() {
+        return originalPosition;
     }
 
     @Override
@@ -50,23 +108,93 @@ public abstract class JTTree<
         return parentTree;
     }
 
-    @Override
-    public boolean isDirty() {
-        return dirty;
+    boolean isActionChange(Object... objects) {
+        if (getAction().isChange()) {
+            return true;
+        }
+        for (Object object : objects) {
+            if (object instanceof IJTTree<?, ?> jtTree) {
+                if (jtTree.isActionChange() || jtTree.isActionIgnore()) {
+                    return true;
+                }
+            } else if (object instanceof List<?> jtTrees) {
+                for (var item : jtTrees) {
+                    if (item instanceof IJTTree<?, ?> jtTree) {
+                        if (jtTree.isActionChange() || jtTree.isActionIgnore()) {
+                            return true;
+                        }
+                    } else if (item == null) {
+                        // Pass.
+                    } else {
+                        throw new IllegalArgumentException("Object type is not supported.");
+                    }
+                }
+            } else if (object == null) {
+                // Pass.
+            } else {
+                throw new IllegalArgumentException("Object type is not supported.");
+            }
+        }
+        return false;
     }
 
-    @Override
-    public NewTree setDirty(boolean dirty) {
-        this.dirty = dirty;
-        if (dirty) {
-            getParentTree().setDirty(dirty);
+    protected boolean save(Writer writer) throws IOException {
+        if (isActionIgnore()) {
+            return false;
         }
+        writer.write(toString());
+        return true;
+    }
+
+    public NewTree setAction(JaspilerContract.Action action) {
+        this.action = action;
         return (NewTree) this;
     }
 
     @Override
-    public NewTree setParentTree(JTTree<?, ?> parentTree) {
+    public NewTree setActionChange() {
+        return setAction(JaspilerContract.Action.Change);
+    }
+
+    @Override
+    public NewTree setActionIgnore() {
+        return setAction(JaspilerContract.Action.Ignore);
+    }
+
+    NewTree setOriginalPosition(IJTTree<?, ?> jtTree) {
+        if (jtTree != null) {
+            this.originalPosition = jtTree.getOriginalPosition();
+        }
+        return (NewTree) this;
+    }
+
+    NewTree setParentTree(JTTree<?, ?> parentTree) {
         this.parentTree = parentTree;
+        return (NewTree) this;
+    }
+
+    @Override
+    public String toString() {
+        if (isActionChange() || !getOriginalPosition().isValid()) {
+            return IJTConstants.UNEXPECTED;
+        }
+        try {
+            String code = getOriginalCode().substring(
+                    (int) getOriginalPosition().startPosition(),
+                    (int) getOriginalPosition().endPosition());
+            if (getLineSeparatorCount() > 0) {
+                code += IJTConstants.LINE_SEPARATOR_X_10.substring(0, getLineSeparatorCount());
+            }
+            return code;
+        } catch (IOException e) {
+            return IJTConstants.UNEXPECTED;
+        }
+    }
+
+    protected NewTree writeStrings(Writer writer, String... strings) throws IOException {
+        for (String str : strings) {
+            writer.write(str);
+        }
         return (NewTree) this;
     }
 }

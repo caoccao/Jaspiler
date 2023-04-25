@@ -33,6 +33,13 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The type Jaspiler compiler.
+ * <p>
+ * Limitations:
+ * 1. Some comments may be lost due to the technical limitations.
+ * Please refer to <a href="https://openjdk.org/groups/compiler/analyzing-doc-comments/analyze-doc-comments.html">Analyzing Documentation Comments</a> for detail.
+ */
 public final class JaspilerCompiler extends BaseLoggingObject {
     private final DiagnosticCollector<JavaFileObject> diagnosticCollector;
     private final JavaCompiler javaCompiler;
@@ -90,10 +97,9 @@ public final class JaspilerCompiler extends BaseLoggingObject {
                 null, javaFileManager, diagnosticCollector, null, null, javaFileObjects);
         var trees = Trees.instance(task);
         for (var compilationUnit : task.parse()) {
-            var jtCompilationUnit = new JTCompilationUnit(trees, compilationUnit);
-            jtCompilationUnit.analyze();
+            var jtCompilationUnit = new JTCompilationUnit(trees, compilationUnit).analyze();
             var jaspilerContext = new JaspilerTransformContext(jtCompilationUnit, trees);
-            scanner.scan(compilationUnit, jaspilerContext);
+            scanner.scan(jtCompilationUnit, jaspilerContext);
             jtCompilationUnit.save(writer);
         }
         return this;

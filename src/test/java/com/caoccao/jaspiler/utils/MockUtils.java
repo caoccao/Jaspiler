@@ -16,14 +16,19 @@
 
 package com.caoccao.jaspiler.utils;
 
+import com.caoccao.jaspiler.mock.MockIgnorePublicClass;
+
+import javax.tools.JavaFileObject;
 import java.nio.file.Path;
 
-public final class SystemUtils {
-    public static final String SYSTEM_PROPERTY_JAVA_IO_TMPDIR = "java.io.tmpdir";
-    public static final String SYSTEM_PROPERTY_USER_DIR = "user.dir";
-    public static final Path SYSTEM_TMP_PATH = Path.of(System.getProperty(SYSTEM_PROPERTY_JAVA_IO_TMPDIR));
-    public static final Path WORKING_DIRECTORY = Path.of(System.getProperty(SYSTEM_PROPERTY_USER_DIR));
+public final class MockUtils {
+    private MockUtils() {
+    }
 
-    private SystemUtils() {
+    public static Path getSourcePath(Class<?> clazz) {
+        return SystemUtils.WORKING_DIRECTORY.resolve(
+                "src/test/java/"
+                        + MockIgnorePublicClass.class.getName().replace('.', '/')
+                        + JavaFileObject.Kind.SOURCE.extension);
     }
 }

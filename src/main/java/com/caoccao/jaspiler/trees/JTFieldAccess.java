@@ -16,11 +16,12 @@
 
 package com.caoccao.jaspiler.trees;
 
-import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.TreeVisitor;
 
-import javax.lang.model.element.Name;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -33,8 +34,15 @@ public final class JTFieldAccess
     private JTExpression<?, ?> expression;
     private JTName identifier;
 
-    public JTFieldAccess(MemberSelectTree originalTree, JTTree<?, ?> parentTree) {
+    public JTFieldAccess() {
+        this(null, null);
+        setActionChange();
+    }
+
+    JTFieldAccess(MemberSelectTree originalTree, JTTree<?, ?> parentTree) {
         super(originalTree, parentTree);
+        expression = null;
+        identifier = null;
     }
 
     @Override
@@ -43,25 +51,25 @@ public final class JTFieldAccess
     }
 
     @Override
-    public JTFieldAccess analyze() {
-        setExpression(Optional.ofNullable(getOriginalTree().getExpression())
-                .map(e -> JTExpression.from(e, this))
-                .map(JTTree::analyze)
-                .orElse(null));
-        setIdentifier(Optional.ofNullable(getOriginalTree().getIdentifier())
+    JTFieldAccess analyze() {
+        super.analyze();
+        expression = Optional.ofNullable(getOriginalTree().getExpression())
+                .map(o -> (JTExpression<?, ?>) JTTree.from(o, this))
+                .orElse(null);
+        identifier = Optional.ofNullable(getOriginalTree().getIdentifier())
                 .map(Object::toString)
                 .map(JTName::new)
-                .orElse(null));
+                .orElse(null);
         return this;
     }
 
     @Override
-    public ExpressionTree getExpression() {
+    public JTExpression<?, ?> getExpression() {
         return expression;
     }
 
     @Override
-    public Name getIdentifier() {
+    public JTName getIdentifier() {
         return identifier;
     }
 
@@ -74,13 +82,48 @@ public final class JTFieldAccess
         return identifier;
     }
 
+    @Override
+    public boolean isActionChange() {
+        return isActionChange(getExpression());
+    }
+
+    @Override
+    protected boolean save(Writer writer) throws IOException {
+        if (isActionChange()) {
+            if (expression != null) {
+                expression.save(writer);
+                writeStrings(writer, ".");
+            }
+            if (identifier != null) {
+                writeStrings(writer, identifier.getValue());
+            }
+            return true;
+        }
+        return super.save(writer);
+    }
+
     public JTFieldAccess setExpression(JTExpression<?, ?> expression) {
-        this.expression = expression;
-        return this;
+        this.expression = Objects.requireNonNull(expression).setParentTree(this).setOriginalPosition(this.expression);
+        return setActionChange();
     }
 
     public JTFieldAccess setIdentifier(JTName identifier) {
-        this.identifier = identifier;
-        return this;
+        this.identifier = Objects.requireNonNull(identifier);
+        return setActionChange();
+    }
+
+    @Override
+    public String toString() {
+        if (isActionChange()) {
+            var stringBuilder = new StringBuilder();
+            if (expression != null) {
+                stringBuilder.append(expression).append(IJTConstants.DOT);
+            }
+            if (identifier != null) {
+                stringBuilder.append(identifier);
+            }
+            return stringBuilder.toString();
+        }
+        return super.toString();
     }
 }

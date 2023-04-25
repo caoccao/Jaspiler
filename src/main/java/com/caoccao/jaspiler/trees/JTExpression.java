@@ -17,10 +17,6 @@
 package com.caoccao.jaspiler.trees;
 
 import com.sun.source.tree.ExpressionTree;
-import com.sun.source.tree.IdentifierTree;
-import com.sun.source.tree.MemberSelectTree;
-
-import java.text.MessageFormat;
 
 /**
  * The type Jt expression.
@@ -31,28 +27,8 @@ public abstract class JTExpression<
         NewTree extends JTExpression<OriginalTree, NewTree>>
         extends JTCaseLabel<OriginalTree, NewTree>
         implements ExpressionTree {
-    public JTExpression(OriginalTree originalTree, JTTree<?, ?> parentTree) {
+    JTExpression(OriginalTree originalTree, JTTree<?, ?> parentTree) {
         super(originalTree, parentTree);
-    }
-
-    public static JTExpression<?, ?> from(ExpressionTree expressionTree, JTTree<?, ?> parentTree) {
-        if (expressionTree != null) {
-            switch (expressionTree.getKind()) {
-                case IDENTIFIER -> {
-                    return new JTIdent((IdentifierTree) expressionTree, parentTree);
-                }
-                case MEMBER_SELECT -> {
-                    return new JTFieldAccess((MemberSelectTree) expressionTree, parentTree);
-                }
-                default -> {
-                    throw new UnsupportedOperationException(
-                            MessageFormat.format(
-                                    "Expression {0} is not supported.",
-                                    expressionTree.getKind().name()));
-                }
-            }
-        }
-        return null;
     }
 
     @Override

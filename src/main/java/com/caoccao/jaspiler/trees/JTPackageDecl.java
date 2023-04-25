@@ -19,10 +19,9 @@ package com.caoccao.jaspiler.trees;
 import com.sun.source.tree.PackageTree;
 import com.sun.source.tree.TreeVisitor;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -35,9 +34,15 @@ public final class JTPackageDecl
     private final List<JTAnnotation> annotations;
     private JTExpression<?, ?> packageName;
 
-    public JTPackageDecl(PackageTree originalTree, JTTree<?, ?> parentTree) {
+    public JTPackageDecl() {
+        this(null, null);
+        setActionChange();
+    }
+
+    JTPackageDecl(PackageTree originalTree, JTTree<?, ?> parentTree) {
         super(originalTree, parentTree);
         annotations = new ArrayList<>();
+        packageName = null;
     }
 
     @Override
@@ -46,11 +51,11 @@ public final class JTPackageDecl
     }
 
     @Override
-    public JTPackageDecl analyze() {
-        setPackageName(Optional.ofNullable(getOriginalTree().getPackageName())
-                .map(p -> JTExpression.from(p, this))
-                .map(JTTree::analyze)
-                .orElse(null));
+    JTPackageDecl analyze() {
+        super.analyze();
+        packageName = Optional.ofNullable(getOriginalTree().getPackageName())
+                .map(o -> (JTExpression<?, ?>) JTTree.from(o, this))
+                .orElse(null);
         return this;
     }
 
@@ -65,20 +70,36 @@ public final class JTPackageDecl
     }
 
     @Override
+    protected int getLineSeparatorCount() {
+        return 2;
+    }
+
+    @Override
     public JTExpression<?, ?> getPackageName() {
         return packageName;
     }
 
     @Override
-    public JTPackageDecl save(Writer writer) throws IOException {
-        if (isDirty()) {
-            throw new UnsupportedOperationException();
-        }
-        return super.save(writer);
+    public boolean isActionChange() {
+        return isActionChange(packageName);
     }
 
     public JTPackageDecl setPackageName(JTExpression<?, ?> packageName) {
-        this.packageName = packageName;
-        return this;
+        this.packageName = Objects.requireNonNull(packageName).setParentTree(this).setOriginalPosition(this.packageName);
+        return setActionChange();
+    }
+
+    @Override
+    public String toString() {
+        if (isActionChange()) {
+            var stringBuilder = new StringBuilder();
+            annotations.forEach(stringBuilder::append);
+            if (packageName != null) {
+                stringBuilder.append(IJTConstants.PACKAGE_).append(packageName)
+                        .append(IJTConstants.SEMI_COLON).append(IJTConstants.LINE_SEPARATOR_X_2);
+            }
+            return stringBuilder.toString();
+        }
+        return super.toString();
     }
 }

@@ -16,43 +16,34 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.JaspilerContract;
 import com.sun.source.tree.Tree;
 
-import java.io.IOException;
-import java.io.Writer;
-
-@SuppressWarnings("unchecked")
 public interface IJTTree<
         OriginalTree extends Tree,
         NewTree extends IJTTree<OriginalTree, NewTree>>
         extends Tree {
-    NewTree analyze();
+    JaspilerContract.Action getAction();
 
     default JTCompilationUnit getCompilationUnit() {
         return getParentTree().getCompilationUnit();
     }
 
-    default JTPosition getOriginalPosition() {
-        return getCompilationUnit().getOriginalPosition(getOriginalTree());
-    }
+    JTPosition getOriginalPosition();
 
     OriginalTree getOriginalTree();
 
     JTTree<?, ?> getParentTree();
 
-    boolean isDirty();
+    boolean isActionChange();
 
-    default NewTree save(Writer writer) throws IOException {
-        if (isDirty() || getOriginalTree() == null) {
-            throw new UnsupportedOperationException();
-        }
-        String code = getCompilationUnit().getOriginalCode();
-        JTPosition position = getOriginalPosition();
-        writer.write(code, (int) position.startPosition(), (int) (position.endPosition() - position.startPosition()));
-        return (NewTree) this;
+    default boolean isActionIgnore() {
+        return getAction().isIgnore();
     }
 
-    NewTree setDirty(boolean dirty);
+    NewTree setAction(JaspilerContract.Action action);
 
-    NewTree setParentTree(JTTree<?, ?> parentTree);
+    NewTree setActionChange();
+
+    NewTree setActionIgnore();
 }

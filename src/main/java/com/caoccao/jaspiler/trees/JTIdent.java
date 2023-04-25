@@ -19,6 +19,9 @@ package com.caoccao.jaspiler.trees;
 import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.TreeVisitor;
 
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Objects;
 import java.util.Optional;
 
 public final class JTIdent
@@ -26,8 +29,14 @@ public final class JTIdent
         implements IdentifierTree {
     private JTName name;
 
-    public JTIdent(IdentifierTree identifierTree, JTTree<?, ?> parentTree) {
-        super(identifierTree, parentTree);
+    public JTIdent() {
+        this(null, null);
+        setActionChange();
+    }
+
+    JTIdent(IdentifierTree originalTree, JTTree<?, ?> parentTree) {
+        super(originalTree, parentTree);
+        name = null;
     }
 
     @Override
@@ -36,11 +45,12 @@ public final class JTIdent
     }
 
     @Override
-    public JTIdent analyze() {
-        setName(Optional.ofNullable(getOriginalTree().getName())
+    JTIdent analyze() {
+        super.analyze();
+        name = Optional.ofNullable(getOriginalTree().getName())
                 .map(Object::toString)
                 .map(JTName::new)
-                .orElse(null));
+                .orElse(null);
         return this;
     }
 
@@ -54,8 +64,36 @@ public final class JTIdent
         return name;
     }
 
+    @Override
+    public boolean isActionChange() {
+        return getAction().isChange();
+    }
+
+    @Override
+    protected boolean save(Writer writer) throws IOException {
+        if (isActionChange()) {
+            if (name != null) {
+                writeStrings(writer, name.getValue());
+            }
+            return true;
+        }
+        return super.save(writer);
+    }
+
     public JTIdent setName(JTName name) {
-        this.name = name;
-        return this;
+        this.name = Objects.requireNonNull(name);
+        return setActionChange();
+    }
+
+    @Override
+    public String toString() {
+        if (isActionChange()) {
+            var stringBuilder = new StringBuilder();
+            if (name != null) {
+                stringBuilder.append(name);
+            }
+            return stringBuilder.toString();
+        }
+        return super.toString();
     }
 }

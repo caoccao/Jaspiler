@@ -14,16 +14,23 @@
  * limitations under the License.
  */
 
-package com.caoccao.jaspiler.utils;
+/* test */package/* test */com./*1*/caoccao/*2*/.jaspiler.mock;
 
-import java.nio.file.Path;
+import com.caoccao/*1*/./*2*/jaspiler.JaspilerContract;
 
-public final class SystemUtils {
-    public static final String SYSTEM_PROPERTY_JAVA_IO_TMPDIR = "java.io.tmpdir";
-    public static final String SYSTEM_PROPERTY_USER_DIR = "user.dir";
-    public static final Path SYSTEM_TMP_PATH = Path.of(System.getProperty(SYSTEM_PROPERTY_JAVA_IO_TMPDIR));
-    public static final Path WORKING_DIRECTORY = Path.of(System.getProperty(SYSTEM_PROPERTY_USER_DIR));
+import java.util./* test */ArrayList;
+import java.util.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-    private SystemUtils() {
+@JaspilerContract.Ignore
+public class MockIgnorePublicClass {
+    public int b;
+    private String a;
+    private List<Object> list;
+
+    public void Test() {
+        a = "abc";
+        b = 1;
+        list = new ArrayList<>();
     }
 }

@@ -17,13 +17,10 @@
 package com.caoccao.jaspiler.visiters;
 
 import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
-import com.caoccao.jaspiler.trees.JTPosition;
 import com.sun.source.tree.*;
 import com.sun.source.util.TreePathScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Optional;
 
 @SuppressWarnings("preview")
 public class JaspilerTransformScanner extends TreePathScanner<JaspilerTransformScanner, JaspilerTransformContext> {
@@ -36,11 +33,6 @@ public class JaspilerTransformScanner extends TreePathScanner<JaspilerTransformS
 
     @Override
     public JaspilerTransformScanner scan(Tree tree, JaspilerTransformContext jaspilerContext) {
-        var optionalTree = Optional.ofNullable(tree);
-        var optionalKind = optionalTree.map(Tree::getKind);
-        if (optionalTree.isPresent()) {
-            var position = JTPosition.from(jaspilerContext.getTrees(), jaspilerContext.getCompilationUnitTree(), tree);
-        }
         return super.scan(tree, jaspilerContext);
     }
 

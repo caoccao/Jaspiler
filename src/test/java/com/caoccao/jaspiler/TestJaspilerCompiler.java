@@ -17,8 +17,15 @@
 package com.caoccao.jaspiler;
 
 import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
+import com.caoccao.jaspiler.mock.MockIgnorePublicClass;
+import com.caoccao.jaspiler.trees.JTFieldAccess;
+import com.caoccao.jaspiler.trees.JTName;
+import com.caoccao.jaspiler.trees.JTPackageDecl;
 import com.caoccao.jaspiler.utils.BaseLoggingObject;
-import com.caoccao.jaspiler.utils.SystemUtils;
+import com.caoccao.jaspiler.utils.MockUtils;
+import com.caoccao.jaspiler.visiters.JaspilerTransformScanner;
+import com.sun.source.tree.ImportTree;
+import com.sun.source.tree.PackageTree;
 import com.sun.source.util.TreePathScanner;
 import org.junit.jupiter.api.Test;
 
@@ -26,28 +33,46 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.file.Path;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class TestJaspilerCompiler extends BaseLoggingObject {
     @Test
     public void testTransform() throws IOException {
         class TestScanner extends TreePathScanner<TestScanner, JaspilerTransformContext> {
+            @Override
+            public TestScanner visitImport(ImportTree node, JaspilerTransformContext jaspilerTransformContext) {
+                return super.visitImport(node, jaspilerTransformContext);
+            }
+
+            @Override
+            public TestScanner visitPackage(PackageTree node, JaspilerTransformContext jaspilerTransformContext) {
+                var packageTree = (JTPackageDecl) node;
+                var jtFieldAccess1 = new JTFieldAccess();
+                packageTree.setPackageName(jtFieldAccess1);
+                jtFieldAccess1.setIdentifier(new JTName("a2"));
+                var jtFieldAccess2 = new JTFieldAccess();
+                jtFieldAccess1.setExpression(jtFieldAccess2);
+                jtFieldAccess2.setIdentifier(new JTName("a1"));
+                return super.visitPackage(node, jaspilerTransformContext);
+            }
         }
-        Path outputPath = SystemUtils.SYSTEM_TMP_PATH.resolve(JaspilerContract.NAME);
+        Path sourceFilePath = MockUtils.getSourcePath(MockIgnorePublicClass.class);
         var compiler = new JaspilerCompiler();
-        compiler.addJavaFileStringObject("com.test.Test", """
-                // This is a test.
-                package com.test;
-                // This is a test.
-                class Test {
-                    private String a;
-                    public int b;
-                    public Test() {
-                        a = "abc";
-                        b = 1;
-                    }
-                }""");
+        compiler.addJavaFileObjects(sourceFilePath);
+        try (StringWriter writer = new StringWriter()) {
+            compiler.transform(new JaspilerTransformScanner(), writer);
+            String code = writer.toString();
+            logger.debug(code);
+            assertTrue(code.contains("package/* test */com./*1*/caoccao/*2*/.jaspiler.mock;"));
+            assertTrue(code.contains("import com.caoccao/*1*/./*2*/jaspiler.JaspilerContract;"));
+        }
+        logger.debug("=====================================");
         try (StringWriter writer = new StringWriter()) {
             compiler.transform(new TestScanner(), writer);
-            logger.info(writer.toString());
+            String code = writer.toString();
+            logger.debug(code);
+            assertTrue(code.contains("package a1.a2;"));
+            assertTrue(code.contains("import com.caoccao/*1*/./*2*/jaspiler.JaspilerContract;"));
         }
     }
 }

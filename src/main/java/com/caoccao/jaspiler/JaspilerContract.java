@@ -31,6 +31,24 @@ public final class JaspilerContract {
     private JaspilerContract() {
     }
 
+    public enum Action {
+        Change,
+        Ignore,
+        NoChange;
+
+        public boolean isChange() {
+            return this == Action.Change;
+        }
+
+        public boolean isIgnore() {
+            return this == Action.Ignore;
+        }
+
+        public boolean isNoChange() {
+            return this == Action.NoChange;
+        }
+    }
+
     /**
      * The annotation Ignore provides conditional ignore over decorated class, method, etc.
      *
