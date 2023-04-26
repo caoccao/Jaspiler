@@ -91,13 +91,13 @@ public final class JaspilerCompiler extends BaseLoggingObject {
     }
 
     public <Scanner extends TreePathScanner<Scanner, JaspilerTransformContext>> JaspilerCompiler transform(
-            Scanner scanner, Writer writer)
+            Scanner scanner, Writer writer, JaspilerOptions options)
             throws IOException {
         var task = (JavacTask) javaCompiler.getTask(
                 null, javaFileManager, diagnosticCollector, null, null, javaFileObjects);
         var trees = Trees.instance(task);
         for (var compilationUnit : task.parse()) {
-            var jtCompilationUnit = new JTCompilationUnit(trees, compilationUnit).analyze();
+            var jtCompilationUnit = new JTCompilationUnit(trees, compilationUnit, options).analyze();
             var jaspilerContext = new JaspilerTransformContext(jtCompilationUnit, trees);
             scanner.scan(jtCompilationUnit, jaspilerContext);
             jtCompilationUnit.save(writer);

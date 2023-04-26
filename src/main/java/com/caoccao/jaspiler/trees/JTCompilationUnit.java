@@ -17,6 +17,7 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.JaspilerContract;
+import com.caoccao.jaspiler.JaspilerOptions;
 import com.sun.source.tree.*;
 import com.sun.source.util.Trees;
 
@@ -42,13 +43,15 @@ public final class JTCompilationUnit
         extends JTTree<CompilationUnitTree, JTCompilationUnit>
         implements CompilationUnitTree {
     private final List<JTImport> imports;
+    private final JaspilerOptions options;
     private final Trees trees;
     private String originalCode;
     private JTPackageDecl packageTree;
 
-    public JTCompilationUnit(Trees trees, CompilationUnitTree originalTree) {
+    public JTCompilationUnit(Trees trees, CompilationUnitTree originalTree, JaspilerOptions options) {
         super(Objects.requireNonNull(originalTree), null);
         imports = new ArrayList<>();
+        this.options = options;
         originalCode = null;
         packageTree = null;
         this.trees = Objects.requireNonNull(trees);
@@ -96,10 +99,18 @@ public final class JTCompilationUnit
         return null;
     }
 
+    public JaspilerOptions getOptions() {
+        return options;
+    }
+
     @Override
-    public String getOriginalCode() throws IOException {
+    public String getOriginalCode() {
         if (originalCode == null) {
-            originalCode = getOriginalTree().getSourceFile().getCharContent(true).toString();
+            try {
+                originalCode = getOriginalTree().getSourceFile().getCharContent(true).toString();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
         return originalCode;
     }
@@ -211,14 +222,15 @@ public final class JTCompilationUnit
     public String toString() {
         if (isActionChange()) {
             var stringBuilder = new StringBuilder();
+            if (options.isPreserveCopyrights()
+                    && getOriginalPosition().isValid()
+                    && getOriginalPosition().startPosition() > 0) {
+                stringBuilder.append(getOriginalCode(), 0, (int) getOriginalPosition().startPosition());
+            }
             stringBuilder.append(packageTree);
             imports.forEach(stringBuilder::append);
             return stringBuilder.toString();
         }
-        try {
-            return getOriginalCode();
-        } catch (IOException e) {
-            return IJTConstants.UNEXPECTED;
-        }
+        return getOriginalCode();
     }
 }

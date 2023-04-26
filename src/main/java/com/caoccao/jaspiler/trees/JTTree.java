@@ -89,7 +89,7 @@ public abstract class JTTree<
         return getOriginalPosition().isValid() ? getOriginalPosition().endPosition() : position;
     }
 
-    public String getOriginalCode() throws IOException {
+    public String getOriginalCode() {
         return getCompilationUnit().getOriginalCode();
     }
 
@@ -178,17 +178,13 @@ public abstract class JTTree<
         if (isActionChange() || !getOriginalPosition().isValid()) {
             return IJTConstants.UNEXPECTED;
         }
-        try {
-            String code = getOriginalCode().substring(
-                    (int) getOriginalPosition().startPosition(),
-                    (int) getOriginalPosition().endPosition());
-            if (getLineSeparatorCount() > 0) {
-                code += IJTConstants.LINE_SEPARATOR_X_10.substring(0, getLineSeparatorCount());
-            }
-            return code;
-        } catch (IOException e) {
-            return IJTConstants.UNEXPECTED;
+        String code = getOriginalCode().substring(
+                (int) getOriginalPosition().startPosition(),
+                (int) getOriginalPosition().endPosition());
+        if (getLineSeparatorCount() > 0) {
+            code += IJTConstants.LINE_SEPARATOR_X_10.substring(0, getLineSeparatorCount());
         }
+        return code;
     }
 
     protected NewTree writeStrings(Writer writer, String... strings) throws IOException {

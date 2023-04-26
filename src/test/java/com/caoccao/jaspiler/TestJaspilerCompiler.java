@@ -60,7 +60,7 @@ public class TestJaspilerCompiler extends BaseLoggingObject {
         var compiler = new JaspilerCompiler();
         compiler.addJavaFileObjects(sourceFilePath);
         try (StringWriter writer = new StringWriter()) {
-            compiler.transform(new JaspilerTransformScanner(), writer);
+            compiler.transform(new JaspilerTransformScanner(), writer, JaspilerOptions.Default);
             String code = writer.toString();
             logger.debug(code);
             assertTrue(code.contains("package/* test */com./*1*/caoccao/*2*/.jaspiler.mock;"));
@@ -68,7 +68,7 @@ public class TestJaspilerCompiler extends BaseLoggingObject {
         }
         logger.debug("=====================================");
         try (StringWriter writer = new StringWriter()) {
-            compiler.transform(new TestScanner(), writer);
+            compiler.transform(new TestScanner(), writer, JaspilerOptions.Default);
             String code = writer.toString();
             logger.debug(code);
             assertTrue(code.contains("package a1.a2;"));
