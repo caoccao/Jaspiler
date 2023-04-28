@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-package com.caoccao.jaspiler.trees;
+package com.caoccao.jaspiler;
 
-interface IJTConstants {
-    String AT = "@";
-    String COMMA_ = ", ";
-    String DOT = ".";
-    String IMPORT_ = "import ";
-    String LEFT_PARENTHESIS = "(";
-    String LINE_SEPARATOR = "\n";
-    String PACKAGE_ = "package ";
-    String RIGHT_PARENTHESIS = ")";
-    String SEMI_COLON = ";";
-    String SPACE = " ";
-    String STATIC_ = "static ";
-    String UNEXPECTED = "unexpected";
+import com.caoccao.jaspiler.utils.BaseLoggingObject;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+
+public abstract class BaseTestSuite extends BaseLoggingObject {
+    protected JaspilerCompiler compiler;
+
+    @AfterEach
+    protected void afterEach() {
+
+    }
+
+    @BeforeEach
+    protected void beforeEach() {
+        compiler = new JaspilerCompiler();
+    }
 }

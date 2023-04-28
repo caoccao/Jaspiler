@@ -99,7 +99,7 @@ public final class JTPackageDecl
             annotations.forEach(stringBuilder::append);
             if (packageName != null) {
                 stringBuilder.append(IJTConstants.PACKAGE_).append(packageName)
-                        .append(IJTConstants.SEMI_COLON).append(IJTConstants.LINE_SEPARATOR_X_2);
+                        .append(IJTConstants.SEMI_COLON).append(JTLineSeparator.L2);
             }
             return stringBuilder.toString();
         }

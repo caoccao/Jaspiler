@@ -26,6 +26,7 @@ import com.sun.source.util.DocTrees;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.Trees;
 
+import javax.lang.model.element.Modifier;
 import javax.tools.JavaFileObject;
 import java.io.File;
 import java.io.FileWriter;
@@ -54,6 +55,7 @@ public final class JTCompilationUnit
     private final JaspilerOptions options;
     private final SourcePositions sourcePositions;
     private final Trees trees;
+    private final List<JTTree<?, ?>> typeDecls;
     private JTModuleTree moduleTree;
     private String originalCode;
     private JTPackageDecl packageTree;
@@ -73,6 +75,7 @@ public final class JTCompilationUnit
         packageTree = null;
         sourcePositions = Objects.requireNonNull(trees).getSourcePositions();
         this.trees = trees;
+        typeDecls = new ArrayList<>();
     }
 
     @Override
@@ -89,7 +92,9 @@ public final class JTCompilationUnit
         getOriginalTree().getImports().stream()
                 .map(o -> new JTImport(o, this).analyze())
                 .forEach(imports::add);
-        // TODO Type
+        getOriginalTree().getTypeDecls().stream()
+                .map(o -> (JTTree<?, ?>) JTTreeFactory.createFrom(o, this))
+                .forEach(typeDecls::add);
         moduleTree = Optional.ofNullable(getOriginalTree().getModule())
                 .map(o -> new JTModuleTree(o, this).analyze())
                 .orElse(null);
@@ -101,7 +106,8 @@ public final class JTCompilationUnit
         var nodes = super.getAllNodes();
         nodes.add(packageTree);
         imports.forEach(t -> nodes.add(t.setParentTree(this)));
-        // TODO Type
+        nodes.add(JTLineSeparator.L2);
+        typeDecls.forEach(t -> nodes.add(t.setParentTree(this)));
         nodes.add(moduleTree);
         return nodes;
     }
@@ -178,7 +184,7 @@ public final class JTCompilationUnit
 
     @Override
     public List<? extends AnnotationTree> getPackageAnnotations() {
-        return null;
+        return getPackage().getAnnotations();
     }
 
     @Override
@@ -197,7 +203,7 @@ public final class JTCompilationUnit
 
     @Override
     public List<? extends Tree> getTypeDecls() {
-        return null;
+        return typeDecls;
     }
 
     public boolean save(Path outputPath) throws IOException {
@@ -253,6 +259,27 @@ public final class JTCompilationUnit
 
     @Override
     public boolean save(Writer writer) throws IOException {
+        if (isActionChange()) {
+            /*
+             * If the public type is annotated with {@link JaspilerContract.Ignore},
+             * the whole file will be ignored.
+             */
+            boolean ignore = typeDecls.stream()
+                    .filter(typeDecl -> typeDecl instanceof JTClassDecl)
+                    .anyMatch(typeDecl -> {
+                        var modifiers = ((JTClassDecl) typeDecl).getModifiers();
+                        if (modifiers.getFlags().contains(Modifier.PUBLIC)) {
+                            if (modifiers.getAnnotations().stream()
+                                    .anyMatch(annotation -> annotation.toString().startsWith("@JaspilerContract.Ignore"))) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    });
+            if (ignore) {
+                return false;
+            }
+        }
         return super.save(writer);
     }
 

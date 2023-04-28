@@ -26,7 +26,7 @@ import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TestJaspilerContract {
+public class TestJaspilerContract extends BaseTestSuite {
     @Test
     public void testIgnore() throws IOException {
         class TestScanner extends TreePathScanner<TestScanner, JaspilerParseContext> {
@@ -39,7 +39,6 @@ public class TestJaspilerContract {
                 return super.visitAnnotation(node, jaspilerContext);
             }
         }
-        var compiler = new JaspilerCompiler();
         compiler.addJavaFileStringObject("A", """
                 @JC.Ignore(condition = "a")
                 class A {}""");

@@ -16,17 +16,14 @@
 
 package com.caoccao.jaspiler.trees;
 
-interface IJTConstants {
-    String AT = "@";
-    String COMMA_ = ", ";
-    String DOT = ".";
-    String IMPORT_ = "import ";
-    String LEFT_PARENTHESIS = "(";
-    String LINE_SEPARATOR = "\n";
-    String PACKAGE_ = "package ";
-    String RIGHT_PARENTHESIS = ")";
-    String SEMI_COLON = ";";
-    String SPACE = " ";
-    String STATIC_ = "static ";
-    String UNEXPECTED = "unexpected";
+import com.sun.source.tree.StatementTree;
+
+public abstract class JTStatement<
+        OriginalTree extends StatementTree,
+        NewTree extends JTStatement<OriginalTree, NewTree>>
+        extends JTTree<OriginalTree, NewTree>
+        implements StatementTree {
+    JTStatement(OriginalTree originalTree, JTTree<?, ?> parentTree) {
+        super(originalTree, parentTree);
+    }
 }

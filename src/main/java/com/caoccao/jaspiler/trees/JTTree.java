@@ -142,7 +142,7 @@ public abstract class JTTree<
                 (int) getOriginalPosition().startPosition(),
                 (int) getOriginalPosition().endPosition());
         if (getLineSeparatorCount() > 0) {
-            code += IJTConstants.LINE_SEPARATOR_X_10.substring(0, getLineSeparatorCount());
+            code += IJTConstants.LINE_SEPARATOR.repeat(getLineSeparatorCount());
         }
         return code;
     }

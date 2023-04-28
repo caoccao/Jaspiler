@@ -85,8 +85,28 @@ public final class JTAnnotation
         return Kind.ANNOTATION;
     }
 
+    @Override
+    protected int getLineSeparatorCount() {
+        return 1;
+    }
+
     public JTAnnotation setAnnotationType(JTTree<?, ?> annotationType) {
         this.annotationType = Objects.requireNonNull(annotationType).setParentTree(this);
         return setActionChange();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(IJTConstants.AT).append(annotationType).append(IJTConstants.LEFT_PARENTHESIS);
+        final int argumentCount = arguments.size();
+        for (int i = 0; i < argumentCount; i++) {
+            stringBuilder.append(arguments.get(i));
+            if (i < argumentCount - 1) {
+                stringBuilder.append(IJTConstants.COMMA_);
+            }
+        }
+        stringBuilder.append(IJTConstants.RIGHT_PARENTHESIS);
+        return stringBuilder.toString();
     }
 }

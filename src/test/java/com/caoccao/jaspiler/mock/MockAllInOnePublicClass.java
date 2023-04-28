@@ -14,21 +14,33 @@
  * limitations under the License.
  */
 
-package com.caoccao.jaspiler.utils;
+/* test */package/* test */com./*1*/caoccao/*2*/.jaspiler.mock;
 
-import com.caoccao.jaspiler.mock.MockIgnorePublicClass;
+import java.lang.annotation.*;
+import java.util./* test */ArrayList;
+import java.util.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import javax.tools.JavaFileObject;
-import java.nio.file.Path;
+public class MockAllInOnePublicClass {
+    public int b;
+    private String a;
+    private List<Object> list;
 
-public final class MockUtils {
-    private MockUtils() {
-    }
-
-    public static Path getSourcePath(Class<?> clazz) {
-        return SystemUtils.WORKING_DIRECTORY.resolve(
-                "src/test/java/"
-                        + clazz.getName().replace('.', '/')
-                        + JavaFileObject.Kind.SOURCE.extension);
+    /**
+     * Test.
+     */
+    public void Test() {
+        a = "abc";
+        b = 1;
+        list = new ArrayList<>();
     }
 }
+
+@Documented
+@Inherited
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.ANNOTATION_TYPE)
+@interface Annotation1 {
+    String value() default "value";
+}
+

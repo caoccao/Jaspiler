@@ -16,17 +16,17 @@
 
 package com.caoccao.jaspiler.trees;
 
-interface IJTConstants {
-    String AT = "@";
-    String COMMA_ = ", ";
-    String DOT = ".";
-    String IMPORT_ = "import ";
-    String LEFT_PARENTHESIS = "(";
-    String LINE_SEPARATOR = "\n";
-    String PACKAGE_ = "package ";
-    String RIGHT_PARENTHESIS = ")";
-    String SEMI_COLON = ";";
-    String SPACE = " ";
-    String STATIC_ = "static ";
-    String UNEXPECTED = "unexpected";
+import com.caoccao.jaspiler.BaseTestSuite;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class TestJTAnnotation extends BaseTestSuite {
+    @Test
+    public void testToString() {
+        var jtAnnotation = new JTAnnotation().setAnnotationType(JTTreeFactory.createJTFieldAccess("X", "Y", "Z"));
+        jtAnnotation.getArguments().add(JTTreeFactory.createJTFieldAccess("A1", "B1", "C1"));
+        jtAnnotation.getArguments().add(JTTreeFactory.createJTFieldAccess("A2", "B2", "C2"));
+        assertEquals("@X.Y.Z(A1.B1.C1, A2.B2.C2)", jtAnnotation.toString());
+    }
 }

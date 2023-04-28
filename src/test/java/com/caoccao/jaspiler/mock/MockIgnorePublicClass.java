@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-/* test */package/* test */com./*1*/caoccao/*2*/.jaspiler.mock;
+/* test */
+package/* test */com./*1*/caoccao/*2*/.jaspiler.mock;
 
-import com.caoccao/*1*/./*2*/jaspiler.JaspilerContract;
+import com.caoccao.jaspiler.JaspilerContract;
 
-import java.lang.annotation.Documented;
-import java.util./* test */ArrayList;
-import java.util.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.ArrayList;
+import java.util.List;
 
 @JaspilerContract.Ignore
 public class MockIgnorePublicClass {
@@ -39,7 +38,3 @@ public class MockIgnorePublicClass {
     }
 }
 
-@Documented
-@interface Annotation1 {
-    String value() default "value";
-}

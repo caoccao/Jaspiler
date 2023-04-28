@@ -16,38 +16,53 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.Tree;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 
 @SuppressWarnings("unchecked")
 public final class JTTreeFactory {
+    private static final Logger logger = LoggerFactory.getLogger(JTTreeFactory.class);
+
     private JTTreeFactory() {
     }
 
-    public static <T extends Tree, R extends T> R createFrom(T tree, JTTree<?, ?> parentTree) {
+    public static <T extends Tree, R extends JTTree<?, ?>> R createFrom(T tree, JTTree<?, ?> parentTree) {
         R r = null;
         if (tree != null) {
             switch (tree.getKind()) {
-                case IDENTIFIER -> {
-                    r = (R) new JTIdent((IdentifierTree) tree, parentTree);
-                }
-                case MEMBER_SELECT -> {
-                    r = (R) new JTFieldAccess((MemberSelectTree) tree, parentTree);
-                }
+                case ANNOTATION_TYPE, CLASS -> r = (R) new JTClassDecl((ClassTree) tree, parentTree);
+                case IDENTIFIER -> r = (R) new JTIdent((IdentifierTree) tree, parentTree);
+                case MEMBER_SELECT -> r = (R) new JTFieldAccess((MemberSelectTree) tree, parentTree);
                 default -> {
-                    throw new UnsupportedOperationException(
-                            MessageFormat.format(
-                                    "Kind {0} is not supported.",
-                                    tree.getKind().name()));
+                    String message = MessageFormat.format(
+                            "Type {0} and kind {1} is not supported.",
+                            tree.getClass().getName(),
+                            tree.getKind().name());
+                    logger.error("{}\n{}", message, tree);
+                    throw new UnsupportedOperationException(message);
                 }
             }
         }
-        if (r instanceof JTTree<?, ?> jtTree) {
-            jtTree.analyze();
+        if (r != null) {
+            r.analyze();
         }
         return r;
+    }
+
+    public static JTFieldAccess createJTFieldAccess(String... strings) {
+        assert strings.length > 0 : "String array must not be empty.";
+        var jtFieldAccess = new JTFieldAccess();
+        jtFieldAccess.setIdentifier(new JTName(strings[strings.length - 1]));
+        if (strings.length > 1) {
+            jtFieldAccess.setExpression(createJTFieldAccess(Arrays.copyOfRange(strings, 0, strings.length - 1)));
+        }
+        return jtFieldAccess;
     }
 }
