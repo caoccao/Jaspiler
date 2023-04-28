@@ -89,6 +89,9 @@ public abstract class JTTree<
 
     @Override
     public boolean isActionChange() {
+        if (isActionIgnore()) {
+            return false;
+        }
         if (getAction().isChange()) {
             return true;
         }
@@ -130,6 +133,9 @@ public abstract class JTTree<
 
     @Override
     public String toString() {
+        if (isActionIgnore()) {
+            return IJTConstants.EMPTY;
+        }
         if (isActionChange()) {
             var stringBuilder = new StringBuilder();
             getAllNodes().stream().filter(Objects::nonNull).forEach(stringBuilder::append);

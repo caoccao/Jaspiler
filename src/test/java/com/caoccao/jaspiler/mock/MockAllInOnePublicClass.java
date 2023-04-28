@@ -16,10 +16,13 @@
 
 /* test */package/* test */com./*1*/caoccao/*2*/.jaspiler.mock;
 
+import com.caoccao.jaspiler.JaspilerContract;
+
 import java.lang.annotation.*;
 import java.util./* test */ArrayList;
 import java.util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.apache.commons.lang3.StringUtils;
 
 public class MockAllInOnePublicClass {
     public int b;

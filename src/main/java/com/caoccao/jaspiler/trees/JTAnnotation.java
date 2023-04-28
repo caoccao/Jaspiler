@@ -97,16 +97,19 @@ public final class JTAnnotation
 
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(IJTConstants.AT).append(annotationType).append(IJTConstants.LEFT_PARENTHESIS);
-        final int argumentCount = arguments.size();
-        for (int i = 0; i < argumentCount; i++) {
-            stringBuilder.append(arguments.get(i));
-            if (i < argumentCount - 1) {
-                stringBuilder.append(IJTConstants.COMMA_);
+        if (isActionChange()) {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(IJTConstants.AT).append(annotationType).append(IJTConstants.LEFT_PARENTHESIS);
+            final int argumentCount = arguments.size();
+            for (int i = 0; i < argumentCount; i++) {
+                stringBuilder.append(arguments.get(i));
+                if (i < argumentCount - 1) {
+                    stringBuilder.append(IJTConstants.COMMA_);
+                }
             }
+            stringBuilder.append(IJTConstants.RIGHT_PARENTHESIS).append(JTLineSeparator.L1);
+            return stringBuilder.toString();
         }
-        stringBuilder.append(IJTConstants.RIGHT_PARENTHESIS);
-        return stringBuilder.toString();
+        return super.toString();
     }
 }

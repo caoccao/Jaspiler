@@ -17,16 +17,53 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.BaseTestSuite;
+import com.caoccao.jaspiler.JaspilerOptions;
+import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
+import com.caoccao.jaspiler.mock.MockAllInOnePublicClass;
+import com.caoccao.jaspiler.utils.MockUtils;
+import com.sun.source.tree.AnnotationTree;
+import com.sun.source.util.TreePathScanner;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.io.StringWriter;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestJTAnnotation extends BaseTestSuite {
+    @Test
+    public void testIgnore() throws Exception {
+        String annotationString = "@Retention(RetentionPolicy.RUNTIME)";
+        class TestTransformScanner extends TreePathScanner<TestTransformScanner, JaspilerTransformContext> {
+            @Override
+            public TestTransformScanner visitAnnotation(AnnotationTree node, JaspilerTransformContext jaspilerTransformContext) {
+                if (node.toString().startsWith(annotationString)) {
+                    ((JTAnnotation) node).setActionIgnore();
+                }
+                return super.visitAnnotation(node, jaspilerTransformContext);
+            }
+        }
+        compiler.addJavaFileObjects(MockUtils.getSourcePath(MockAllInOnePublicClass.class));
+        try (StringWriter writer = new StringWriter()) {
+            compiler.transform(
+                    new TestTransformScanner(),
+                    null,
+                    writer,
+                    JaspilerOptions.Default);
+            String code = writer.toString();
+            assertFalse(code.contains(annotationString));
+            var texts = List.of(
+                    "* Copyright (c)",
+                    "public class MockAllInOnePublicClass");
+            texts.forEach(text -> assertTrue(code.contains(text), text));
+        }
+    }
+
     @Test
     public void testToString() {
         var jtAnnotation = new JTAnnotation().setAnnotationType(JTTreeFactory.createJTFieldAccess("X", "Y", "Z"));
         jtAnnotation.getArguments().add(JTTreeFactory.createJTFieldAccess("A1", "B1", "C1"));
         jtAnnotation.getArguments().add(JTTreeFactory.createJTFieldAccess("A2", "B2", "C2"));
-        assertEquals("@X.Y.Z(A1.B1.C1, A2.B2.C2)", jtAnnotation.toString());
+        assertEquals("@X.Y.Z(A1.B1.C1, A2.B2.C2)\n", jtAnnotation.toString());
     }
 }

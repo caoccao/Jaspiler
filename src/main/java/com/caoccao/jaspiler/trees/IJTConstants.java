@@ -20,6 +20,7 @@ interface IJTConstants {
     String AT = "@";
     String COMMA_ = ", ";
     String DOT = ".";
+    String EMPTY = "";
     String IMPORT_ = "import ";
     String LEFT_PARENTHESIS = "(";
     String LINE_SEPARATOR = "\n";
