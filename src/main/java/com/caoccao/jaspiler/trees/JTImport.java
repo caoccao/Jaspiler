@@ -58,7 +58,8 @@ public final class JTImport
     @Override
     List<JTTree<?, ?>> getAllNodes() {
         var nodes = super.getAllNodes();
-        nodes.add(qualifiedIdentifier);
+        Optional.ofNullable(qualifiedIdentifier).ifPresent(nodes::add);
+        nodes.forEach(node -> node.setParentTree(this));
         return nodes;
     }
 

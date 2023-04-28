@@ -67,7 +67,8 @@ public final class JTFieldAccess
     @Override
     List<JTTree<?, ?>> getAllNodes() {
         var nodes = super.getAllNodes();
-        nodes.add(expression);
+        Optional.ofNullable(expression).ifPresent(nodes::add);
+        nodes.forEach(node -> node.setParentTree(this));
         return nodes;
     }
 

@@ -16,39 +16,51 @@
 
 package com.caoccao.jaspiler.trees;
 
-import com.sun.source.tree.ModifiersTree;
 import com.sun.source.tree.TreeVisitor;
+import com.sun.source.tree.TypeParameterTree;
 
-import javax.lang.model.element.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
+import java.util.Optional;
 
-public final class JTModifiers
-        extends JTTree<ModifiersTree, JTModifiers>
-        implements ModifiersTree {
+public final class JTTypeParameter
+        extends JTTree<TypeParameterTree, JTTypeParameter>
+        implements TypeParameterTree {
     private final List<JTAnnotation> annotations;
-    private long flags;
+    private final List<JTExpression<?, ?>> bounds;
+    private JTName name;
 
-    JTModifiers(ModifiersTree modifiersTree, JTTree<?, ?> parentTree) {
-        super(modifiersTree, parentTree);
+    public JTTypeParameter() {
+        this(null, null);
+        setActionChange();
+    }
+
+    JTTypeParameter(TypeParameterTree typeParameterTree, JTTree<?, ?> parentTree) {
+        super(typeParameterTree, parentTree);
         annotations = new ArrayList<>();
-        flags = 0L;
+        bounds = new ArrayList<>();
+        name = null;
     }
 
     @Override
     public <R, D> R accept(TreeVisitor<R, D> visitor, D data) {
-        return visitor.visitModifiers(this, data);
+        return visitor.visitTypeParameter(this, data);
     }
 
     @Override
-    JTModifiers analyze() {
+    JTTypeParameter analyze() {
         super.analyze();
         getOriginalTree().getAnnotations().stream()
                 .map(o -> new JTAnnotation(o, this).analyze())
                 .forEach(annotations::add);
-        flags = JTFlags.fromModifierSet(getOriginalTree().getFlags());
+        name = Optional.ofNullable(getOriginalTree().getName())
+                .map(Object::toString)
+                .map(JTName::new)
+                .orElse(null);
+        getOriginalTree().getBounds().stream()
+                .map(o -> (JTExpression<?, ?>) JTTreeFactory.createFrom(o, this))
+                .forEach(bounds::add);
         return this;
     }
 
@@ -56,6 +68,7 @@ public final class JTModifiers
     List<JTTree<?, ?>> getAllNodes() {
         var nodes = super.getAllNodes();
         annotations.stream().filter(Objects::nonNull).forEach(nodes::add);
+        bounds.stream().filter(Objects::nonNull).forEach(nodes::add);
         nodes.forEach(node -> node.setParentTree(this));
         return nodes;
     }
@@ -66,32 +79,22 @@ public final class JTModifiers
     }
 
     @Override
-    public Set<Modifier> getFlags() {
-        return JTFlags.toModifierSet(flags);
+    public List<JTExpression<?, ?>> getBounds() {
+        return bounds;
     }
 
     @Override
     public Kind getKind() {
-        return Kind.MODIFIERS;
+        return Kind.TYPE_PARAMETER;
     }
 
     @Override
-    protected int getLineSeparatorCount() {
-        return 1;
+    public JTName getName() {
+        return name;
     }
 
-    public JTModifiers setFlags(long flags) {
-        if (this.flags != flags) {
-            this.flags = flags;
-            return setActionChange();
-        }
-        return this;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(super.toString());
-        return stringBuilder.toString();
+    public JTTypeParameter setName(JTName name) {
+        this.name = Objects.requireNonNull(name);
+        return setActionChange();
     }
 }

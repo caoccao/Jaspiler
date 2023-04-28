@@ -19,15 +19,17 @@ package com.caoccao.jaspiler.trees;
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.TreeVisitor;
-import com.sun.source.tree.TypeParameterTree;
 
 import javax.lang.model.element.Name;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public final class JTClassDecl
         extends JTStatement<ClassTree, JTClassDecl>
         implements ClassTree {
+    private final List<JTTypeParameter> typeParameters;
     private JTModifiers modifiers;
 
     public JTClassDecl() {
@@ -37,6 +39,8 @@ public final class JTClassDecl
 
     JTClassDecl(ClassTree classTree, JTTree<?, ?> parentTree) {
         super(classTree, parentTree);
+        modifiers = null;
+        typeParameters = new ArrayList<>();
     }
 
     @Override
@@ -50,6 +54,9 @@ public final class JTClassDecl
         modifiers = Optional.ofNullable(getOriginalTree().getModifiers())
                 .map(o -> new JTModifiers(o, this).analyze())
                 .orElse(null);
+        getOriginalTree().getTypeParameters().stream()
+                .map(o -> new JTTypeParameter(o, this).analyze())
+                .forEach(typeParameters::add);
 //        r = scanAndReduce(node.getTypeParameters(), p, r);
 //        r = scanAndReduce(node.getExtendsClause(), p, r);
 //        r = scanAndReduce(node.getImplementsClause(), p, r);
@@ -61,7 +68,9 @@ public final class JTClassDecl
     @Override
     List<JTTree<?, ?>> getAllNodes() {
         var nodes = super.getAllNodes();
-        nodes.add(modifiers);
+        Optional.ofNullable(modifiers).ifPresent(nodes::add);
+        typeParameters.stream().filter(Objects::nonNull).forEach(nodes::add);
+        nodes.forEach(node -> node.setParentTree(this));
         return nodes;
     }
 
@@ -101,7 +110,12 @@ public final class JTClassDecl
     }
 
     @Override
-    public List<? extends TypeParameterTree> getTypeParameters() {
-        return null;
+    public List<JTTypeParameter> getTypeParameters() {
+        return typeParameters;
+    }
+
+    public JTClassDecl setModifiers(JTModifiers modifiers) {
+        this.modifiers = Objects.requireNonNull(modifiers).setParentTree(this);
+        return setActionChange();
     }
 }

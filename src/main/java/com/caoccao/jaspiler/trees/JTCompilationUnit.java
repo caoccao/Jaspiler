@@ -104,11 +104,12 @@ public final class JTCompilationUnit
     @Override
     List<JTTree<?, ?>> getAllNodes() {
         var nodes = super.getAllNodes();
-        nodes.add(packageTree);
-        imports.forEach(t -> nodes.add(t.setParentTree(this)));
+        Optional.ofNullable(packageTree).ifPresent(nodes::add);
+        imports.stream().filter(Objects::nonNull).forEach(nodes::add);
         nodes.add(JTLineSeparator.L2);
-        typeDecls.forEach(t -> nodes.add(t.setParentTree(this)));
-        nodes.add(moduleTree);
+        typeDecls.stream().filter(Objects::nonNull).forEach(nodes::add);
+        Optional.ofNullable(moduleTree).ifPresent(nodes::add);
+        nodes.forEach(node -> node.setParentTree(this));
         return nodes;
     }
 

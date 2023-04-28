@@ -56,14 +56,18 @@ public final class JTPackageDecl
         packageName = Optional.ofNullable(getOriginalTree().getPackageName())
                 .map(o -> (JTExpression<?, ?>) JTTreeFactory.createFrom(o, this))
                 .orElse(null);
+        getOriginalTree().getAnnotations().stream()
+                .map(o -> new JTAnnotation(o, this).analyze())
+                .forEach(annotations::add);
         return this;
     }
 
     @Override
     List<JTTree<?, ?>> getAllNodes() {
         var nodes = super.getAllNodes();
-        nodes.addAll(annotations);
-        nodes.add(packageName);
+        annotations.stream().filter(Objects::nonNull).forEach(nodes::add);
+        Optional.ofNullable(packageName).ifPresent(nodes::add);
+        nodes.forEach(node -> node.setParentTree(this));
         return nodes;
     }
 

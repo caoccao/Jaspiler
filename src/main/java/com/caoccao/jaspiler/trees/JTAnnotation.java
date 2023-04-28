@@ -65,8 +65,9 @@ public final class JTAnnotation
     @Override
     List<JTTree<?, ?>> getAllNodes() {
         var nodes = super.getAllNodes();
-        nodes.add(annotationType);
-        arguments.forEach(t -> nodes.add(t.setParentTree(this)));
+        Optional.ofNullable(annotationType).ifPresent(nodes::add);
+        arguments.stream().filter(Objects::nonNull).forEach(nodes::add);
+        nodes.forEach(node -> node.setParentTree(this));
         return nodes;
     }
 

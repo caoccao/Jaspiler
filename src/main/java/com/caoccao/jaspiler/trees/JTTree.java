@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @SuppressWarnings("unchecked")
 public abstract class JTTree<
@@ -96,7 +95,6 @@ public abstract class JTTree<
             return true;
         }
         return getAllNodes().stream()
-                .filter(Objects::nonNull)
                 .anyMatch(jtTree -> jtTree.isActionChange() || jtTree.isActionIgnore());
     }
 
@@ -138,7 +136,7 @@ public abstract class JTTree<
         }
         if (isActionChange()) {
             var stringBuilder = new StringBuilder();
-            getAllNodes().stream().filter(Objects::nonNull).forEach(stringBuilder::append);
+            getAllNodes().forEach(stringBuilder::append);
             return stringBuilder.toString();
         }
         if (!getOriginalPosition().isValid()) {
