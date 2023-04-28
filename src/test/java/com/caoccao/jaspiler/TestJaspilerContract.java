@@ -17,7 +17,6 @@
 package com.caoccao.jaspiler;
 
 import com.caoccao.jaspiler.contexts.JaspilerParseContext;
-import com.caoccao.jaspiler.visiters.JaspilerLoggingScanner;
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.AssignmentTree;
 import com.sun.source.util.TreePathScanner;
@@ -45,6 +44,5 @@ public class TestJaspilerContract {
                 @JC.Ignore(condition = "a")
                 class A {}""");
         compiler.parse(new TestScanner());
-        compiler.parse(new JaspilerLoggingScanner());
     }
 }

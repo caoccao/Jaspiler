@@ -16,14 +16,13 @@
 
 package com.caoccao.jaspiler;
 
+import com.caoccao.jaspiler.contexts.JaspilerDocContext;
 import com.caoccao.jaspiler.contexts.JaspilerParseContext;
 import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
 import com.caoccao.jaspiler.trees.JTCompilationUnit;
 import com.caoccao.jaspiler.utils.BaseLoggingObject;
 import com.caoccao.jaspiler.utils.JavaFileStringObject;
-import com.sun.source.util.JavacTask;
-import com.sun.source.util.TreePathScanner;
-import com.sun.source.util.Trees;
+import com.sun.source.util.*;
 
 import javax.tools.*;
 import java.io.File;
@@ -84,22 +83,31 @@ public final class JaspilerCompiler extends BaseLoggingObject {
                 null, javaFileManager, diagnosticCollector, null, null, javaFileObjects);
         var trees = Trees.instance(task);
         for (var compilationUnit : task.parse()) {
-            var jaspilerContext = new JaspilerParseContext(compilationUnit, trees);
+            var jaspilerContext = new JaspilerParseContext(compilationUnit);
             scanner.scan(compilationUnit, jaspilerContext);
         }
         return this;
     }
 
-    public <Scanner extends TreePathScanner<Scanner, JaspilerTransformContext>> JaspilerCompiler transform(
-            Scanner scanner, Writer writer, JaspilerOptions options)
+    public <TransformScanner extends TreePathScanner<TransformScanner, JaspilerTransformContext>,
+            DocScanner extends DocTreeScanner<DocScanner, JaspilerDocContext>> JaspilerCompiler transform(
+            TransformScanner transformScanner,
+            DocScanner docScanner,
+            Writer writer,
+            JaspilerOptions options)
             throws IOException {
         var task = (JavacTask) javaCompiler.getTask(
                 null, javaFileManager, diagnosticCollector, null, null, javaFileObjects);
         var trees = Trees.instance(task);
+        var docTrees = DocTrees.instance(task);
         for (var compilationUnit : task.parse()) {
-            var jtCompilationUnit = new JTCompilationUnit(trees, compilationUnit, options).analyze();
-            var jaspilerContext = new JaspilerTransformContext(jtCompilationUnit, trees);
-            scanner.scan(jtCompilationUnit, jaspilerContext);
+            var jtCompilationUnit = new JTCompilationUnit(trees, docTrees, compilationUnit, options).analyze();
+            var jaspilerTransformContext = new JaspilerTransformContext(jtCompilationUnit);
+            var jaspilerDocContext = new JaspilerDocContext(jtCompilationUnit);
+            transformScanner.scan(jtCompilationUnit, jaspilerTransformContext);
+            if (docScanner != null) {
+                docScanner.scan(jtCompilationUnit.getDocCommentTree(), jaspilerDocContext);
+            }
             jtCompilationUnit.save(writer);
         }
         return this;

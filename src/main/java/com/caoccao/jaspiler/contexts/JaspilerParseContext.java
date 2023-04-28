@@ -17,11 +17,10 @@
 package com.caoccao.jaspiler.contexts;
 
 import com.sun.source.tree.CompilationUnitTree;
-import com.sun.source.util.Trees;
 
 public class JaspilerParseContext extends BaseJaspilerContext<CompilationUnitTree> {
 
-    public JaspilerParseContext(CompilationUnitTree compilationUnitTree, Trees trees) {
-        super(compilationUnitTree, trees);
+    public JaspilerParseContext(CompilationUnitTree compilationUnitTree) {
+        super(compilationUnitTree);
     }
 }

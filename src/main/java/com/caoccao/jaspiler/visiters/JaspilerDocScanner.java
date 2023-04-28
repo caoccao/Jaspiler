@@ -14,32 +14,18 @@
  * limitations under the License.
  */
 
-/* test */package/* test */com./*1*/caoccao/*2*/.jaspiler.mock;
+package com.caoccao.jaspiler.visiters;
 
-import com.caoccao/*1*/./*2*/jaspiler.JaspilerContract;
+import com.caoccao.jaspiler.contexts.JaspilerDocContext;
+import com.sun.source.util.DocTreeScanner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.lang.annotation.Documented;
-import java.util./* test */ArrayList;
-import java.util.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+public class JaspilerDocScanner extends DocTreeScanner<JaspilerDocScanner, JaspilerDocContext> {
+    protected final Logger logger;
 
-@JaspilerContract.Ignore
-public class MockIgnorePublicClass {
-    public int b;
-    private String a;
-    private List<Object> list;
-
-    /**
-     * Test.
-     */
-    public void Test() {
-        a = "abc";
-        b = 1;
-        list = new ArrayList<>();
+    public JaspilerDocScanner() {
+        super();
+        logger = LoggerFactory.getLogger(getClass());
     }
-}
-
-@Documented
-@interface Annotation1 {
-    String value() default "value";
 }

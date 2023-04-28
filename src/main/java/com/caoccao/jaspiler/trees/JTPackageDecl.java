@@ -54,9 +54,17 @@ public final class JTPackageDecl
     JTPackageDecl analyze() {
         super.analyze();
         packageName = Optional.ofNullable(getOriginalTree().getPackageName())
-                .map(o -> (JTExpression<?, ?>) JTTree.from(o, this))
+                .map(o -> (JTExpression<?, ?>) JTTreeFactory.createFrom(o, this))
                 .orElse(null);
         return this;
+    }
+
+    @Override
+    List<JTTree<?, ?>> getAllNodes() {
+        var nodes = super.getAllNodes();
+        nodes.addAll(annotations);
+        nodes.add(packageName);
+        return nodes;
     }
 
     @Override
@@ -79,13 +87,8 @@ public final class JTPackageDecl
         return packageName;
     }
 
-    @Override
-    public boolean isActionChange() {
-        return isActionChange(packageName);
-    }
-
     public JTPackageDecl setPackageName(JTExpression<?, ?> packageName) {
-        this.packageName = Objects.requireNonNull(packageName).setParentTree(this).setOriginalPosition(this.packageName);
+        this.packageName = Objects.requireNonNull(packageName).setParentTree(this);
         return setActionChange();
     }
 

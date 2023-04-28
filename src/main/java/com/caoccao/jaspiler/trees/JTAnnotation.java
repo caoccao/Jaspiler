@@ -22,6 +22,7 @@ import com.sun.source.tree.TreeVisitor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * The type Jt annotation tree.
@@ -52,8 +53,21 @@ public final class JTAnnotation
     @Override
     JTAnnotation analyze() {
         super.analyze();
-
+        annotationType = Optional.ofNullable(getOriginalTree().getAnnotationType())
+                .map(o -> (JTTree<?, ?>) JTTreeFactory.createFrom(o, this))
+                .orElse(null);
+        getOriginalTree().getArguments().stream()
+                .map(o -> (JTExpression<?, ?>) JTTreeFactory.createFrom(o, this))
+                .forEach(arguments::add);
         return this;
+    }
+
+    @Override
+    List<JTTree<?, ?>> getAllNodes() {
+        var nodes = super.getAllNodes();
+        nodes.add(annotationType);
+        arguments.forEach(t -> nodes.add(t.setParentTree(this)));
+        return nodes;
     }
 
     @Override
@@ -71,13 +85,8 @@ public final class JTAnnotation
         return Kind.ANNOTATION;
     }
 
-    @Override
-    public boolean isActionChange() {
-        return isActionChange(getAnnotationType(), getArguments());
-    }
-
     public JTAnnotation setAnnotationType(JTTree<?, ?> annotationType) {
-        this.annotationType = Objects.requireNonNull(annotationType).setParentTree(this).setOriginalPosition(this.annotationType);
+        this.annotationType = Objects.requireNonNull(annotationType).setParentTree(this);
         return setActionChange();
     }
 }

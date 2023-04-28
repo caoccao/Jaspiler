@@ -16,9 +16,12 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.sun.source.doctree.DocCommentTree;
+import com.sun.source.doctree.DocTree;
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.Tree;
-import com.sun.source.util.Trees;
+import com.sun.source.util.DocSourcePositions;
+import com.sun.source.util.SourcePositions;
 
 public record JTPosition(
         long startPosition,
@@ -27,9 +30,28 @@ public record JTPosition(
         long columnNumber) {
     public static final JTPosition Invalid = new JTPosition(-1, -1, -1, -1);
 
-    public static JTPosition from(Trees trees, CompilationUnitTree compilationUnitTree, Tree tree) {
-        long startPosition = trees.getSourcePositions().getStartPosition(compilationUnitTree, tree);
-        long endPosition = trees.getSourcePositions().getEndPosition(compilationUnitTree, tree);
+    public static JTPosition from(
+            DocSourcePositions docSourcePositions,
+            CompilationUnitTree compilationUnitTree,
+            DocCommentTree docCommentTree,
+            DocTree docTree) {
+        long startPosition = docSourcePositions.getStartPosition(compilationUnitTree, docCommentTree, docTree);
+        long endPosition = docSourcePositions.getEndPosition(compilationUnitTree, docCommentTree, docTree);
+        long lineNumber = -1;
+        long columnNumber = -1;
+        if (startPosition >= 0) {
+            lineNumber = compilationUnitTree.getLineMap().getLineNumber(startPosition);
+            columnNumber = compilationUnitTree.getLineMap().getColumnNumber(startPosition);
+        }
+        return new JTPosition(startPosition, endPosition, lineNumber, columnNumber);
+    }
+
+    public static JTPosition from(
+            SourcePositions sourcePositions,
+            CompilationUnitTree compilationUnitTree,
+            Tree tree) {
+        long startPosition = sourcePositions.getStartPosition(compilationUnitTree, tree);
+        long endPosition = sourcePositions.getEndPosition(compilationUnitTree, tree);
         long lineNumber = -1;
         long columnNumber = -1;
         if (startPosition >= 0) {
@@ -45,5 +67,15 @@ public record JTPosition(
 
     public long length() {
         return endPosition - startPosition;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("S: ").append(startPosition).append(", ");
+        stringBuilder.append("E: ").append(endPosition).append(", ");
+        stringBuilder.append("L: ").append(lineNumber).append(", ");
+        stringBuilder.append("C: ").append(columnNumber);
+        return stringBuilder.toString();
     }
 }

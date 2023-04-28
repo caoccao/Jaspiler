@@ -17,22 +17,15 @@
 package com.caoccao.jaspiler.contexts;
 
 import com.sun.source.tree.CompilationUnitTree;
-import com.sun.source.util.Trees;
 
 public abstract class BaseJaspilerContext<CUT extends CompilationUnitTree> {
     protected CUT compilationUnitTree;
-    protected Trees trees;
 
-    public BaseJaspilerContext(CUT compilationUnitTree, Trees trees) {
+    public BaseJaspilerContext(CUT compilationUnitTree) {
         this.compilationUnitTree = compilationUnitTree;
-        this.trees = trees;
     }
 
     public CUT getCompilationUnitTree() {
         return compilationUnitTree;
-    }
-
-    public Trees getTrees() {
-        return trees;
     }
 }

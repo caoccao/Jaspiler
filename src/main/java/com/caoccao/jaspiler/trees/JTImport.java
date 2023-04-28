@@ -19,6 +19,7 @@ package com.caoccao.jaspiler.trees;
 import com.sun.source.tree.ImportTree;
 import com.sun.source.tree.TreeVisitor;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -48,10 +49,17 @@ public final class JTImport
     JTImport analyze() {
         super.analyze();
         qualifiedIdentifier = Optional.ofNullable(getOriginalTree().getQualifiedIdentifier())
-                .map(o -> (JTTree<?, ?>) JTTree.from(o, this))
+                .map(o -> (JTTree<?, ?>) JTTreeFactory.createFrom(o, this))
                 .orElse(null);
         staticImport = getOriginalTree().isStatic();
         return this;
+    }
+
+    @Override
+    List<JTTree<?, ?>> getAllNodes() {
+        var nodes = super.getAllNodes();
+        nodes.add(qualifiedIdentifier);
+        return nodes;
     }
 
     @Override
@@ -70,17 +78,12 @@ public final class JTImport
     }
 
     @Override
-    public boolean isActionChange() {
-        return isActionChange(qualifiedIdentifier);
-    }
-
-    @Override
     public boolean isStatic() {
         return staticImport;
     }
 
     public JTImport setQualifiedIdentifier(JTTree<?, ?> qualifiedIdentifier) {
-        this.qualifiedIdentifier = Objects.requireNonNull(qualifiedIdentifier).setParentTree(this).setOriginalPosition(this.qualifiedIdentifier);
+        this.qualifiedIdentifier = Objects.requireNonNull(qualifiedIdentifier).setParentTree(this);
         return setActionChange();
     }
 

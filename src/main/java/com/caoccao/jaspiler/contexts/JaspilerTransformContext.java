@@ -17,10 +17,9 @@
 package com.caoccao.jaspiler.contexts;
 
 import com.caoccao.jaspiler.trees.JTCompilationUnit;
-import com.sun.source.util.Trees;
 
 public class JaspilerTransformContext extends BaseJaspilerContext<JTCompilationUnit> {
-    public JaspilerTransformContext(JTCompilationUnit compilationUnitTree, Trees trees) {
-        super(compilationUnitTree, trees);
+    public JaspilerTransformContext(JTCompilationUnit compilationUnitTree) {
+        super(compilationUnitTree);
     }
 }

@@ -18,7 +18,12 @@ package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.JaspilerContract;
 import com.caoccao.jaspiler.JaspilerOptions;
+import com.sun.source.doctree.DocCommentTree;
+import com.sun.source.doctree.DocTree;
 import com.sun.source.tree.*;
+import com.sun.source.util.DocSourcePositions;
+import com.sun.source.util.DocTrees;
+import com.sun.source.util.SourcePositions;
 import com.sun.source.util.Trees;
 
 import javax.tools.JavaFileObject;
@@ -42,19 +47,32 @@ import java.util.Optional;
 public final class JTCompilationUnit
         extends JTTree<CompilationUnitTree, JTCompilationUnit>
         implements CompilationUnitTree {
+    private final DocCommentTree docCommentTree;
+    private final DocSourcePositions docSourcePositions;
+    private final DocTrees docTrees;
     private final List<JTImport> imports;
     private final JaspilerOptions options;
+    private final SourcePositions sourcePositions;
     private final Trees trees;
+    private JTModuleTree moduleTree;
     private String originalCode;
     private JTPackageDecl packageTree;
 
-    public JTCompilationUnit(Trees trees, CompilationUnitTree originalTree, JaspilerOptions options) {
+    public JTCompilationUnit(
+            Trees trees,
+            DocTrees docTrees,
+            CompilationUnitTree originalTree,
+            JaspilerOptions options) {
         super(Objects.requireNonNull(originalTree), null);
+        docCommentTree = Objects.requireNonNull(docTrees).getDocCommentTree(getOriginalTree().getSourceFile());
+        docSourcePositions = docTrees.getSourcePositions();
+        this.docTrees = docTrees;
         imports = new ArrayList<>();
         this.options = options;
         originalCode = null;
         packageTree = null;
-        this.trees = Objects.requireNonNull(trees);
+        sourcePositions = Objects.requireNonNull(trees).getSourcePositions();
+        this.trees = trees;
     }
 
     @Override
@@ -71,12 +89,34 @@ public final class JTCompilationUnit
         getOriginalTree().getImports().stream()
                 .map(o -> new JTImport(o, this).analyze())
                 .forEach(imports::add);
+        // TODO Type
+        moduleTree = Optional.ofNullable(getOriginalTree().getModule())
+                .map(o -> new JTModuleTree(o, this).analyze())
+                .orElse(null);
         return this;
+    }
+
+    @Override
+    List<JTTree<?, ?>> getAllNodes() {
+        var nodes = super.getAllNodes();
+        nodes.add(packageTree);
+        imports.forEach(t -> nodes.add(t.setParentTree(this)));
+        // TODO Type
+        nodes.add(moduleTree);
+        return nodes;
     }
 
     @Override
     public JTCompilationUnit getCompilationUnit() {
         return this;
+    }
+
+    public DocCommentTree getDocCommentTree() {
+        return docCommentTree;
+    }
+
+    public DocTrees getDocTrees() {
+        return docTrees;
     }
 
     @Override
@@ -99,6 +139,10 @@ public final class JTCompilationUnit
         return null;
     }
 
+    public JTModuleTree getModuleTree() {
+        return moduleTree;
+    }
+
     public JaspilerOptions getOptions() {
         return options;
     }
@@ -115,10 +159,16 @@ public final class JTCompilationUnit
         return originalCode;
     }
 
-    JTPosition getOriginalPosition(Tree tree) {
+    public JTPosition getOriginalDocPosition(DocTree docTree) {
+        return docTree == null
+                ? JTPosition.Invalid
+                : JTPosition.from(docSourcePositions, this, docCommentTree, docTree);
+    }
+
+    public JTPosition getOriginalPosition(Tree tree) {
         return tree == null
                 ? JTPosition.Invalid
-                : JTPosition.from(trees, getOriginalTree(), tree);
+                : JTPosition.from(sourcePositions, getOriginalTree(), tree);
     }
 
     @Override
@@ -141,14 +191,13 @@ public final class JTCompilationUnit
         return getOriginalTree().getSourceFile();
     }
 
-    @Override
-    public List<? extends Tree> getTypeDecls() {
-        return null;
+    public Trees getTrees() {
+        return trees;
     }
 
     @Override
-    public boolean isActionChange() {
-        return isActionChange(getPackageName());
+    public List<? extends Tree> getTypeDecls() {
+        return null;
     }
 
     public boolean save(Path outputPath) throws IOException {
@@ -213,8 +262,13 @@ public final class JTCompilationUnit
         return this;
     }
 
+    public JTCompilationUnit setModuleTree(JTModuleTree moduleTree) {
+        this.moduleTree = Objects.requireNonNull(moduleTree).setParentTree(this);
+        return setActionChange();
+    }
+
     public JTCompilationUnit setPackageTree(JTPackageDecl packageTree) {
-        this.packageTree = Objects.requireNonNull(packageTree).setParentTree(this).setOriginalPosition(this.packageTree);
+        this.packageTree = Objects.requireNonNull(packageTree).setParentTree(this);
         return setActionChange();
     }
 
@@ -222,13 +276,12 @@ public final class JTCompilationUnit
     public String toString() {
         if (isActionChange()) {
             var stringBuilder = new StringBuilder();
-            if (options.isPreserveCopyrights()
+            if (getOptions().isPreserveCopyrights()
                     && getOriginalPosition().isValid()
                     && getOriginalPosition().startPosition() > 0) {
                 stringBuilder.append(getOriginalCode(), 0, (int) getOriginalPosition().startPosition());
             }
-            stringBuilder.append(packageTree);
-            imports.forEach(stringBuilder::append);
+            stringBuilder.append(super.toString());
             return stringBuilder.toString();
         }
         return getOriginalCode();

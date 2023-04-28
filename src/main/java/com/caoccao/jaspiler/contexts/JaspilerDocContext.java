@@ -14,32 +14,12 @@
  * limitations under the License.
  */
 
-/* test */package/* test */com./*1*/caoccao/*2*/.jaspiler.mock;
+package com.caoccao.jaspiler.contexts;
 
-import com.caoccao/*1*/./*2*/jaspiler.JaspilerContract;
+import com.caoccao.jaspiler.trees.JTCompilationUnit;
 
-import java.lang.annotation.Documented;
-import java.util./* test */ArrayList;
-import java.util.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-@JaspilerContract.Ignore
-public class MockIgnorePublicClass {
-    public int b;
-    private String a;
-    private List<Object> list;
-
-    /**
-     * Test.
-     */
-    public void Test() {
-        a = "abc";
-        b = 1;
-        list = new ArrayList<>();
+public class JaspilerDocContext extends BaseJaspilerContext<JTCompilationUnit> {
+    public JaspilerDocContext(JTCompilationUnit compilationUnitTree) {
+        super(compilationUnitTree);
     }
-}
-
-@Documented
-@interface Annotation1 {
-    String value() default "value";
 }

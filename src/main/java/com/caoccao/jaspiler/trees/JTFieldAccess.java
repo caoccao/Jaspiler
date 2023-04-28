@@ -21,6 +21,7 @@ import com.sun.source.tree.TreeVisitor;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -54,13 +55,20 @@ public final class JTFieldAccess
     JTFieldAccess analyze() {
         super.analyze();
         expression = Optional.ofNullable(getOriginalTree().getExpression())
-                .map(o -> (JTExpression<?, ?>) JTTree.from(o, this))
+                .map(o -> (JTExpression<?, ?>) JTTreeFactory.createFrom(o, this))
                 .orElse(null);
         identifier = Optional.ofNullable(getOriginalTree().getIdentifier())
                 .map(Object::toString)
                 .map(JTName::new)
                 .orElse(null);
         return this;
+    }
+
+    @Override
+    List<JTTree<?, ?>> getAllNodes() {
+        var nodes = super.getAllNodes();
+        nodes.add(expression);
+        return nodes;
     }
 
     @Override
@@ -76,15 +84,6 @@ public final class JTFieldAccess
     @Override
     public Kind getKind() {
         return Kind.MEMBER_SELECT;
-    }
-
-    public JTName getName() {
-        return identifier;
-    }
-
-    @Override
-    public boolean isActionChange() {
-        return isActionChange(getExpression());
     }
 
     @Override
@@ -103,7 +102,7 @@ public final class JTFieldAccess
     }
 
     public JTFieldAccess setExpression(JTExpression<?, ?> expression) {
-        this.expression = Objects.requireNonNull(expression).setParentTree(this).setOriginalPosition(this.expression);
+        this.expression = Objects.requireNonNull(expression).setParentTree(this);
         return setActionChange();
     }
 

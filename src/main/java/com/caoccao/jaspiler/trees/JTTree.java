@@ -18,14 +18,13 @@ package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.JaspilerContract;
 import com.caoccao.jaspiler.utils.BaseLoggingObject;
-import com.sun.source.tree.IdentifierTree;
-import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.Tree;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @SuppressWarnings("unchecked")
 public abstract class JTTree<
@@ -47,30 +46,6 @@ public abstract class JTTree<
         setAction(JaspilerContract.Action.NoChange);
     }
 
-    public static <T extends Tree, R extends T> R from(T tree, JTTree<?, ?> parentTree) {
-        R r = null;
-        if (tree != null) {
-            switch (tree.getKind()) {
-                case IDENTIFIER -> {
-                    r = (R) new JTIdent((IdentifierTree) tree, parentTree);
-                }
-                case MEMBER_SELECT -> {
-                    r = (R) new JTFieldAccess((MemberSelectTree) tree, parentTree);
-                }
-                default -> {
-                    throw new UnsupportedOperationException(
-                            MessageFormat.format(
-                                    "Kind {0} is not supported.",
-                                    tree.getKind().name()));
-                }
-            }
-        }
-        if (r instanceof JTTree<?, ?> jtTree) {
-            jtTree.analyze();
-        }
-        return r;
-    }
-
     NewTree analyze() {
         originalPosition = getCompilationUnit().getOriginalPosition(getOriginalTree());
         return (NewTree) this;
@@ -79,6 +54,10 @@ public abstract class JTTree<
     @Override
     public JaspilerContract.Action getAction() {
         return action;
+    }
+
+    List<JTTree<?, ?>> getAllNodes() {
+        return new ArrayList<>();
     }
 
     protected int getLineSeparatorCount() {
@@ -108,34 +87,14 @@ public abstract class JTTree<
         return parentTree;
     }
 
-    boolean isActionChange(Object... objects) {
+    @Override
+    public boolean isActionChange() {
         if (getAction().isChange()) {
             return true;
         }
-        for (Object object : objects) {
-            if (object instanceof IJTTree<?, ?> jtTree) {
-                if (jtTree.isActionChange() || jtTree.isActionIgnore()) {
-                    return true;
-                }
-            } else if (object instanceof List<?> jtTrees) {
-                for (var item : jtTrees) {
-                    if (item instanceof IJTTree<?, ?> jtTree) {
-                        if (jtTree.isActionChange() || jtTree.isActionIgnore()) {
-                            return true;
-                        }
-                    } else if (item == null) {
-                        // Pass.
-                    } else {
-                        throw new IllegalArgumentException("Object type is not supported.");
-                    }
-                }
-            } else if (object == null) {
-                // Pass.
-            } else {
-                throw new IllegalArgumentException("Object type is not supported.");
-            }
-        }
-        return false;
+        return getAllNodes().stream()
+                .filter(Objects::nonNull)
+                .anyMatch(jtTree -> jtTree.isActionChange() || jtTree.isActionIgnore());
     }
 
     protected boolean save(Writer writer) throws IOException {
@@ -161,21 +120,22 @@ public abstract class JTTree<
         return setAction(JaspilerContract.Action.Ignore);
     }
 
-    NewTree setOriginalPosition(IJTTree<?, ?> jtTree) {
-        if (jtTree != null) {
-            this.originalPosition = jtTree.getOriginalPosition();
-        }
-        return (NewTree) this;
-    }
-
     NewTree setParentTree(JTTree<?, ?> parentTree) {
-        this.parentTree = parentTree;
+        if (this.parentTree != parentTree) {
+            this.parentTree = parentTree;
+            return setActionChange();
+        }
         return (NewTree) this;
     }
 
     @Override
     public String toString() {
-        if (isActionChange() || !getOriginalPosition().isValid()) {
+        if (isActionChange()) {
+            var stringBuilder = new StringBuilder();
+            getAllNodes().stream().filter(Objects::nonNull).forEach(stringBuilder::append);
+            return stringBuilder.toString();
+        }
+        if (!getOriginalPosition().isValid()) {
             return IJTConstants.UNEXPECTED;
         }
         String code = getOriginalCode().substring(
