@@ -55,7 +55,7 @@ public final class JTAnnotation
         super.analyze();
         annotationType = JTTreeFactory.create(getOriginalTree().getAnnotationType(), this);
         JTTreeFactory.createAndAdd(
-                getOriginalTree().getArguments(), this, o -> arguments.add((JTExpression<?, ?>) o));
+                getOriginalTree().getArguments(), this, (JTExpression<?, ?> o) -> arguments.add(o));
         return this;
     }
 

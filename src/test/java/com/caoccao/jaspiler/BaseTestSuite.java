@@ -16,9 +16,17 @@
 
 package com.caoccao.jaspiler;
 
+import com.caoccao.jaspiler.contexts.JaspilerDocContext;
+import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
 import com.caoccao.jaspiler.utils.BaseLoggingObject;
+import com.caoccao.jaspiler.utils.MockUtils;
+import com.sun.source.util.DocTreeScanner;
+import com.sun.source.util.TreePathScanner;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+
+import java.io.IOException;
+import java.io.StringWriter;
 
 public abstract class BaseTestSuite extends BaseLoggingObject {
     protected JaspilerCompiler compiler;
@@ -31,5 +39,33 @@ public abstract class BaseTestSuite extends BaseLoggingObject {
     @BeforeEach
     protected void beforeEach() {
         compiler = new JaspilerCompiler();
+    }
+
+    protected <TransformScanner extends TreePathScanner<TransformScanner, JaspilerTransformContext>>
+    String transform(
+            TransformScanner transformScanner,
+            Class<?>... classes)
+            throws IOException {
+        return transform(transformScanner, null, classes);
+    }
+
+    protected <TransformScanner extends TreePathScanner<TransformScanner, JaspilerTransformContext>,
+            DocScanner extends DocTreeScanner<DocScanner, JaspilerDocContext>>
+    String transform(
+            TransformScanner transformScanner,
+            DocScanner docScanner,
+            Class<?>... classes)
+            throws IOException {
+        for (var clazz : classes) {
+            compiler.addJavaFileObjects(MockUtils.getSourcePath(clazz));
+        }
+        try (StringWriter writer = new StringWriter()) {
+            compiler.transform(
+                    transformScanner,
+                    docScanner,
+                    writer,
+                    JaspilerOptions.Default);
+            return writer.toString();
+        }
     }
 }

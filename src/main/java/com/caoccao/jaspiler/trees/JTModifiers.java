@@ -20,21 +20,18 @@ import com.sun.source.tree.ModifiersTree;
 import com.sun.source.tree.TreeVisitor;
 
 import javax.lang.model.element.Modifier;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public final class JTModifiers
         extends JTTree<ModifiersTree, JTModifiers>
         implements ModifiersTree {
     private final List<JTAnnotation> annotations;
-    private long flags;
+    private final Set<Modifier> flags;
 
     JTModifiers(ModifiersTree modifiersTree, JTTree<?, ?> parentTree) {
         super(modifiersTree, parentTree);
         annotations = new ArrayList<>();
-        flags = 0L;
+        flags = new HashSet<>();
     }
 
     @Override
@@ -47,7 +44,8 @@ public final class JTModifiers
         super.analyze();
         JTTreeFactory.createAndAdd(
                 getOriginalTree().getAnnotations(), this, JTAnnotation::new, annotations::add);
-        flags = JTFlags.fromModifierSet(getOriginalTree().getFlags());
+        flags.clear();
+        flags.addAll(getOriginalTree().getFlags());
         return this;
     }
 
@@ -66,7 +64,7 @@ public final class JTModifiers
 
     @Override
     public Set<Modifier> getFlags() {
-        return JTFlags.toModifierSet(flags);
+        return flags;
     }
 
     @Override
@@ -77,14 +75,6 @@ public final class JTModifiers
     @Override
     protected int getLineSeparatorCount() {
         return 1;
-    }
-
-    public JTModifiers setFlags(long flags) {
-        if (this.flags != flags) {
-            this.flags = flags;
-            return setActionChange();
-        }
-        return this;
     }
 
     @Override

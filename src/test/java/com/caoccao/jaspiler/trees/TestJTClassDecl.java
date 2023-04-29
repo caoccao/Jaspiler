@@ -17,15 +17,11 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.BaseTestSuite;
-import com.caoccao.jaspiler.JaspilerOptions;
 import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
 import com.caoccao.jaspiler.mock.MockIgnorePublicClass;
-import com.caoccao.jaspiler.utils.MockUtils;
 import com.sun.source.util.TreePathScanner;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
-
-import java.io.StringWriter;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -34,15 +30,7 @@ public class TestJTClassDecl extends BaseTestSuite {
     public void testIgnore() throws Exception {
         class TestTransformScanner extends TreePathScanner<TestTransformScanner, JaspilerTransformContext> {
         }
-        compiler.addJavaFileObjects(MockUtils.getSourcePath(MockIgnorePublicClass.class));
-        try (StringWriter writer = new StringWriter()) {
-            compiler.transform(
-                    new TestTransformScanner(),
-                    null,
-                    writer,
-                    JaspilerOptions.Default);
-            String code = writer.toString();
-            assertTrue(StringUtils.isEmpty(code));
-        }
+        String code = transform(new TestTransformScanner(), MockIgnorePublicClass.class);
+        assertTrue(StringUtils.isEmpty(code));
     }
 }

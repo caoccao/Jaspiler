@@ -19,11 +19,11 @@ package com.caoccao.jaspiler;
 import com.caoccao.jaspiler.contexts.JaspilerDocContext;
 import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
 import com.caoccao.jaspiler.mock.MockAllInOnePublicClass;
+import com.caoccao.jaspiler.mock.MockIgnorePublicClass;
 import com.caoccao.jaspiler.trees.JTCompilationUnit;
 import com.caoccao.jaspiler.trees.JTImport;
 import com.caoccao.jaspiler.trees.JTPackageDecl;
 import com.caoccao.jaspiler.trees.JTTreeFactory;
-import com.caoccao.jaspiler.utils.MockUtils;
 import com.caoccao.jaspiler.visiters.JaspilerDocScanner;
 import com.caoccao.jaspiler.visiters.JaspilerTransformScanner;
 import com.sun.source.doctree.DocTree;
@@ -35,7 +35,6 @@ import com.sun.source.util.TreePathScanner;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -76,27 +75,16 @@ public class TestJaspilerCompiler extends BaseTestSuite {
                 return super.visitPackage(node, jaspilerTransformContext);
             }
         }
-        compiler.addJavaFileObjects(MockUtils.getSourcePath(MockAllInOnePublicClass.class));
-        try (StringWriter writer = new StringWriter()) {
-            compiler.transform(
-                    new JaspilerTransformScanner(),
-                    new JaspilerDocScanner(),
-                    writer,
-                    JaspilerOptions.Default);
-            String code = writer.toString();
+        {
+            String code = transform(new JaspilerTransformScanner(), new JaspilerDocScanner(), MockAllInOnePublicClass.class);
             var texts = List.of(
                     "* Copyright (c)",
                     "package/* test */com./*1*/caoccao/*2*/.jaspiler.mock;",
                     "import java.util./* test */ArrayList;");
             texts.forEach(text -> assertTrue(code.contains(text), text));
         }
-        try (StringWriter writer = new StringWriter()) {
-            compiler.transform(
-                    new TestTransformScanner(),
-                    new TestDocScanner(),
-                    writer,
-                    JaspilerOptions.Default);
-            String code = writer.toString();
+        {
+            String code = transform(new TestTransformScanner(), new TestDocScanner(), MockIgnorePublicClass.class);
             logger.debug(code);
             var texts = List.of(
                     "* Copyright (c)",

@@ -17,15 +17,12 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.BaseTestSuite;
-import com.caoccao.jaspiler.JaspilerOptions;
 import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
 import com.caoccao.jaspiler.mock.MockAllInOnePublicClass;
-import com.caoccao.jaspiler.utils.MockUtils;
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.util.TreePathScanner;
 import org.junit.jupiter.api.Test;
 
-import java.io.StringWriter;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,20 +40,12 @@ public class TestJTAnnotation extends BaseTestSuite {
                 return super.visitAnnotation(node, jaspilerTransformContext);
             }
         }
-        compiler.addJavaFileObjects(MockUtils.getSourcePath(MockAllInOnePublicClass.class));
-        try (StringWriter writer = new StringWriter()) {
-            compiler.transform(
-                    new TestTransformScanner(),
-                    null,
-                    writer,
-                    JaspilerOptions.Default);
-            String code = writer.toString();
-            assertFalse(code.contains(annotationString));
-            var texts = List.of(
-                    "* Copyright (c)",
-                    "public class MockAllInOnePublicClass");
-            texts.forEach(text -> assertTrue(code.contains(text), text));
-        }
+        String code = transform(new TestTransformScanner(), MockAllInOnePublicClass.class);
+        assertFalse(code.contains(annotationString));
+        var texts = List.of(
+                "* Copyright (c)",
+                "public class MockAllInOnePublicClass");
+        texts.forEach(text -> assertTrue(code.contains(text), text));
     }
 
     @Test
