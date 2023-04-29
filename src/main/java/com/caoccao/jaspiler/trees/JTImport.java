@@ -48,9 +48,7 @@ public final class JTImport
     @Override
     JTImport analyze() {
         super.analyze();
-        qualifiedIdentifier = Optional.ofNullable(getOriginalTree().getQualifiedIdentifier())
-                .map(o -> (JTTree<?, ?>) JTTreeFactory.createFrom(o, this))
-                .orElse(null);
+        qualifiedIdentifier = JTTreeFactory.create(getOriginalTree().getQualifiedIdentifier(), this);
         staticImport = getOriginalTree().isStatic();
         return this;
     }

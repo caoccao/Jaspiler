@@ -86,18 +86,14 @@ public final class JTCompilationUnit
     @Override
     public JTCompilationUnit analyze() {
         super.analyze();
-        packageTree = Optional.ofNullable(getOriginalTree().getPackage())
-                .map(o -> new JTPackageDecl(o, this).analyze())
-                .orElse(null);
-        getOriginalTree().getImports().stream()
-                .map(o -> new JTImport(o, this).analyze())
-                .forEach(imports::add);
-        getOriginalTree().getTypeDecls().stream()
-                .map(o -> (JTTree<?, ?>) JTTreeFactory.createFrom(o, this))
-                .forEach(typeDecls::add);
-        moduleTree = Optional.ofNullable(getOriginalTree().getModule())
-                .map(o -> new JTModuleTree(o, this).analyze())
-                .orElse(null);
+        packageTree = JTTreeFactory.create(
+                getOriginalTree().getPackage(), this, JTPackageDecl::new);
+        JTTreeFactory.createAndAdd(
+                getOriginalTree().getImports(), this, JTImport::new, imports::add);
+        JTTreeFactory.createAndAdd(
+                getOriginalTree().getTypeDecls(), this, typeDecls::add);
+        moduleTree = JTTreeFactory.create(
+                getOriginalTree().getModule(), this, JTModuleTree::new);
         return this;
     }
 

@@ -55,7 +55,7 @@ public class TestJaspilerCompiler extends BaseTestSuite {
             public TestTransformScanner visitCompilationUnit(CompilationUnitTree node, JaspilerTransformContext jaspilerTransformContext) {
                 var jtCompilationUnit = (JTCompilationUnit) node;
                 jtCompilationUnit.getImports().add(
-                        new JTImport().setQualifiedIdentifier(JTTreeFactory.createJTFieldAccess("i4", "i5")));
+                        new JTImport().setQualifiedIdentifier(JTTreeFactory.createFieldAccess("i4", "i5")));
                 return super.visitCompilationUnit(node, jaspilerTransformContext);
             }
 
@@ -64,7 +64,7 @@ public class TestJaspilerCompiler extends BaseTestSuite {
                 if (node.toString().contains("import java.util.*;")) {
                     var jtImport = (JTImport) node;
                     jtImport.setStaticImport(true);
-                    jtImport.setQualifiedIdentifier(JTTreeFactory.createJTFieldAccess("i1", "i2", "i3"));
+                    jtImport.setQualifiedIdentifier(JTTreeFactory.createFieldAccess("i1", "i2", "i3"));
                 }
                 return super.visitImport(node, jaspilerTransformContext);
             }
@@ -72,7 +72,7 @@ public class TestJaspilerCompiler extends BaseTestSuite {
             @Override
             public TestTransformScanner visitPackage(PackageTree node, JaspilerTransformContext jaspilerTransformContext) {
                 var packageTree = (JTPackageDecl) node;
-                packageTree.setPackageName(JTTreeFactory.createJTFieldAccess("a1", "a2"));
+                packageTree.setPackageName(JTTreeFactory.createFieldAccess("a1", "a2"));
                 return super.visitPackage(node, jaspilerTransformContext);
             }
         }

@@ -54,13 +54,8 @@ public final class JTFieldAccess
     @Override
     JTFieldAccess analyze() {
         super.analyze();
-        expression = Optional.ofNullable(getOriginalTree().getExpression())
-                .map(o -> (JTExpression<?, ?>) JTTreeFactory.createFrom(o, this))
-                .orElse(null);
-        identifier = Optional.ofNullable(getOriginalTree().getIdentifier())
-                .map(Object::toString)
-                .map(JTName::new)
-                .orElse(null);
+        expression = JTTreeFactory.create(getOriginalTree().getExpression(), this);
+        identifier = JTTreeFactory.createName(getOriginalTree().getIdentifier());
         return this;
     }
 

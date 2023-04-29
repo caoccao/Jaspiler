@@ -61,9 +61,9 @@ public class TestJTAnnotation extends BaseTestSuite {
 
     @Test
     public void testToString() {
-        var jtAnnotation = new JTAnnotation().setAnnotationType(JTTreeFactory.createJTFieldAccess("X", "Y", "Z"));
-        jtAnnotation.getArguments().add(JTTreeFactory.createJTFieldAccess("A1", "B1", "C1"));
-        jtAnnotation.getArguments().add(JTTreeFactory.createJTFieldAccess("A2", "B2", "C2"));
+        var jtAnnotation = new JTAnnotation().setAnnotationType(JTTreeFactory.createFieldAccess("X", "Y", "Z"));
+        jtAnnotation.getArguments().add(JTTreeFactory.createFieldAccess("A1", "B1", "C1"));
+        jtAnnotation.getArguments().add(JTTreeFactory.createFieldAccess("A2", "B2", "C2"));
         assertEquals("@X.Y.Z(A1.B1.C1, A2.B2.C2)\n", jtAnnotation.toString());
     }
 }

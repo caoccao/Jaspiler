@@ -22,7 +22,6 @@ import com.sun.source.tree.TypeParameterTree;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 public final class JTTypeParameter
         extends JTTree<TypeParameterTree, JTTypeParameter>
@@ -51,16 +50,11 @@ public final class JTTypeParameter
     @Override
     JTTypeParameter analyze() {
         super.analyze();
-        getOriginalTree().getAnnotations().stream()
-                .map(o -> new JTAnnotation(o, this).analyze())
-                .forEach(annotations::add);
-        name = Optional.ofNullable(getOriginalTree().getName())
-                .map(Object::toString)
-                .map(JTName::new)
-                .orElse(null);
-        getOriginalTree().getBounds().stream()
-                .map(o -> (JTExpression<?, ?>) JTTreeFactory.createFrom(o, this))
-                .forEach(bounds::add);
+        JTTreeFactory.createAndAdd(
+                getOriginalTree().getAnnotations(), this, JTAnnotation::new, annotations::add);
+        name = JTTreeFactory.createName(getOriginalTree().getName());
+        JTTreeFactory.createAndAdd(
+                getOriginalTree().getBounds(), this, (JTExpression<?, ?> o) -> bounds.add(o));
         return this;
     }
 

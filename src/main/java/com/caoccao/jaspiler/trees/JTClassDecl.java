@@ -51,12 +51,10 @@ public final class JTClassDecl
     @Override
     JTClassDecl analyze() {
         super.analyze();
-        modifiers = Optional.ofNullable(getOriginalTree().getModifiers())
-                .map(o -> new JTModifiers(o, this).analyze())
-                .orElse(null);
-        getOriginalTree().getTypeParameters().stream()
-                .map(o -> new JTTypeParameter(o, this).analyze())
-                .forEach(typeParameters::add);
+        modifiers = JTTreeFactory.create(
+                getOriginalTree().getModifiers(), this, JTModifiers::new);
+        JTTreeFactory.createAndAdd(
+                getOriginalTree().getTypeParameters(), this, JTTypeParameter::new, typeParameters::add);
 //        r = scanAndReduce(node.getTypeParameters(), p, r);
 //        r = scanAndReduce(node.getExtendsClause(), p, r);
 //        r = scanAndReduce(node.getImplementsClause(), p, r);

@@ -45,9 +45,8 @@ public final class JTModifiers
     @Override
     JTModifiers analyze() {
         super.analyze();
-        getOriginalTree().getAnnotations().stream()
-                .map(o -> new JTAnnotation(o, this).analyze())
-                .forEach(annotations::add);
+        JTTreeFactory.createAndAdd(
+                getOriginalTree().getAnnotations(), this, JTAnnotation::new, annotations::add);
         flags = JTFlags.fromModifierSet(getOriginalTree().getFlags());
         return this;
     }

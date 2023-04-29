@@ -23,8 +23,14 @@ import com.sun.source.tree.Tree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.lang.model.element.Name;
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 @SuppressWarnings("unchecked")
 public final class JTTreeFactory {
@@ -33,36 +39,71 @@ public final class JTTreeFactory {
     private JTTreeFactory() {
     }
 
-    public static <T extends Tree, R extends JTTree<?, ?>> R createFrom(T tree, JTTree<?, ?> parentTree) {
+    public static <T extends Tree, R extends JTTree<?, ?>> R create(
+            T tree,
+            JTTree<?, ?> parentTree,
+            BiFunction<T, JTTree<?, ?>, R> constructor) {
+        return Optional.ofNullable(tree)
+                .map(o -> constructor.apply(o, parentTree))
+                .map(o -> (R) o.analyze())
+                .orElse(null);
+    }
+
+    public static <T extends Tree, R extends JTTree<?, ?>> R create(
+            T tree,
+            JTTree<?, ?> parentTree) {
         R r = null;
         if (tree != null) {
             switch (tree.getKind()) {
-                case ANNOTATION_TYPE, CLASS -> r = (R) new JTClassDecl((ClassTree) tree, parentTree);
-                case IDENTIFIER -> r = (R) new JTIdent((IdentifierTree) tree, parentTree);
-                case MEMBER_SELECT -> r = (R) new JTFieldAccess((MemberSelectTree) tree, parentTree);
+                case ANNOTATION_TYPE, CLASS -> r = (R) create((ClassTree) tree, parentTree, JTClassDecl::new);
+                case IDENTIFIER -> r = (R) create((IdentifierTree) tree, parentTree, JTIdent::new);
+                case MEMBER_SELECT -> r = (R) create((MemberSelectTree) tree, parentTree, JTFieldAccess::new);
                 default -> {
                     String message = MessageFormat.format(
                             "Type {0} and kind {1} is not supported.",
                             tree.getClass().getName(),
                             tree.getKind().name());
-                    logger.error("{}\n{}", message, tree);
-                    throw new UnsupportedOperationException(message);
+                    logger.warn("{}\n{}", message, tree);
                 }
             }
-        }
-        if (r != null) {
-            r.analyze();
         }
         return r;
     }
 
-    public static JTFieldAccess createJTFieldAccess(String... strings) {
+    public static <T extends Tree, R extends JTTree<?, ?>> void createAndAdd(
+            List<T> trees,
+            JTTree<?, ?> parentTree,
+            BiFunction<T, JTTree<?, ?>, R> constructor,
+            Consumer<R> consumer) {
+        Objects.requireNonNull(trees).stream()
+                .filter(Objects::nonNull)
+                .map(o -> constructor.apply(o, parentTree))
+                .filter(Objects::nonNull)
+                .map(o -> (R) o.analyze())
+                .forEach(consumer);
+    }
+
+    public static <T extends Tree, R extends JTTree<?, ?>> void createAndAdd(
+            List<T> trees,
+            JTTree<?, ?> parentTree,
+            Consumer<R> consumer) {
+        createAndAdd(trees, parentTree, JTTreeFactory::create, consumer);
+    }
+
+    public static JTFieldAccess createFieldAccess(String... strings) {
         assert strings.length > 0 : "String array must not be empty.";
         var jtFieldAccess = new JTFieldAccess();
         jtFieldAccess.setIdentifier(new JTName(strings[strings.length - 1]));
         if (strings.length > 1) {
-            jtFieldAccess.setExpression(createJTFieldAccess(Arrays.copyOfRange(strings, 0, strings.length - 1)));
+            jtFieldAccess.setExpression(createFieldAccess(Arrays.copyOfRange(strings, 0, strings.length - 1)));
         }
         return jtFieldAccess;
+    }
+
+    public static JTName createName(Name name) {
+        return Optional.ofNullable(name)
+                .map(Object::toString)
+                .map(JTName::new)
+                .orElse(null);
     }
 }

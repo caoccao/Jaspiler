@@ -22,7 +22,6 @@ import com.sun.source.tree.TreeVisitor;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Objects;
-import java.util.Optional;
 
 public final class JTIdent
         extends JTExpression<IdentifierTree, JTIdent>
@@ -47,10 +46,7 @@ public final class JTIdent
     @Override
     JTIdent analyze() {
         super.analyze();
-        name = Optional.ofNullable(getOriginalTree().getName())
-                .map(Object::toString)
-                .map(JTName::new)
-                .orElse(null);
+        name = JTTreeFactory.createName(getOriginalTree().getName());
         return this;
     }
 

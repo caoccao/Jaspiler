@@ -53,12 +53,9 @@ public final class JTAnnotation
     @Override
     JTAnnotation analyze() {
         super.analyze();
-        annotationType = Optional.ofNullable(getOriginalTree().getAnnotationType())
-                .map(o -> (JTTree<?, ?>) JTTreeFactory.createFrom(o, this))
-                .orElse(null);
-        getOriginalTree().getArguments().stream()
-                .map(o -> (JTExpression<?, ?>) JTTreeFactory.createFrom(o, this))
-                .forEach(arguments::add);
+        annotationType = JTTreeFactory.create(getOriginalTree().getAnnotationType(), this);
+        JTTreeFactory.createAndAdd(
+                getOriginalTree().getArguments(), this, o -> arguments.add((JTExpression<?, ?>) o));
         return this;
     }
 

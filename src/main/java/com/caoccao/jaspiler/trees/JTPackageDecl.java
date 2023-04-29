@@ -53,12 +53,9 @@ public final class JTPackageDecl
     @Override
     JTPackageDecl analyze() {
         super.analyze();
-        packageName = Optional.ofNullable(getOriginalTree().getPackageName())
-                .map(o -> (JTExpression<?, ?>) JTTreeFactory.createFrom(o, this))
-                .orElse(null);
-        getOriginalTree().getAnnotations().stream()
-                .map(o -> new JTAnnotation(o, this).analyze())
-                .forEach(annotations::add);
+        packageName = JTTreeFactory.create(getOriginalTree().getPackageName(), this);
+        JTTreeFactory.createAndAdd(
+                getOriginalTree().getAnnotations(), this, JTAnnotation::new, annotations::add);
         return this;
     }
 
