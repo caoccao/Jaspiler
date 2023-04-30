@@ -19,8 +19,6 @@ package com.caoccao.jaspiler.trees;
 import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.TreeVisitor;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -80,21 +78,6 @@ public final class JTFieldAccess
     @Override
     public Kind getKind() {
         return Kind.MEMBER_SELECT;
-    }
-
-    @Override
-    protected boolean save(Writer writer) throws IOException {
-        if (isActionChange()) {
-            if (expression != null) {
-                expression.save(writer);
-                writeStrings(writer, ".");
-            }
-            if (identifier != null) {
-                writeStrings(writer, identifier.getValue());
-            }
-            return true;
-        }
-        return super.save(writer);
     }
 
     public JTFieldAccess setExpression(JTExpression<?, ?> expression) {

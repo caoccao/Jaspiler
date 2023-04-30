@@ -30,8 +30,6 @@ import com.sun.source.doctree.DocTree;
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.ImportTree;
 import com.sun.source.tree.PackageTree;
-import com.sun.source.util.DocTreeScanner;
-import com.sun.source.util.TreePathScanner;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -42,14 +40,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TestJaspilerCompiler extends BaseTestSuite {
     @Test
     public void testTransform() throws IOException {
-        class TestDocScanner extends DocTreeScanner<TestDocScanner, JaspilerDocContext> {
+        class DummyDocScanner extends JaspilerDocScanner<DummyDocScanner> {
+        }
+        class DummyTransformScanner extends JaspilerTransformScanner<DummyTransformScanner> {
+        }
+        class TestDocScanner extends JaspilerDocScanner<TestDocScanner> {
             @Override
             public TestDocScanner scan(DocTree node, JaspilerDocContext jaspilerDocContext) {
                 var position = jaspilerDocContext.getCompilationUnitTree().getOriginalDocPosition(node);
                 return super.scan(node, jaspilerDocContext);
             }
         }
-        class TestTransformScanner extends TreePathScanner<TestTransformScanner, JaspilerTransformContext> {
+        class TestTransformScanner extends JaspilerTransformScanner<TestTransformScanner> {
             @Override
             public TestTransformScanner visitCompilationUnit(CompilationUnitTree node, JaspilerTransformContext jaspilerTransformContext) {
                 var jtCompilationUnit = (JTCompilationUnit) node;
@@ -76,7 +78,7 @@ public class TestJaspilerCompiler extends BaseTestSuite {
             }
         }
         {
-            String code = transform(new JaspilerTransformScanner(), new JaspilerDocScanner(), MockAllInOnePublicClass.class);
+            String code = transform(new DummyTransformScanner(), new DummyDocScanner(), MockAllInOnePublicClass.class);
             var texts = List.of(
                     "* Copyright (c)",
                     "package/* test */com./*1*/caoccao/*2*/.jaspiler.mock;",

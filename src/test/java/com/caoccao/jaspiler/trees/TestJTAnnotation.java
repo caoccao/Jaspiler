@@ -19,8 +19,8 @@ package com.caoccao.jaspiler.trees;
 import com.caoccao.jaspiler.BaseTestSuite;
 import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
 import com.caoccao.jaspiler.mock.MockAllInOnePublicClass;
+import com.caoccao.jaspiler.visiters.JaspilerTransformScanner;
 import com.sun.source.tree.AnnotationTree;
-import com.sun.source.util.TreePathScanner;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public class TestJTAnnotation extends BaseTestSuite {
     @Test
     public void testIgnore() throws Exception {
         String annotationString = "@Retention(RetentionPolicy.RUNTIME)";
-        class TestTransformScanner extends TreePathScanner<TestTransformScanner, JaspilerTransformContext> {
+        class TestTransformScanner extends JaspilerTransformScanner<TestTransformScanner> {
             @Override
             public TestTransformScanner visitAnnotation(AnnotationTree node, JaspilerTransformContext jaspilerTransformContext) {
                 if (node.toString().startsWith(annotationString)) {

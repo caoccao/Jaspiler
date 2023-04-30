@@ -16,10 +16,7 @@
 
 package com.caoccao.jaspiler.trees;
 
-import com.sun.source.tree.ClassTree;
-import com.sun.source.tree.IdentifierTree;
-import com.sun.source.tree.MemberSelectTree;
-import com.sun.source.tree.Tree;
+import com.sun.source.tree.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +55,7 @@ public final class JTTreeFactory {
                 case ANNOTATION_TYPE, CLASS -> r = (R) create((ClassTree) tree, parentTree, JTClassDecl::new);
                 case IDENTIFIER -> r = (R) create((IdentifierTree) tree, parentTree, JTIdent::new);
                 case MEMBER_SELECT -> r = (R) create((MemberSelectTree) tree, parentTree, JTFieldAccess::new);
+                case VARIABLE -> r = (R) create((VariableTree) tree, parentTree, JTVariableDecl::new);
                 default -> {
                     String message = MessageFormat.format(
                             "Type {0} and kind {1} is not supported.",

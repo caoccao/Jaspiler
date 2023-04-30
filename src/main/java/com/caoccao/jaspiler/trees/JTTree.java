@@ -17,6 +17,7 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.JaspilerContract;
+import com.caoccao.jaspiler.exceptions.JaspilerNotImplementedException;
 import com.caoccao.jaspiler.utils.BaseLoggingObject;
 import com.sun.source.tree.Tree;
 
@@ -135,9 +136,7 @@ public abstract class JTTree<
             return IJTConstants.EMPTY;
         }
         if (isActionChange()) {
-            var stringBuilder = new StringBuilder();
-            getAllNodes().forEach(stringBuilder::append);
-            return stringBuilder.toString();
+            throw new JaspilerNotImplementedException(getClass().getSimpleName() + "{} is not implemented yet.");
         }
         if (!getOriginalPosition().isValid()) {
             return IJTConstants.UNEXPECTED;

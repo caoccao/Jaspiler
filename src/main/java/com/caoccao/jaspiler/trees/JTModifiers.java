@@ -79,8 +79,11 @@ public final class JTModifiers
 
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(super.toString());
-        return stringBuilder.toString();
+        if (isActionChange()) {
+            StringBuilder stringBuilder = new StringBuilder();
+            // TODO
+            return stringBuilder.toString();
+        }
+        return super.toString();
     }
 }

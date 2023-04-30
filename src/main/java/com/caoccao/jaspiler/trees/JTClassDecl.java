@@ -17,10 +17,8 @@
 package com.caoccao.jaspiler.trees;
 
 import com.sun.source.tree.ClassTree;
-import com.sun.source.tree.Tree;
 import com.sun.source.tree.TreeVisitor;
 
-import javax.lang.model.element.Name;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -29,8 +27,13 @@ import java.util.Optional;
 public final class JTClassDecl
         extends JTStatement<ClassTree, JTClassDecl>
         implements ClassTree {
+    private final List<JTExpression<?, ?>> implementsClauses;
+    private final List<JTTree<?, ?>> members;
+    private final List<JTExpression<?, ?>> permitsClauses;
     private final List<JTTypeParameter> typeParameters;
+    private JTExpression<?, ?> extendsClause;
     private JTModifiers modifiers;
+    private JTName name;
 
     public JTClassDecl() {
         this(null, null);
@@ -39,7 +42,12 @@ public final class JTClassDecl
 
     JTClassDecl(ClassTree classTree, JTTree<?, ?> parentTree) {
         super(classTree, parentTree);
+        extendsClause = null;
+        implementsClauses = new ArrayList<>();
+        members = new ArrayList<>();
         modifiers = null;
+        name = null;
+        permitsClauses = new ArrayList<>();
         typeParameters = new ArrayList<>();
     }
 
@@ -55,11 +63,14 @@ public final class JTClassDecl
                 getOriginalTree().getModifiers(), this, JTModifiers::new);
         JTTreeFactory.createAndAdd(
                 getOriginalTree().getTypeParameters(), this, JTTypeParameter::new, typeParameters::add);
-//        r = scanAndReduce(node.getTypeParameters(), p, r);
-//        r = scanAndReduce(node.getExtendsClause(), p, r);
-//        r = scanAndReduce(node.getImplementsClause(), p, r);
-//        r = scanAndReduce(node.getPermitsClause(), p, r);
-//        r = scanAndReduce(node.getMembers(), p, r);
+        extendsClause = JTTreeFactory.create(getOriginalTree().getExtendsClause(), this);
+        JTTreeFactory.createAndAdd(
+                getOriginalTree().getImplementsClause(), this, (JTExpression<?, ?> o) -> implementsClauses.add(o));
+        JTTreeFactory.createAndAdd(
+                getOriginalTree().getPermitsClause(), this, (JTExpression<?, ?> o) -> permitsClauses.add(o));
+        JTTreeFactory.createAndAdd(
+                getOriginalTree().getMembers(), this, members::add);
+        name = JTTreeFactory.createName(getOriginalTree().getSimpleName());
         return this;
     }
 
@@ -68,18 +79,22 @@ public final class JTClassDecl
         var nodes = super.getAllNodes();
         Optional.ofNullable(modifiers).ifPresent(nodes::add);
         typeParameters.stream().filter(Objects::nonNull).forEach(nodes::add);
+        Optional.ofNullable(extendsClause).ifPresent(nodes::add);
+        implementsClauses.stream().filter(Objects::nonNull).forEach(nodes::add);
+        permitsClauses.stream().filter(Objects::nonNull).forEach(nodes::add);
+        members.stream().filter(Objects::nonNull).forEach(nodes::add);
         nodes.forEach(node -> node.setParentTree(this));
         return nodes;
     }
 
     @Override
-    public Tree getExtendsClause() {
-        return null;
+    public JTExpression<?, ?> getExtendsClause() {
+        return extendsClause;
     }
 
     @Override
-    public List<? extends Tree> getImplementsClause() {
-        return null;
+    public List<JTExpression<?, ?>> getImplementsClause() {
+        return implementsClauses;
     }
 
     @Override
@@ -93,8 +108,8 @@ public final class JTClassDecl
     }
 
     @Override
-    public List<? extends Tree> getMembers() {
-        return null;
+    public List<JTTree<?, ?>> getMembers() {
+        return members;
     }
 
     @Override
@@ -103,8 +118,13 @@ public final class JTClassDecl
     }
 
     @Override
-    public Name getSimpleName() {
-        return null;
+    public List<JTExpression<?, ?>> getPermitsClause() {
+        return permitsClauses;
+    }
+
+    @Override
+    public JTName getSimpleName() {
+        return name;
     }
 
     @Override
@@ -112,8 +132,29 @@ public final class JTClassDecl
         return typeParameters;
     }
 
+    public JTClassDecl setExtendsClause(JTExpression<?, ?> extendsClause) {
+        this.extendsClause = Objects.requireNonNull(extendsClause).setParentTree(this);
+        return setActionChange();
+    }
+
     public JTClassDecl setModifiers(JTModifiers modifiers) {
         this.modifiers = Objects.requireNonNull(modifiers).setParentTree(this);
         return setActionChange();
+    }
+
+    public JTClassDecl setName(JTName name) {
+        this.name = Objects.requireNonNull(name);
+        return setActionChange();
+    }
+
+    @Override
+    public String toString() {
+        if (isActionChange()) {
+            var stringBuilder = new StringBuilder();
+            getAllNodes().forEach(stringBuilder::append);
+            // TODO
+            return stringBuilder.toString();
+        }
+        return super.toString();
     }
 }

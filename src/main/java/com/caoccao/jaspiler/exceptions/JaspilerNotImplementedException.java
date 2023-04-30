@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package com.caoccao.jaspiler.visiters;
+package com.caoccao.jaspiler.exceptions;
 
-import com.caoccao.jaspiler.contexts.JaspilerDocContext;
-import com.sun.source.util.DocTreeScanner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public abstract class JaspilerDocScanner<Scanner extends JaspilerDocScanner<Scanner>>
-        extends DocTreeScanner<Scanner, JaspilerDocContext> {
-    protected final Logger logger;
-
-    public JaspilerDocScanner() {
+public class JaspilerNotImplementedException extends RuntimeException {
+    public JaspilerNotImplementedException() {
         super();
-        logger = LoggerFactory.getLogger(getClass());
+    }
+
+    public JaspilerNotImplementedException(String message) {
+        super(message);
+    }
+
+    public JaspilerNotImplementedException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

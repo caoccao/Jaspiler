@@ -305,7 +305,7 @@ public final class JTCompilationUnit
                     && getOriginalPosition().startPosition() > 0) {
                 stringBuilder.append(getOriginalCode(), 0, (int) getOriginalPosition().startPosition());
             }
-            stringBuilder.append(super.toString());
+            getAllNodes().forEach(stringBuilder::append);
             return stringBuilder.toString();
         }
         return getOriginalCode();

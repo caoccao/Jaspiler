@@ -19,8 +19,6 @@ package com.caoccao.jaspiler.trees;
 import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.TreeVisitor;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.util.Objects;
 
 public final class JTIdent
@@ -65,17 +63,6 @@ public final class JTIdent
         return getAction().isChange();
     }
 
-    @Override
-    protected boolean save(Writer writer) throws IOException {
-        if (isActionChange()) {
-            if (name != null) {
-                writeStrings(writer, name.getValue());
-            }
-            return true;
-        }
-        return super.save(writer);
-    }
-
     public JTIdent setName(JTName name) {
         this.name = Objects.requireNonNull(name);
         return setActionChange();
@@ -84,11 +71,10 @@ public final class JTIdent
     @Override
     public String toString() {
         if (isActionChange()) {
-            var stringBuilder = new StringBuilder();
-            if (name != null) {
-                stringBuilder.append(name);
+            if (name == null) {
+                return IJTConstants.EMPTY;
             }
-            return stringBuilder.toString();
+            return name.toString();
         }
         return super.toString();
     }
