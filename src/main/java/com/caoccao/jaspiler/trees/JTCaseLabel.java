@@ -17,6 +17,7 @@
 package com.caoccao.jaspiler.trees;
 
 import com.sun.source.tree.CaseLabelTree;
+import com.sun.source.tree.Tree;
 
 /**
  * The type Jt case label.
@@ -24,7 +25,7 @@ import com.sun.source.tree.CaseLabelTree;
  */
 @SuppressWarnings("preview")
 public abstract class JTCaseLabel<
-        OriginalTree extends CaseLabelTree,
+        OriginalTree extends Tree,
         NewTree extends JTCaseLabel<OriginalTree, NewTree>>
         extends JTTree<OriginalTree, NewTree>
         implements CaseLabelTree {

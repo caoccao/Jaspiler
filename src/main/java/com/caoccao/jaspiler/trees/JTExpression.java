@@ -17,13 +17,14 @@
 package com.caoccao.jaspiler.trees;
 
 import com.sun.source.tree.ExpressionTree;
+import com.sun.source.tree.Tree;
 
 /**
  * The type Jt expression.
  * It references com.sun.tools.javac.tree.JCTree.JCExpression.
  */
 public abstract class JTExpression<
-        OriginalTree extends ExpressionTree,
+        OriginalTree extends Tree,
         NewTree extends JTExpression<OriginalTree, NewTree>>
         extends JTCaseLabel<OriginalTree, NewTree>
         implements ExpressionTree {
