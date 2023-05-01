@@ -104,26 +104,41 @@ public final class JTVariableDecl
     }
 
     public JTVariableDecl setInitializer(JTExpression<?, ?> initializer) {
+        if (this.initializer == initializer) {
+            return this;
+        }
         this.initializer = Optional.ofNullable(initializer).map(o -> o.setParentTree(this)).orElse(null);
         return setActionChange();
     }
 
     public JTVariableDecl setModifiers(JTModifiers modifiers) {
+        if (this.modifiers == modifiers) {
+            return this;
+        }
         this.modifiers = Objects.requireNonNull(modifiers).setParentTree(this);
         return setActionChange();
     }
 
     public JTVariableDecl setName(JTName name) {
+        if (this.name == name) {
+            return this;
+        }
         this.name = Objects.requireNonNull(name);
         return setActionChange();
     }
 
     public JTVariableDecl setNameExpression(JTExpression<?, ?> nameExpression) {
+        if (this.nameExpression == nameExpression) {
+            return this;
+        }
         this.nameExpression = Objects.requireNonNull(nameExpression).setParentTree(this);
         return this;
     }
 
     public JTVariableDecl setType(JTExpression<?, ?> type) {
+        if (this.type == type) {
+            return this;
+        }
         this.type = Optional.ofNullable(type).map(o -> o.setParentTree(this)).orElse(null);
         return setActionChange();
     }

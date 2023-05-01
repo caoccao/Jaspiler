@@ -64,6 +64,9 @@ public final class JTIdent
     }
 
     public JTIdent setName(JTName name) {
+        if (this.name == name) {
+            return this;
+        }
         this.name = Objects.requireNonNull(name);
         return setActionChange();
     }

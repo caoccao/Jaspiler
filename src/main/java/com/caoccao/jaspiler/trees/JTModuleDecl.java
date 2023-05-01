@@ -16,7 +16,7 @@
 
 package com.caoccao.jaspiler.trees;
 
-import com.sun.source.tree.PackageTree;
+import com.sun.source.tree.ModuleTree;
 import com.sun.source.tree.TreeVisitor;
 
 import java.util.ArrayList;
@@ -24,38 +24,39 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-/**
- * The type Jt package tree.
- * It references com.sun.tools.javac.tree.JCTree.JCPackageDecl.
- */
-public final class JTPackageDecl
-        extends JTTree<PackageTree, JTPackageDecl>
-        implements PackageTree {
+public final class JTModuleDecl
+        extends JTTree<ModuleTree, JTModuleDecl>
+        implements ModuleTree {
     private final List<JTAnnotation> annotations;
-    private JTExpression<?, ?> packageName;
+    private final List<JTDirective<?, ?>> directives;
+    private ModuleKind moduleType;
+    private JTExpression<?, ?> name;
 
-    public JTPackageDecl() {
+    public JTModuleDecl() {
         this(null, null);
         setActionChange();
     }
 
-    JTPackageDecl(PackageTree originalTree, JTTree<?, ?> parentTree) {
-        super(originalTree, parentTree);
+    JTModuleDecl(ModuleTree moduleTree, JTTree<?, ?> parentTree) {
+        super(moduleTree, parentTree);
         annotations = new ArrayList<>();
-        packageName = null;
+        directives = new ArrayList<>();
+        moduleType = null;
     }
 
     @Override
     public <R, D> R accept(TreeVisitor<R, D> visitor, D data) {
-        return visitor.visitPackage(this, data);
+        return visitor.visitModule(this, data);
     }
 
     @Override
-    JTPackageDecl analyze() {
+    JTModuleDecl analyze() {
         super.analyze();
-        packageName = JTTreeFactory.create(getOriginalTree().getPackageName(), this);
         JTTreeFactory.createAndAdd(
                 getOriginalTree().getAnnotations(), this, JTAnnotation::new, annotations::add);
+        name = JTTreeFactory.create(getOriginalTree().getName(), this);
+        JTTreeFactory.createAndAdd(
+                getOriginalTree().getDirectives(), this, (JTDirective<?, ?> o) -> directives.add(o));
         return this;
     }
 
@@ -63,7 +64,7 @@ public final class JTPackageDecl
     List<JTTree<?, ?>> getAllNodes() {
         var nodes = super.getAllNodes();
         annotations.stream().filter(Objects::nonNull).forEach(nodes::add);
-        Optional.ofNullable(packageName).ifPresent(nodes::add);
+        Optional.ofNullable(name).ifPresent(nodes::add);
         nodes.forEach(node -> node.setParentTree(this));
         return nodes;
     }
@@ -74,39 +75,38 @@ public final class JTPackageDecl
     }
 
     @Override
+    public List<JTDirective<?, ?>> getDirectives() {
+        return directives;
+    }
+
+    @Override
     public Kind getKind() {
-        return Kind.PACKAGE;
+        return Kind.MODULE;
     }
 
     @Override
-    protected int getLineSeparatorCount() {
-        return 2;
+    public ModuleKind getModuleType() {
+        return moduleType;
     }
 
     @Override
-    public JTExpression<?, ?> getPackageName() {
-        return packageName;
+    public JTExpression<?, ?> getName() {
+        return name;
     }
 
-    public JTPackageDecl setPackageName(JTExpression<?, ?> packageName) {
-        if (this.packageName == packageName) {
+    public JTModuleDecl setModuleType(ModuleKind moduleType) {
+        if (this.moduleType == moduleType) {
             return this;
         }
-        this.packageName = Objects.requireNonNull(packageName).setParentTree(this);
+        this.moduleType = moduleType;
         return setActionChange();
     }
 
-    @Override
-    public String toString() {
-        if (isActionChange()) {
-            var stringBuilder = new StringBuilder();
-            annotations.forEach(stringBuilder::append);
-            if (packageName != null) {
-                stringBuilder.append(IJTConstants.PACKAGE_).append(packageName)
-                        .append(IJTConstants.SEMI_COLON).append(JTLineSeparator.L2);
-            }
-            return stringBuilder.toString();
+    public JTModuleDecl setName(JTExpression<?, ?> name) {
+        if (this.name == name) {
+            return this;
         }
-        return super.toString();
+        this.name = name;
+        return setActionChange();
     }
 }

@@ -88,6 +88,9 @@ public final class JTTypeParameter
     }
 
     public JTTypeParameter setName(JTName name) {
+        if (this.name == name) {
+            return this;
+        }
         this.name = Objects.requireNonNull(name);
         return setActionChange();
     }

@@ -89,6 +89,9 @@ public final class JTAnnotation
     }
 
     public JTAnnotation setAnnotationType(JTTree<?, ?> annotationType) {
+        if (this.annotationType == annotationType) {
+            return this;
+        }
         this.annotationType = Objects.requireNonNull(annotationType).setParentTree(this);
         return setActionChange();
     }

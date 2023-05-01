@@ -61,10 +61,10 @@ public final class JTPrimitiveTypeTree
     }
 
     public JTPrimitiveTypeTree setPrimitiveTypeKind(TypeKind primitiveTypeKind) {
-        if (this.primitiveTypeKind == Objects.requireNonNull(primitiveTypeKind)) {
+        if (this.primitiveTypeKind == primitiveTypeKind) {
             return this;
         }
-        switch (primitiveTypeKind) {
+        switch (Objects.requireNonNull(primitiveTypeKind)) {
             case BOOLEAN, BYTE, SHORT, INT, LONG, CHAR, FLOAT, DOUBLE, VOID -> {
                 this.primitiveTypeKind = primitiveTypeKind;
                 return setActionChange();

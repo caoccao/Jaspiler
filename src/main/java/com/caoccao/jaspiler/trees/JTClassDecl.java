@@ -133,16 +133,25 @@ public final class JTClassDecl
     }
 
     public JTClassDecl setExtendsClause(JTExpression<?, ?> extendsClause) {
+        if (this.extendsClause == extendsClause) {
+            return this;
+        }
         this.extendsClause = Objects.requireNonNull(extendsClause).setParentTree(this);
         return setActionChange();
     }
 
     public JTClassDecl setModifiers(JTModifiers modifiers) {
+        if (this.modifiers == modifiers) {
+            return this;
+        }
         this.modifiers = Objects.requireNonNull(modifiers).setParentTree(this);
         return setActionChange();
     }
 
     public JTClassDecl setName(JTName name) {
+        if (this.name == name) {
+            return this;
+        }
         this.name = Objects.requireNonNull(name);
         return setActionChange();
     }

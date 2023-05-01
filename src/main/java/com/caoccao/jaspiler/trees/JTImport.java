@@ -82,11 +82,17 @@ public final class JTImport
     }
 
     public JTImport setQualifiedIdentifier(JTTree<?, ?> qualifiedIdentifier) {
+        if (this.qualifiedIdentifier == qualifiedIdentifier) {
+            return this;
+        }
         this.qualifiedIdentifier = Objects.requireNonNull(qualifiedIdentifier).setParentTree(this);
         return setActionChange();
     }
 
     public JTImport setStaticImport(boolean staticImport) {
+        if (this.staticImport == staticImport) {
+            return this;
+        }
         this.staticImport = staticImport;
         return setActionChange();
     }

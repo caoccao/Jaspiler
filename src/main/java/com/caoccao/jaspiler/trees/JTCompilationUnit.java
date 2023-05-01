@@ -56,7 +56,7 @@ public final class JTCompilationUnit
     private final SourcePositions sourcePositions;
     private final Trees trees;
     private final List<JTTree<?, ?>> typeDecls;
-    private JTModuleTree moduleTree;
+    private JTModuleDecl moduleTree;
     private String originalCode;
     private JTPackageDecl packageTree;
 
@@ -93,7 +93,7 @@ public final class JTCompilationUnit
         JTTreeFactory.createAndAdd(
                 getOriginalTree().getTypeDecls(), this, typeDecls::add);
         moduleTree = JTTreeFactory.create(
-                getOriginalTree().getModule(), this, JTModuleTree::new);
+                getOriginalTree().getModule(), this, JTModuleDecl::new);
         return this;
     }
 
@@ -142,7 +142,7 @@ public final class JTCompilationUnit
         return null;
     }
 
-    public JTModuleTree getModuleTree() {
+    public JTModuleDecl getModuleTree() {
         return moduleTree;
     }
 
@@ -280,18 +280,18 @@ public final class JTCompilationUnit
         return super.save(writer);
     }
 
-    @Override
-    public JTCompilationUnit setActionChange() {
-        action = JaspilerContract.Action.Change;
-        return this;
-    }
-
-    public JTCompilationUnit setModuleTree(JTModuleTree moduleTree) {
+    public JTCompilationUnit setModuleTree(JTModuleDecl moduleTree) {
+        if (this.moduleTree == moduleTree) {
+            return this;
+        }
         this.moduleTree = Objects.requireNonNull(moduleTree).setParentTree(this);
         return setActionChange();
     }
 
     public JTCompilationUnit setPackageTree(JTPackageDecl packageTree) {
+        if (this.packageTree == packageTree) {
+            return this;
+        }
         this.packageTree = Objects.requireNonNull(packageTree).setParentTree(this);
         return setActionChange();
     }

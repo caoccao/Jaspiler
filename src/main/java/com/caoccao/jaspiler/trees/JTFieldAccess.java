@@ -81,11 +81,17 @@ public final class JTFieldAccess
     }
 
     public JTFieldAccess setExpression(JTExpression<?, ?> expression) {
+        if (this.expression == expression) {
+            return this;
+        }
         this.expression = Objects.requireNonNull(expression).setParentTree(this);
         return setActionChange();
     }
 
     public JTFieldAccess setIdentifier(JTName identifier) {
+        if (this.identifier == identifier) {
+            return this;
+        }
         this.identifier = Objects.requireNonNull(identifier);
         return setActionChange();
     }
