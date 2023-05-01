@@ -53,6 +53,8 @@ public final class JTTreeFactory {
         if (tree != null) {
             switch (tree.getKind()) {
                 case ANNOTATION_TYPE, CLASS -> r = (R) create((ClassTree) tree, parentTree, JTClassDecl::new);
+                case EXPRESSION_STATEMENT ->
+                        r = (R) create((ExpressionStatementTree) tree, parentTree, JTExpressionStatement::new);
                 case IDENTIFIER -> r = (R) create((IdentifierTree) tree, parentTree, JTIdent::new);
                 case MEMBER_SELECT -> r = (R) create((MemberSelectTree) tree, parentTree, JTFieldAccess::new);
                 case METHOD -> r = (R) create((MethodTree) tree, parentTree, JTMethodDecl::new);

@@ -158,7 +158,7 @@ public final class JTMethodDecl
         if (this.defaultValue == defaultValue) {
             return this;
         }
-        this.defaultValue = Objects.requireNonNull(defaultValue);
+        this.defaultValue = defaultValue;
         return setActionChange();
     }
 
@@ -182,7 +182,7 @@ public final class JTMethodDecl
         if (this.receiverParameter == receiverParameter) {
             return this;
         }
-        this.receiverParameter = Objects.requireNonNull(receiverParameter);
+        this.receiverParameter = receiverParameter;
         return setActionChange();
     }
 
