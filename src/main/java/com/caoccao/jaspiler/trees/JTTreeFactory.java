@@ -53,9 +53,13 @@ public final class JTTreeFactory {
         if (tree != null) {
             switch (tree.getKind()) {
                 case ANNOTATION_TYPE, CLASS -> r = (R) create((ClassTree) tree, parentTree, JTClassDecl::new);
+                case ASSIGNMENT -> r = (R) create((AssignmentTree) tree, parentTree, JTAssign::new);
                 case EXPRESSION_STATEMENT ->
                         r = (R) create((ExpressionStatementTree) tree, parentTree, JTExpressionStatement::new);
                 case IDENTIFIER -> r = (R) create((IdentifierTree) tree, parentTree, JTIdent::new);
+                case INT_LITERAL, LONG_LITERAL, FLOAT_LITERAL, DOUBLE_LITERAL,
+                        BOOLEAN_LITERAL, CHAR_LITERAL, STRING_LITERAL, NULL_LITERAL ->
+                        r = (R) create((LiteralTree) tree, parentTree, JTLiteral::new);
                 case MEMBER_SELECT -> r = (R) create((MemberSelectTree) tree, parentTree, JTFieldAccess::new);
                 case METHOD -> r = (R) create((MethodTree) tree, parentTree, JTMethodDecl::new);
                 case PRIMITIVE_TYPE -> r = (R) create((PrimitiveTypeTree) tree, parentTree, JTPrimitiveTypeTree::new);
