@@ -33,7 +33,7 @@ public final class JTClassDecl
     private final List<JTTypeParameter> typeParameters;
     private JTExpression<?, ?> extendsClause;
     private JTModifiers modifiers;
-    private JTName name;
+    private JTName simpleName;
 
     public JTClassDecl() {
         this(null, null);
@@ -46,8 +46,8 @@ public final class JTClassDecl
         implementsClauses = new ArrayList<>();
         members = new ArrayList<>();
         modifiers = null;
-        name = null;
         permitsClauses = new ArrayList<>();
+        simpleName = null;
         typeParameters = new ArrayList<>();
     }
 
@@ -70,7 +70,7 @@ public final class JTClassDecl
                 getOriginalTree().getPermitsClause(), this, (JTExpression<?, ?> o) -> permitsClauses.add(o));
         JTTreeFactory.createAndAdd(
                 getOriginalTree().getMembers(), this, members::add);
-        name = JTTreeFactory.createName(getOriginalTree().getSimpleName());
+        simpleName = JTTreeFactory.createName(getOriginalTree().getSimpleName());
         return this;
     }
 
@@ -124,7 +124,7 @@ public final class JTClassDecl
 
     @Override
     public JTName getSimpleName() {
-        return name;
+        return simpleName;
     }
 
     @Override
@@ -148,11 +148,11 @@ public final class JTClassDecl
         return setActionChange();
     }
 
-    public JTClassDecl setName(JTName name) {
-        if (this.name == name) {
+    public JTClassDecl setSimpleName(JTName simpleName) {
+        if (this.simpleName == simpleName) {
             return this;
         }
-        this.name = Objects.requireNonNull(name);
+        this.simpleName = Objects.requireNonNull(simpleName);
         return setActionChange();
     }
 

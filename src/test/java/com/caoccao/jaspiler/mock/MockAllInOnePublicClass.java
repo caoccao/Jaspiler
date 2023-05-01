@@ -18,6 +18,7 @@
 
 import com.caoccao.jaspiler.JaspilerContract;
 
+import java.io.IOException;
 import java.lang.annotation.*;
 import java.util./* test */ArrayList;
 import java.util.*;
@@ -32,10 +33,15 @@ public class MockAllInOnePublicClass {
     /**
      * Test.
      */
-    public void Test() {
+    public void Test() throws IOException {
         a = "abc";
-        b = 1;
+        b = new Random().nextInt();
         list = new ArrayList<>();
+        if (b > 0) {
+            a = "def";
+        } else {
+            throw new IOException("abc");
+        }
     }
 }
 
