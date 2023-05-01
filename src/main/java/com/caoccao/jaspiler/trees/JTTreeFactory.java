@@ -62,6 +62,7 @@ public final class JTTreeFactory {
                         r = (R) create((LiteralTree) tree, parentTree, JTLiteral::new);
                 case MEMBER_SELECT -> r = (R) create((MemberSelectTree) tree, parentTree, JTFieldAccess::new);
                 case METHOD -> r = (R) create((MethodTree) tree, parentTree, JTMethodDecl::new);
+                case METHOD_INVOCATION -> r = (R) create((MethodInvocationTree) tree, parentTree, JTMethodInvocation::new);
                 case NEW_CLASS -> r = (R) create((NewClassTree) tree, parentTree, JTNewClass::new);
                 case PRIMITIVE_TYPE -> r = (R) create((PrimitiveTypeTree) tree, parentTree, JTPrimitiveTypeTree::new);
                 case PARAMETERIZED_TYPE -> r = (R) create((ParameterizedTypeTree) tree, parentTree, JTTypeApply::new);
