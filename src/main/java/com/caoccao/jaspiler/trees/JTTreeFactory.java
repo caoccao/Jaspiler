@@ -78,6 +78,7 @@ public final class JTTreeFactory {
                 case INT_LITERAL, LONG_LITERAL, FLOAT_LITERAL, DOUBLE_LITERAL,
                         BOOLEAN_LITERAL, CHAR_LITERAL, STRING_LITERAL, NULL_LITERAL ->
                         r = (R) create((LiteralTree) tree, parentTree, JTLiteral::new);
+                case LAMBDA_EXPRESSION -> r = (R) create((LambdaExpressionTree) tree, parentTree, JTLambda::new);
                 case MEMBER_REFERENCE -> r = (R) create((MemberReferenceTree) tree, parentTree, JTMemberReference::new);
                 case MEMBER_SELECT -> r = (R) create((MemberSelectTree) tree, parentTree, JTFieldAccess::new);
                 case METHOD -> r = (R) create((MethodTree) tree, parentTree, JTMethodDecl::new);
