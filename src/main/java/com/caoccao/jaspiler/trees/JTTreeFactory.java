@@ -54,6 +54,7 @@ public final class JTTreeFactory {
         if (tree != null) {
             switch (tree.getKind()) {
                 case ANNOTATION_TYPE, CLASS -> r = (R) create((ClassTree) tree, parentTree, JTClassDecl::new);
+                case ARRAY_TYPE -> r = (R) create((ArrayTypeTree) tree, parentTree, JTArrayTypeTree::new);
                 case ASSIGNMENT -> r = (R) create((AssignmentTree) tree, parentTree, JTAssign::new);
                 case EXPRESSION_STATEMENT ->
                         r = (R) create((ExpressionStatementTree) tree, parentTree, JTExpressionStatement::new);
