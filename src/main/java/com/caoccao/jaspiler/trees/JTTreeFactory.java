@@ -54,7 +54,12 @@ public final class JTTreeFactory {
         R r = null;
         if (tree != null) {
             switch (tree.getKind()) {
-                case ANNOTATION_TYPE, CLASS -> r = (R) create((ClassTree) tree, parentTree, JTClassDecl::new);
+                case AND, CONDITIONAL_AND, CONDITIONAL_OR, DIVIDE, EQUAL_TO,
+                        GREATER_THAN, GREATER_THAN_EQUAL, LEFT_SHIFT, LESS_THAN, LESS_THAN_EQUAL,
+                        MINUS, MULTIPLY, NOT_EQUAL_TO, OR, PLUS,
+                        REMAINDER, RIGHT_SHIFT, UNSIGNED_RIGHT_SHIFT, XOR ->
+                        r = (R) create((BinaryTree) tree, parentTree, JTBinary::new);
+                case ANNOTATION_TYPE, CLASS, ENUM -> r = (R) create((ClassTree) tree, parentTree, JTClassDecl::new);
                 case ARRAY_TYPE -> r = (R) create((ArrayTypeTree) tree, parentTree, JTArrayTypeTree::new);
                 case ASSIGNMENT -> r = (R) create((AssignmentTree) tree, parentTree, JTAssign::new);
                 case BLOCK -> r = (R) create((BlockTree) tree, parentTree, JTBlock::new);
