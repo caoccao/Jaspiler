@@ -73,6 +73,7 @@ public final class JTTreeFactory {
                         r = (R) create((ExpressionStatementTree) tree, parentTree, JTExpressionStatement::new);
                 case EXTENDS_WILDCARD, SUPER_WILDCARD, UNBOUNDED_WILDCARD ->
                         r = (R) create((WildcardTree) tree, parentTree, JTWildcard::new);
+                case FOR_LOOP -> r = (R) create((ForLoopTree) tree, parentTree, JTForLoop::new);
                 case IDENTIFIER -> r = (R) create((IdentifierTree) tree, parentTree, JTIdent::new);
                 case IF -> r = (R) create((IfTree) tree, parentTree, JTIf::new);
                 case INT_LITERAL, LONG_LITERAL, FLOAT_LITERAL, DOUBLE_LITERAL,
