@@ -98,7 +98,7 @@ public final class JTModuleDecl
         if (this.moduleType == moduleType) {
             return this;
         }
-        this.moduleType = moduleType;
+        this.moduleType = Objects.requireNonNull(moduleType);
         return setActionChange();
     }
 
@@ -106,7 +106,7 @@ public final class JTModuleDecl
         if (this.name == name) {
             return this;
         }
-        this.name = name;
+        this.name = Objects.requireNonNull(name).setParentTree(this);
         return setActionChange();
     }
 }
