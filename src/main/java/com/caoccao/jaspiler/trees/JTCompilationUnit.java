@@ -290,7 +290,7 @@ public final class JTCompilationUnit
         if (this.moduleTree == moduleTree) {
             return this;
         }
-        this.moduleTree = Objects.requireNonNull(moduleTree).setParentTree(this);
+        this.moduleTree = Optional.ofNullable(moduleTree).map(o -> o.setParentTree(this)).orElse(null);
         return setActionChange();
     }
 

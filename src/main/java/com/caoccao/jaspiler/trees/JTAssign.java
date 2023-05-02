@@ -81,7 +81,7 @@ public final class JTAssign
         if (this.expression == expression) {
             return this;
         }
-        this.expression = Objects.requireNonNull(expression);
+        this.expression = Objects.requireNonNull(expression).setParentTree(this);
         return setActionChange();
     }
 
@@ -89,7 +89,7 @@ public final class JTAssign
         if (this.variable == variable) {
             return this;
         }
-        this.variable = Objects.requireNonNull(variable);
+        this.variable = Objects.requireNonNull(variable).setParentTree(this);
         return setActionChange();
     }
 }

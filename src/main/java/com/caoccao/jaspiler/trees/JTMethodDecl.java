@@ -150,7 +150,7 @@ public final class JTMethodDecl
         if (this.body == body) {
             return this;
         }
-        this.body = Objects.requireNonNull(body);
+        this.body = Objects.requireNonNull(body).setParentTree(this);
         return setActionChange();
     }
 
@@ -158,7 +158,7 @@ public final class JTMethodDecl
         if (this.defaultValue == defaultValue) {
             return this;
         }
-        this.defaultValue = defaultValue;
+        this.defaultValue = Optional.ofNullable(defaultValue).map(o -> o.setParentTree(this)).orElse(null);
         return setActionChange();
     }
 
@@ -182,7 +182,7 @@ public final class JTMethodDecl
         if (this.receiverParameter == receiverParameter) {
             return this;
         }
-        this.receiverParameter = receiverParameter;
+        this.receiverParameter = Optional.ofNullable(receiverParameter).map(o -> o.setParentTree(this)).orElse(null);
         return setActionChange();
     }
 

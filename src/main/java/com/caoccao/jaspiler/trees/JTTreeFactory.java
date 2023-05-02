@@ -63,6 +63,7 @@ public final class JTTreeFactory {
                 case EXPRESSION_STATEMENT ->
                         r = (R) create((ExpressionStatementTree) tree, parentTree, JTExpressionStatement::new);
                 case IDENTIFIER -> r = (R) create((IdentifierTree) tree, parentTree, JTIdent::new);
+                case IF -> r = (R) create((IfTree) tree, parentTree, JTIf::new);
                 case INT_LITERAL, LONG_LITERAL, FLOAT_LITERAL, DOUBLE_LITERAL,
                         BOOLEAN_LITERAL, CHAR_LITERAL, STRING_LITERAL, NULL_LITERAL ->
                         r = (R) create((LiteralTree) tree, parentTree, JTLiteral::new);

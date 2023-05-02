@@ -20,6 +20,7 @@ import com.sun.source.tree.EnhancedForLoopTree;
 import com.sun.source.tree.TreeVisitor;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public final class JTEnhancedForLoop
@@ -88,7 +89,7 @@ public final class JTEnhancedForLoop
         if (this.expression == expression) {
             return this;
         }
-        this.expression = Optional.ofNullable(expression).map(o -> o.setParentTree(this)).orElse(null);
+        this.expression = Objects.requireNonNull(expression).setParentTree(this);
         return setActionChange();
     }
 
@@ -96,7 +97,7 @@ public final class JTEnhancedForLoop
         if (this.statement == statement) {
             return this;
         }
-        this.statement = Optional.ofNullable(statement).map(o -> o.setParentTree(this)).orElse(null);
+        this.statement = Objects.requireNonNull(statement).setParentTree(this);
         return setActionChange();
     }
 
@@ -104,7 +105,7 @@ public final class JTEnhancedForLoop
         if (this.variable == variable) {
             return this;
         }
-        this.variable = Optional.ofNullable(variable).map(o -> o.setParentTree(this)).orElse(null);
+        this.variable = Objects.requireNonNull(variable).setParentTree(this);
         return setActionChange();
     }
 }

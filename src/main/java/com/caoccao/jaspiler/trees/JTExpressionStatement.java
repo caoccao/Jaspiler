@@ -20,6 +20,7 @@ import com.sun.source.tree.ExpressionStatementTree;
 import com.sun.source.tree.TreeVisitor;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public final class JTExpressionStatement
@@ -71,7 +72,7 @@ public final class JTExpressionStatement
         if (this.expression == expression) {
             return this;
         }
-        this.expression = expression;
+        this.expression = Objects.requireNonNull(expression).setParentTree(this);
         return setActionChange();
     }
 }
