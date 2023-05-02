@@ -59,9 +59,13 @@ public final class JTTreeFactory {
                         MINUS, MULTIPLY, NOT_EQUAL_TO, OR, PLUS,
                         REMAINDER, RIGHT_SHIFT, UNSIGNED_RIGHT_SHIFT, XOR ->
                         r = (R) create((BinaryTree) tree, parentTree, JTBinary::new);
-                case ANNOTATION_TYPE, CLASS, ENUM -> r = (R) create((ClassTree) tree, parentTree, JTClassDecl::new);
+                case ANNOTATION_TYPE, CLASS, ENUM, INTERFACE ->
+                        r = (R) create((ClassTree) tree, parentTree, JTClassDecl::new);
                 case ARRAY_TYPE -> r = (R) create((ArrayTypeTree) tree, parentTree, JTArrayTypeTree::new);
                 case ASSIGNMENT -> r = (R) create((AssignmentTree) tree, parentTree, JTAssign::new);
+                case BITWISE_COMPLEMENT, LOGICAL_COMPLEMENT, POSTFIX_DECREMENT, POSTFIX_INCREMENT, PREFIX_DECREMENT,
+                        PREFIX_INCREMENT, UNARY_MINUS, UNARY_PLUS ->
+                        r = (R) create((UnaryTree) tree, parentTree, JTUnary::new);
                 case BLOCK -> r = (R) create((BlockTree) tree, parentTree, JTBlock::new);
                 case ENHANCED_FOR_LOOP ->
                         r = (R) create((EnhancedForLoopTree) tree, parentTree, JTEnhancedForLoop::new);
