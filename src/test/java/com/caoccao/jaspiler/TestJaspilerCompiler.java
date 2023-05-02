@@ -17,6 +17,7 @@
 package com.caoccao.jaspiler;
 
 import com.caoccao.jaspiler.contexts.JaspilerDocContext;
+import com.caoccao.jaspiler.contexts.JaspilerParseContext;
 import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
 import com.caoccao.jaspiler.mock.MockAllInOnePublicClass;
 import com.caoccao.jaspiler.mock.MockIgnorePublicClass;
@@ -33,6 +34,7 @@ import com.sun.source.doctree.DocTree;
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.ImportTree;
 import com.sun.source.tree.PackageTree;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -41,8 +43,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -112,14 +114,14 @@ public class TestJaspilerCompiler extends BaseTestSuite {
     public void testUnsupported() throws IOException {
         var dummyTransformScanner = new DummyTransformScanner();
         var dummyDocScanner = new DummyDocScanner();
-        var errorCounter = new AtomicInteger();
+        List<JaspilerParseContext> parseContexts = new ArrayList<>();
+        List<JaspilerTransformContext> transformContexts = new ArrayList<>();
         try (var stream = Files.walk(SystemUtils.WORKING_DIRECTORY.resolve("src"))) {
             stream.filter(Files::isRegularFile)
                     .map(Path::toFile)
                     .filter(file -> file.getName().endsWith(".java"))
                     .forEach(file -> {
                         try {
-                            logger.info("Transforming [{}]...", file.getAbsolutePath());
                             compiler.clearJavaFileObject();
                             compiler.addJavaFileObjects(file);
                             try (StringWriter writer = new StringWriter()) {
@@ -128,15 +130,31 @@ public class TestJaspilerCompiler extends BaseTestSuite {
                                         dummyDocScanner,
                                         writer,
                                         JaspilerOptions.Default);
+                            } finally {
+                                parseContexts.addAll(compiler.getParseContexts());
+                                transformContexts.addAll(compiler.getTransformContexts());
                             }
-                            errorCounter.addAndGet(compiler.getDocContexts().size());
-                            errorCounter.addAndGet(compiler.getTransformContexts().size());
                         } catch (IOException e) {
                             fail(e);
                         }
                     });
         }
-        assertEquals(0, errorCounter.get(), "There shouldn't be any errors.");
+        List<Integer> errorCounts = new ArrayList<>();
+        parseContexts.forEach(context -> {
+            var compilationUnit = (JTCompilationUnit) context.getCompilationUnitTree();
+            if (CollectionUtils.isNotEmpty(compilationUnit.getUnsupportedTrees())) {
+                errorCounts.add(compilationUnit.getUnsupportedTrees().size());
+                logger.error("Failed to parse [{}].", compilationUnit.getSourceFile().getName());
+            }
+        });
+        transformContexts.forEach(context -> {
+            var compilationUnit = (JTCompilationUnit) context.getCompilationUnitTree();
+            if (CollectionUtils.isNotEmpty(compilationUnit.getUnsupportedTrees())) {
+                errorCounts.add(compilationUnit.getUnsupportedTrees().size());
+                logger.error("Failed to transform [{}].", compilationUnit.getSourceFile().getName());
+            }
+        });
+        assertEquals(0, errorCounts.stream().mapToInt(i -> i).sum(), "There shouldn't be any errors.");
     }
 
 }

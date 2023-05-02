@@ -18,8 +18,10 @@
 
 import com.caoccao.jaspiler.JaspilerContract;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.annotation.*;
+import java.nio.file.FileAlreadyExistsException;
 import java.util./* test */ArrayList;
 import java.util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,7 +46,18 @@ public class MockAllInOnePublicClass {
         }
         for (int i = 0; i < 10; i++) {
             System.out.println(i);
+            try {
+                if (b > 100) {
+                    throw new FileAlreadyExistsException("aaa");
+                } else {
+                    throw new FileNotFoundException("BBB");
+                }
+            } catch (FileAlreadyExistsException | FileNotFoundException e) {
+                // Pass.
+            }
         }
+        ++b;
+        b -= 1;
     }
 }
 

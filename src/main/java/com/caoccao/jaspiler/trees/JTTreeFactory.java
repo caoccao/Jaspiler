@@ -64,7 +64,9 @@ public final class JTTreeFactory {
                         XOR_ASSIGNMENT -> r = (R) create((CompoundAssignmentTree) tree, parentTree, JTAssignOp::new);
                 case ANNOTATION_TYPE, CLASS, ENUM, INTERFACE, RECORD ->
                         r = (R) create((ClassTree) tree, parentTree, JTClassDecl::new);
+                case ARRAY_ACCESS -> r = (R) create((ArrayAccessTree) tree, parentTree, JTArrayAccess::new);
                 case ARRAY_TYPE -> r = (R) create((ArrayTypeTree) tree, parentTree, JTArrayTypeTree::new);
+                case ASSERT -> r = (R) create((AssertTree) tree, parentTree, JTAssert::new);
                 case ASSIGNMENT -> r = (R) create((AssignmentTree) tree, parentTree, JTAssign::new);
                 case BINDING_PATTERN -> r = (R) create((BindingPatternTree) tree, parentTree, JTBindingPattern::new);
                 case BITWISE_COMPLEMENT, LOGICAL_COMPLEMENT, POSTFIX_DECREMENT, POSTFIX_INCREMENT, PREFIX_DECREMENT,
@@ -106,6 +108,7 @@ public final class JTTreeFactory {
                 case THROW -> r = (R) create((ThrowTree) tree, parentTree, JTThrow::new);
                 case TRY -> r = (R) create((TryTree) tree, parentTree, JTTry::new);
                 case TYPE_CAST -> r = (R) create((TypeCastTree) tree, parentTree, JTTypeCast::new);
+                case UNION_TYPE -> r = (R) create((UnionTypeTree) tree, parentTree, JTTypeUnion::new);
                 case VARIABLE -> r = (R) create((VariableTree) tree, parentTree, JTVariableDecl::new);
                 default -> {
                     parentTree.getCompilationUnit().getUnsupportedTrees().add(tree);
