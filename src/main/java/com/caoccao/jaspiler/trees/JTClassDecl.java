@@ -16,6 +16,7 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerNotSupportedException;
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.TreeVisitor;
 
@@ -31,7 +32,9 @@ public final class JTClassDecl
     private final List<JTTree<?, ?>> members;
     private final List<JTExpression<?, ?>> permitsClauses;
     private final List<JTTypeParameter> typeParameters;
-    private JTExpression<?, ?> extendsClause; private JTModifiers modifiers;
+    private JTExpression<?, ?> extendsClause;
+    private Kind kind;
+    private JTModifiers modifiers;
     private JTName simpleName;
 
     public JTClassDecl() {
@@ -70,6 +73,7 @@ public final class JTClassDecl
         JTTreeFactory.createAndAdd(
                 getOriginalTree().getMembers(), this, members::add);
         simpleName = JTTreeFactory.createName(getOriginalTree().getSimpleName());
+        kind = getOriginalTree().getKind();
         return this;
     }
 
@@ -98,7 +102,7 @@ public final class JTClassDecl
 
     @Override
     public Kind getKind() {
-        return Kind.CLASS;
+        return kind;
     }
 
     @Override
@@ -136,6 +140,17 @@ public final class JTClassDecl
             return this;
         }
         this.extendsClause = Objects.requireNonNull(extendsClause).setParentTree(this);
+        return setActionChange();
+    }
+
+    public JTClassDecl setKind(Kind kind) {
+        if (this.kind == kind) {
+            return this;
+        }
+        switch (Objects.requireNonNull(kind)) {
+            case ANNOTATION_TYPE, CLASS, ENUM, INTERFACE, RECORD -> this.kind = kind;
+            default -> throw new JaspilerNotSupportedException(kind.name() + " is not supported.");
+        }
         return setActionChange();
     }
 

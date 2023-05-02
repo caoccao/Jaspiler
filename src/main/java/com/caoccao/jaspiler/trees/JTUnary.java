@@ -50,6 +50,7 @@ public final class JTUnary
     JTUnary analyze() {
         super.analyze();
         expression = JTTreeFactory.create(getOriginalTree().getExpression(), this);
+        kind = getOriginalTree().getKind();
         return this;
     }
 

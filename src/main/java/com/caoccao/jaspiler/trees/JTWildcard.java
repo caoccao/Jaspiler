@@ -50,6 +50,7 @@ public final class JTWildcard
     JTWildcard analyze() {
         super.analyze();
         bound = JTTreeFactory.create(getOriginalTree().getBound(), this);
+        kind = getOriginalTree().getKind();
         return this;
     }
 

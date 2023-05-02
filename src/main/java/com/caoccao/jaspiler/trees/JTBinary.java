@@ -53,6 +53,7 @@ public final class JTBinary
         super.analyze();
         leftOperand = JTTreeFactory.create(getOriginalTree().getLeftOperand(), this);
         rightOperand = JTTreeFactory.create(getOriginalTree().getRightOperand(), this);
+        kind = getOriginalTree().getKind();
         return this;
     }
 
