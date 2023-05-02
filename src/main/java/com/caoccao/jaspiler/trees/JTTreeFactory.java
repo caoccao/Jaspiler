@@ -69,6 +69,9 @@ public final class JTTreeFactory {
                         r = (R) create((UnaryTree) tree, parentTree, JTUnary::new);
                 case BLOCK -> r = (R) create((BlockTree) tree, parentTree, JTBlock::new);
                 case CASE -> r = (R) create((CaseTree) tree, parentTree, JTCase::new);
+                case CATCH -> r = (R) create((CatchTree) tree, parentTree, JTCatch::new);
+                case CONDITIONAL_EXPRESSION ->
+                        r = (R) create((ConditionalExpressionTree) tree, parentTree, JTConditional::new);
                 case DEFAULT_CASE_LABEL ->
                         r = (R) create((DefaultCaseLabelTree) tree, parentTree, JTDefaultCaseLabel::new);
                 case ENHANCED_FOR_LOOP ->
@@ -97,6 +100,7 @@ public final class JTTreeFactory {
                 case RETURN -> r = (R) create((ReturnTree) tree, parentTree, JTReturn::new);
                 case SWITCH -> r = (R) create((SwitchTree) tree, parentTree, JTSwitch::new);
                 case THROW -> r = (R) create((ThrowTree) tree, parentTree, JTThrow::new);
+                case TRY -> r = (R) create((TryTree) tree, parentTree, JTTry::new);
                 case TYPE_CAST -> r = (R) create((TypeCastTree) tree, parentTree, JTTypeCast::new);
                 case VARIABLE -> r = (R) create((VariableTree) tree, parentTree, JTVariableDecl::new);
                 default -> {

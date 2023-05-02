@@ -84,6 +84,14 @@ public final class JTInstanceOf
         return pattern;
     }
 
+    public JTInstanceOf setExpression(JTExpression<?, ?> expression) {
+        if (this.expression == expression) {
+            return this;
+        }
+        this.expression = Optional.ofNullable(expression).map(o -> o.setParentTree(this)).orElse(null);
+        return setActionChange();
+    }
+
     public JTInstanceOf setPattern(JTTree<?, ?> pattern) {
         if (this.pattern == pattern) {
             return this;
