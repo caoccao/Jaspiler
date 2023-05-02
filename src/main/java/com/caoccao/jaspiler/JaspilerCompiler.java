@@ -41,9 +41,12 @@ import java.util.List;
  */
 public final class JaspilerCompiler extends BaseLoggingObject {
     private final DiagnosticCollector<JavaFileObject> diagnosticCollector;
+    private final List<JaspilerDocContext> docContexts;
     private final JavaCompiler javaCompiler;
     private final StandardJavaFileManager javaFileManager;
     private final List<JavaFileObject> javaFileObjects;
+    private final List<JaspilerParseContext> parseContexts;
+    private final List<JaspilerTransformContext> transformContexts;
 
     public JaspilerCompiler() {
         this(ToolProvider.getSystemJavaCompiler());
@@ -52,9 +55,12 @@ public final class JaspilerCompiler extends BaseLoggingObject {
     public JaspilerCompiler(JavaCompiler javaCompiler) {
         super();
         diagnosticCollector = new DiagnosticCollector<>();
+        docContexts = new ArrayList<>();
         this.javaCompiler = javaCompiler;
         javaFileObjects = new ArrayList<>();
         javaFileManager = javaCompiler.getStandardFileManager(diagnosticCollector, null, null);
+        parseContexts = new ArrayList<>();
+        transformContexts = new ArrayList<>();
     }
 
     public JaspilerCompiler addJavaFileObjects(String... names) {
@@ -77,14 +83,33 @@ public final class JaspilerCompiler extends BaseLoggingObject {
         return this;
     }
 
+    public JaspilerCompiler clearJavaFileObject() {
+        javaFileObjects.clear();
+        return this;
+    }
+
+    public List<JaspilerDocContext> getDocContexts() {
+        return docContexts;
+    }
+
+    public List<JaspilerParseContext> getParseContexts() {
+        return parseContexts;
+    }
+
+    public List<JaspilerTransformContext> getTransformContexts() {
+        return transformContexts;
+    }
+
     public <Scanner extends TreePathScanner<Scanner, JaspilerParseContext>> JaspilerCompiler parse(Scanner scanner)
             throws IOException {
+        parseContexts.clear();
         var task = (JavacTask) javaCompiler.getTask(
                 null, javaFileManager, diagnosticCollector, null, null, javaFileObjects);
         var trees = Trees.instance(task);
         for (var compilationUnit : task.parse()) {
-            var jaspilerContext = new JaspilerParseContext(compilationUnit);
-            scanner.scan(compilationUnit, jaspilerContext);
+            var parseContext = new JaspilerParseContext(compilationUnit);
+            parseContexts.add(parseContext);
+            scanner.scan(compilationUnit, parseContext);
         }
         return this;
     }
@@ -96,17 +121,21 @@ public final class JaspilerCompiler extends BaseLoggingObject {
             Writer writer,
             JaspilerOptions options)
             throws IOException {
+        transformContexts.clear();
+        docContexts.clear();
         var task = (JavacTask) javaCompiler.getTask(
                 null, javaFileManager, diagnosticCollector, null, null, javaFileObjects);
         var trees = Trees.instance(task);
         var docTrees = DocTrees.instance(task);
         for (var compilationUnit : task.parse()) {
             var jtCompilationUnit = new JTCompilationUnit(trees, docTrees, compilationUnit, options).analyze();
-            var jaspilerTransformContext = new JaspilerTransformContext(jtCompilationUnit);
-            var jaspilerDocContext = new JaspilerDocContext(jtCompilationUnit);
-            transformScanner.scan(jtCompilationUnit, jaspilerTransformContext);
+            var transformContext = new JaspilerTransformContext(jtCompilationUnit);
+            transformContexts.add(transformContext);
+            transformScanner.scan(jtCompilationUnit, transformContext);
             if (docScanner != null) {
-                docScanner.scan(jtCompilationUnit.getDocCommentTree(), jaspilerDocContext);
+                var docContext = new JaspilerDocContext(jtCompilationUnit);
+                docContexts.add(docContext);
+                docScanner.scan(jtCompilationUnit.getDocCommentTree(), docContext);
             }
             jtCompilationUnit.save(writer);
         }

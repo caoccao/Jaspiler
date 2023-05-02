@@ -24,26 +24,31 @@ import com.caoccao.jaspiler.trees.JTCompilationUnit;
 import com.caoccao.jaspiler.trees.JTImport;
 import com.caoccao.jaspiler.trees.JTPackageDecl;
 import com.caoccao.jaspiler.trees.JTTreeFactory;
+import com.caoccao.jaspiler.utils.SystemUtils;
+import com.caoccao.jaspiler.visiters.DummyDocScanner;
+import com.caoccao.jaspiler.visiters.DummyTransformScanner;
 import com.caoccao.jaspiler.visiters.JaspilerDocScanner;
 import com.caoccao.jaspiler.visiters.JaspilerTransformScanner;
 import com.sun.source.doctree.DocTree;
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.ImportTree;
 import com.sun.source.tree.PackageTree;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestJaspilerCompiler extends BaseTestSuite {
     @Test
     public void testTransform() throws IOException {
-        class DummyDocScanner extends JaspilerDocScanner<DummyDocScanner> {
-        }
-        class DummyTransformScanner extends JaspilerTransformScanner<DummyTransformScanner> {
-        }
         class TestDocScanner extends JaspilerDocScanner<TestDocScanner> {
             @Override
             public TestDocScanner scan(DocTree node, JaspilerDocContext jaspilerDocContext) {
@@ -86,7 +91,7 @@ public class TestJaspilerCompiler extends BaseTestSuite {
             texts.forEach(text -> assertTrue(code.contains(text), text));
         }
         {
-            String code = transform(new TestTransformScanner(), new TestDocScanner(), MockIgnorePublicClass.class);
+            String code = transform(new TestTransformScanner(), new TestDocScanner(), MockAllInOnePublicClass.class);
             logger.debug(code);
             var texts = List.of(
                     "* Copyright (c)",
@@ -96,5 +101,42 @@ public class TestJaspilerCompiler extends BaseTestSuite {
                     "import i4.i5;");
             texts.forEach(text -> assertTrue(code.contains(text), text));
         }
+        {
+            String code = transform(new TestTransformScanner(), new TestDocScanner(), MockIgnorePublicClass.class);
+            assertTrue(StringUtils.isEmpty(code));
+        }
     }
+
+    @Test
+    @Tag("manual")
+    public void testUnsupported() throws IOException {
+        var dummyTransformScanner = new DummyTransformScanner();
+        var dummyDocScanner = new DummyDocScanner();
+        var errorCounter = new AtomicInteger();
+        try (var stream = Files.walk(SystemUtils.WORKING_DIRECTORY.resolve("src/main/java"))) {
+            stream.filter(Files::isRegularFile)
+                    .map(Path::toFile)
+                    .filter(file -> file.getName().endsWith(".java"))
+                    .forEach(file -> {
+                        try {
+                            logger.info("Transforming [{}]...", file.getAbsolutePath());
+                            compiler.clearJavaFileObject();
+                            compiler.addJavaFileObjects(file);
+                            try (StringWriter writer = new StringWriter()) {
+                                compiler.transform(
+                                        dummyTransformScanner,
+                                        dummyDocScanner,
+                                        writer,
+                                        JaspilerOptions.Default);
+                            }
+                            errorCounter.addAndGet(compiler.getDocContexts().size());
+                            errorCounter.addAndGet(compiler.getTransformContexts().size());
+                        } catch (IOException e) {
+                            fail(e);
+                        }
+                    });
+        }
+        assertEquals(0, errorCounter.get(), "There shouldn't be any errors.");
+    }
+
 }

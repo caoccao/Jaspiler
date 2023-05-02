@@ -56,6 +56,7 @@ public abstract class BaseTestSuite extends BaseLoggingObject {
             DocScanner docScanner,
             Class<?>... classes)
             throws IOException {
+        compiler.clearJavaFileObject();
         for (var clazz : classes) {
             compiler.addJavaFileObjects(MockUtils.getSourcePath(clazz));
         }

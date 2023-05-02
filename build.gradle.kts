@@ -34,5 +34,13 @@ tasks.jar {
 }
 
 tasks.test {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        excludeTags("manual")
+    }
+}
+
+tasks.register<Test>("manualTest") {
+    useJUnitPlatform {
+        includeTags("manual")
+    }
 }

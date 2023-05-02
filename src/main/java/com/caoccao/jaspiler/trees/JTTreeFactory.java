@@ -49,6 +49,7 @@ public final class JTTreeFactory {
     public static <T extends Tree, R extends JTTree<?, ?>> R create(
             T tree,
             JTTree<?, ?> parentTree) {
+        Objects.requireNonNull(parentTree);
         R r = null;
         if (tree != null) {
             switch (tree.getKind()) {
@@ -62,12 +63,15 @@ public final class JTTreeFactory {
                         r = (R) create((LiteralTree) tree, parentTree, JTLiteral::new);
                 case MEMBER_SELECT -> r = (R) create((MemberSelectTree) tree, parentTree, JTFieldAccess::new);
                 case METHOD -> r = (R) create((MethodTree) tree, parentTree, JTMethodDecl::new);
-                case METHOD_INVOCATION -> r = (R) create((MethodInvocationTree) tree, parentTree, JTMethodInvocation::new);
+                case METHOD_INVOCATION ->
+                        r = (R) create((MethodInvocationTree) tree, parentTree, JTMethodInvocation::new);
                 case NEW_CLASS -> r = (R) create((NewClassTree) tree, parentTree, JTNewClass::new);
                 case PRIMITIVE_TYPE -> r = (R) create((PrimitiveTypeTree) tree, parentTree, JTPrimitiveTypeTree::new);
                 case PARAMETERIZED_TYPE -> r = (R) create((ParameterizedTypeTree) tree, parentTree, JTTypeApply::new);
+                case RETURN -> r = (R) create((ReturnTree) tree, parentTree, JTReturn::new);
                 case VARIABLE -> r = (R) create((VariableTree) tree, parentTree, JTVariableDecl::new);
                 default -> {
+                    parentTree.getCompilationUnit().getUnsupportedTrees().add(tree);
                     String message = MessageFormat.format(
                             "Type {0} and kind {1} is not supported.",
                             tree.getClass().getName(),
