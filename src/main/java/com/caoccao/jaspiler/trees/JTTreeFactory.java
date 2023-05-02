@@ -63,6 +63,7 @@ public final class JTTreeFactory {
                         r = (R) create((ClassTree) tree, parentTree, JTClassDecl::new);
                 case ARRAY_TYPE -> r = (R) create((ArrayTypeTree) tree, parentTree, JTArrayTypeTree::new);
                 case ASSIGNMENT -> r = (R) create((AssignmentTree) tree, parentTree, JTAssign::new);
+                case BINDING_PATTERN -> r = (R) create((BindingPatternTree) tree, parentTree, JTBindingPattern::new);
                 case BITWISE_COMPLEMENT, LOGICAL_COMPLEMENT, POSTFIX_DECREMENT, POSTFIX_INCREMENT, PREFIX_DECREMENT,
                         PREFIX_INCREMENT, UNARY_MINUS, UNARY_PLUS ->
                         r = (R) create((UnaryTree) tree, parentTree, JTUnary::new);
@@ -79,6 +80,7 @@ public final class JTTreeFactory {
                 case FOR_LOOP -> r = (R) create((ForLoopTree) tree, parentTree, JTForLoop::new);
                 case IDENTIFIER -> r = (R) create((IdentifierTree) tree, parentTree, JTIdent::new);
                 case IF -> r = (R) create((IfTree) tree, parentTree, JTIf::new);
+                case INSTANCE_OF -> r = (R) create((InstanceOfTree) tree, parentTree, JTInstanceOf::new);
                 case INT_LITERAL, LONG_LITERAL, FLOAT_LITERAL, DOUBLE_LITERAL,
                         BOOLEAN_LITERAL, CHAR_LITERAL, STRING_LITERAL, NULL_LITERAL ->
                         r = (R) create((LiteralTree) tree, parentTree, JTLiteral::new);
@@ -94,6 +96,7 @@ public final class JTTreeFactory {
                 case PARAMETERIZED_TYPE -> r = (R) create((ParameterizedTypeTree) tree, parentTree, JTTypeApply::new);
                 case RETURN -> r = (R) create((ReturnTree) tree, parentTree, JTReturn::new);
                 case SWITCH -> r = (R) create((SwitchTree) tree, parentTree, JTSwitch::new);
+                case THROW -> r = (R) create((ThrowTree) tree, parentTree, JTThrow::new);
                 case TYPE_CAST -> r = (R) create((TypeCastTree) tree, parentTree, JTTypeCast::new);
                 case VARIABLE -> r = (R) create((VariableTree) tree, parentTree, JTVariableDecl::new);
                 default -> {
