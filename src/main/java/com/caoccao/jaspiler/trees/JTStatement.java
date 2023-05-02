@@ -17,9 +17,10 @@
 package com.caoccao.jaspiler.trees;
 
 import com.sun.source.tree.StatementTree;
+import com.sun.source.tree.Tree;
 
 public abstract class JTStatement<
-        OriginalTree extends StatementTree,
+        OriginalTree extends Tree,
         NewTree extends JTStatement<OriginalTree, NewTree>>
         extends JTTree<OriginalTree, NewTree>
         implements StatementTree {

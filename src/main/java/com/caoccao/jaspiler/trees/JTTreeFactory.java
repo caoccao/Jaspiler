@@ -30,7 +30,7 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "preview"})
 public final class JTTreeFactory {
     private static final Logger logger = LoggerFactory.getLogger(JTTreeFactory.class);
 
@@ -67,6 +67,9 @@ public final class JTTreeFactory {
                         PREFIX_INCREMENT, UNARY_MINUS, UNARY_PLUS ->
                         r = (R) create((UnaryTree) tree, parentTree, JTUnary::new);
                 case BLOCK -> r = (R) create((BlockTree) tree, parentTree, JTBlock::new);
+                case CASE -> r = (R) create((CaseTree) tree, parentTree, JTCase::new);
+                case DEFAULT_CASE_LABEL ->
+                        r = (R) create((DefaultCaseLabelTree) tree, parentTree, JTDefaultCaseLabel::new);
                 case ENHANCED_FOR_LOOP ->
                         r = (R) create((EnhancedForLoopTree) tree, parentTree, JTEnhancedForLoop::new);
                 case EXPRESSION_STATEMENT ->
@@ -90,6 +93,7 @@ public final class JTTreeFactory {
                 case PRIMITIVE_TYPE -> r = (R) create((PrimitiveTypeTree) tree, parentTree, JTPrimitiveTypeTree::new);
                 case PARAMETERIZED_TYPE -> r = (R) create((ParameterizedTypeTree) tree, parentTree, JTTypeApply::new);
                 case RETURN -> r = (R) create((ReturnTree) tree, parentTree, JTReturn::new);
+                case SWITCH -> r = (R) create((SwitchTree) tree, parentTree, JTSwitch::new);
                 case TYPE_CAST -> r = (R) create((TypeCastTree) tree, parentTree, JTTypeCast::new);
                 case VARIABLE -> r = (R) create((VariableTree) tree, parentTree, JTVariableDecl::new);
                 default -> {
