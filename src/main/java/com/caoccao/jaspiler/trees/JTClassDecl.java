@@ -31,8 +31,7 @@ public final class JTClassDecl
     private final List<JTTree<?, ?>> members;
     private final List<JTExpression<?, ?>> permitsClauses;
     private final List<JTTypeParameter> typeParameters;
-    private JTExpression<?, ?> extendsClause;
-    private JTModifiers modifiers;
+    private JTExpression<?, ?> extendsClause; private JTModifiers modifiers;
     private JTName simpleName;
 
     public JTClassDecl() {

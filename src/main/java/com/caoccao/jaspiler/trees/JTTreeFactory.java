@@ -73,6 +73,7 @@ public final class JTTreeFactory {
                 case METHOD_INVOCATION ->
                         r = (R) create((MethodInvocationTree) tree, parentTree, JTMethodInvocation::new);
                 case NEW_CLASS -> r = (R) create((NewClassTree) tree, parentTree, JTNewClass::new);
+                case PARENTHESIZED -> r = (R) create((ParenthesizedTree) tree, parentTree, JTParens::new);
                 case PRIMITIVE_TYPE -> r = (R) create((PrimitiveTypeTree) tree, parentTree, JTPrimitiveTypeTree::new);
                 case PARAMETERIZED_TYPE -> r = (R) create((ParameterizedTypeTree) tree, parentTree, JTTypeApply::new);
                 case RETURN -> r = (R) create((ReturnTree) tree, parentTree, JTReturn::new);
