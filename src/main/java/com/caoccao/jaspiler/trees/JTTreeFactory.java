@@ -17,6 +17,7 @@
 package com.caoccao.jaspiler.trees;
 
 import com.sun.source.tree.*;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +57,9 @@ public final class JTTreeFactory {
                 case ANNOTATION_TYPE, CLASS -> r = (R) create((ClassTree) tree, parentTree, JTClassDecl::new);
                 case ARRAY_TYPE -> r = (R) create((ArrayTypeTree) tree, parentTree, JTArrayTypeTree::new);
                 case ASSIGNMENT -> r = (R) create((AssignmentTree) tree, parentTree, JTAssign::new);
+                case BLOCK -> r = (R) create((BlockTree) tree, parentTree, JTBlock::new);
+                case ENHANCED_FOR_LOOP ->
+                        r = (R) create((EnhancedForLoopTree) tree, parentTree, JTEnhancedForLoop::new);
                 case EXPRESSION_STATEMENT ->
                         r = (R) create((ExpressionStatementTree) tree, parentTree, JTExpressionStatement::new);
                 case IDENTIFIER -> r = (R) create((IdentifierTree) tree, parentTree, JTIdent::new);
@@ -71,6 +75,7 @@ public final class JTTreeFactory {
                 case PRIMITIVE_TYPE -> r = (R) create((PrimitiveTypeTree) tree, parentTree, JTPrimitiveTypeTree::new);
                 case PARAMETERIZED_TYPE -> r = (R) create((ParameterizedTypeTree) tree, parentTree, JTTypeApply::new);
                 case RETURN -> r = (R) create((ReturnTree) tree, parentTree, JTReturn::new);
+                case TYPE_CAST -> r = (R) create((TypeCastTree) tree, parentTree, JTTypeCast::new);
                 case VARIABLE -> r = (R) create((VariableTree) tree, parentTree, JTVariableDecl::new);
                 default -> {
                     parentTree.getCompilationUnit().getUnsupportedTrees().add(tree);
@@ -90,7 +95,7 @@ public final class JTTreeFactory {
             JTTree<?, ?> parentTree,
             BiFunction<T, JTTree<?, ?>, R> constructor,
             Consumer<R> consumer) {
-        if (trees != null) {
+        if (CollectionUtils.isNotEmpty(trees)) {
             trees.stream()
                     .filter(Objects::nonNull)
                     .map(o -> constructor.apply(o, parentTree))

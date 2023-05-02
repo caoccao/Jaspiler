@@ -113,7 +113,7 @@ public class TestJaspilerCompiler extends BaseTestSuite {
         var dummyTransformScanner = new DummyTransformScanner();
         var dummyDocScanner = new DummyDocScanner();
         var errorCounter = new AtomicInteger();
-        try (var stream = Files.walk(SystemUtils.WORKING_DIRECTORY.resolve("src/main/java"))) {
+        try (var stream = Files.walk(SystemUtils.WORKING_DIRECTORY.resolve("src"))) {
             stream.filter(Files::isRegularFile)
                     .map(Path::toFile)
                     .filter(file -> file.getName().endsWith(".java"))
