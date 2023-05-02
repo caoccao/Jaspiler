@@ -59,6 +59,9 @@ public final class JTTreeFactory {
                         MINUS, MULTIPLY, NOT_EQUAL_TO, OR, PLUS,
                         REMAINDER, RIGHT_SHIFT, UNSIGNED_RIGHT_SHIFT, XOR ->
                         r = (R) create((BinaryTree) tree, parentTree, JTBinary::new);
+                case AND_ASSIGNMENT, DIVIDE_ASSIGNMENT, LEFT_SHIFT_ASSIGNMENT, MINUS_ASSIGNMENT, MULTIPLY_ASSIGNMENT,
+                        OR_ASSIGNMENT, PLUS_ASSIGNMENT, REMAINDER_ASSIGNMENT, RIGHT_SHIFT_ASSIGNMENT, UNSIGNED_RIGHT_SHIFT_ASSIGNMENT,
+                        XOR_ASSIGNMENT -> r = (R) create((CompoundAssignmentTree) tree, parentTree, JTAssignOp::new);
                 case ANNOTATION_TYPE, CLASS, ENUM, INTERFACE, RECORD ->
                         r = (R) create((ClassTree) tree, parentTree, JTClassDecl::new);
                 case ARRAY_TYPE -> r = (R) create((ArrayTypeTree) tree, parentTree, JTArrayTypeTree::new);
@@ -93,6 +96,7 @@ public final class JTTreeFactory {
                 case METHOD -> r = (R) create((MethodTree) tree, parentTree, JTMethodDecl::new);
                 case METHOD_INVOCATION ->
                         r = (R) create((MethodInvocationTree) tree, parentTree, JTMethodInvocation::new);
+                case NEW_ARRAY -> r = (R) create((NewArrayTree) tree, parentTree, JTNewArray::new);
                 case NEW_CLASS -> r = (R) create((NewClassTree) tree, parentTree, JTNewClass::new);
                 case PARENTHESIZED -> r = (R) create((ParenthesizedTree) tree, parentTree, JTParens::new);
                 case PRIMITIVE_TYPE -> r = (R) create((PrimitiveTypeTree) tree, parentTree, JTPrimitiveTypeTree::new);
