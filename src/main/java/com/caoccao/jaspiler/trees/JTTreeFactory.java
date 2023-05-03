@@ -73,6 +73,7 @@ public final class JTTreeFactory {
                         PREFIX_INCREMENT, UNARY_MINUS, UNARY_PLUS ->
                         r = (R) create((UnaryTree) tree, parentTree, JTUnary::new);
                 case BLOCK -> r = (R) create((BlockTree) tree, parentTree, JTBlock::new);
+                case BREAK -> r = (R) create((BreakTree) tree, parentTree, JTBreak::new);
                 case CASE -> r = (R) create((CaseTree) tree, parentTree, JTCase::new);
                 case CATCH -> r = (R) create((CatchTree) tree, parentTree, JTCatch::new);
                 case CONDITIONAL_EXPRESSION ->
@@ -110,6 +111,7 @@ public final class JTTreeFactory {
                 case TYPE_CAST -> r = (R) create((TypeCastTree) tree, parentTree, JTTypeCast::new);
                 case UNION_TYPE -> r = (R) create((UnionTypeTree) tree, parentTree, JTTypeUnion::new);
                 case VARIABLE -> r = (R) create((VariableTree) tree, parentTree, JTVariableDecl::new);
+                case WHILE_LOOP -> r = (R) create((WhileLoopTree) tree, parentTree, JTWhileLoop::new);
                 default -> {
                     parentTree.getCompilationUnit().getUnsupportedTrees().add(tree);
                     String message = MessageFormat.format(
