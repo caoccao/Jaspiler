@@ -78,8 +78,10 @@ public final class JTTreeFactory {
                 case CATCH -> r = (R) create((CatchTree) tree, parentTree, JTCatch::new);
                 case CONDITIONAL_EXPRESSION ->
                         r = (R) create((ConditionalExpressionTree) tree, parentTree, JTConditional::new);
+                case CONTINUE -> r = (R) create((ContinueTree) tree, parentTree, JTContinue::new);
                 case DEFAULT_CASE_LABEL ->
                         r = (R) create((DefaultCaseLabelTree) tree, parentTree, JTDefaultCaseLabel::new);
+                case DO_WHILE_LOOP -> r = (R) create((DoWhileLoopTree) tree, parentTree, JTDoWhileLoop::new);
                 case ENHANCED_FOR_LOOP ->
                         r = (R) create((EnhancedForLoopTree) tree, parentTree, JTEnhancedForLoop::new);
                 case EXPRESSION_STATEMENT ->
@@ -106,6 +108,7 @@ public final class JTTreeFactory {
                 case PARAMETERIZED_TYPE -> r = (R) create((ParameterizedTypeTree) tree, parentTree, JTTypeApply::new);
                 case RETURN -> r = (R) create((ReturnTree) tree, parentTree, JTReturn::new);
                 case SWITCH -> r = (R) create((SwitchTree) tree, parentTree, JTSwitch::new);
+                case SYNCHRONIZED -> r = (R) create((SynchronizedTree) tree, parentTree, JTSynchronized::new);
                 case THROW -> r = (R) create((ThrowTree) tree, parentTree, JTThrow::new);
                 case TRY -> r = (R) create((TryTree) tree, parentTree, JTTry::new);
                 case TYPE_CAST -> r = (R) create((TypeCastTree) tree, parentTree, JTTypeCast::new);
