@@ -44,6 +44,7 @@ import java.util.stream.Stream;
  * Please refer to <a href="https://openjdk.org/groups/compiler/analyzing-doc-comments/analyze-doc-comments.html">Analyzing Documentation Comments</a> for detail.
  */
 public final class JaspilerCompiler extends BaseLoggingObject {
+    private static final int MIN_FILE_SIZE = 10;
     private final DiagnosticCollector<JavaFileObject> diagnosticCollector;
     private final List<JaspilerDocContext> docContexts;
     private final JavaCompiler javaCompiler;
@@ -95,7 +96,7 @@ public final class JaspilerCompiler extends BaseLoggingObject {
     private Iterable<File> filterFiles(Stream<File> fileStream) {
         return fileStream
                 .map(file -> {
-                    if (file.exists() && file.isFile() && file.canRead() && file.length() > 9) {
+                    if (file.exists() && file.isFile() && file.canRead() && file.length() >= MIN_FILE_SIZE) {
                         return file;
                     }
                     logger.warn("Ignored [{}].", file.getAbsolutePath());

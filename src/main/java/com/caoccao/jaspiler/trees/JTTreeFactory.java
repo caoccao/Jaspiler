@@ -97,6 +97,7 @@ public final class JTTreeFactory {
                     case ENHANCED_FOR_LOOP ->
                             r = (R) create((EnhancedForLoopTree) tree, parentTree, JTEnhancedForLoop::new);
                     case ERRONEOUS -> r = (R) create((ErroneousTree) tree, parentTree, JTErroneous::new);
+                    case EXPORTS -> r = (R) create((ExportsTree) tree, parentTree, JTExports::new);
                     case EXPRESSION_STATEMENT ->
                             r = (R) create((ExpressionStatementTree) tree, parentTree, JTExpressionStatement::new);
                     case EXTENDS_WILDCARD, SUPER_WILDCARD, UNBOUNDED_WILDCARD ->
@@ -122,12 +123,15 @@ public final class JTTreeFactory {
                     case MODIFIERS -> r = (R) create((ModifiersTree) tree, parentTree, JTModifiers::new);
                     case NEW_ARRAY -> r = (R) create((NewArrayTree) tree, parentTree, JTNewArray::new);
                     case NEW_CLASS -> r = (R) create((NewClassTree) tree, parentTree, JTNewClass::new);
+                    case OPENS -> r = (R) create((OpensTree) tree, parentTree, JTOpens::new);
+                    case PARAMETERIZED_TYPE ->
+                            r = (R) create((ParameterizedTypeTree) tree, parentTree, JTTypeApply::new);
                     case PARENTHESIZED -> r = (R) create((ParenthesizedTree) tree, parentTree, JTParens::new);
                     case PRIMITIVE_TYPE ->
                             r = (R) create((PrimitiveTypeTree) tree, parentTree, JTPrimitiveTypeTree::new);
-                    case PARAMETERIZED_TYPE ->
-                            r = (R) create((ParameterizedTypeTree) tree, parentTree, JTTypeApply::new);
+                    case PROVIDES -> r = (R) create((ProvidesTree) tree, parentTree, JTProvides::new);
                     case RETURN -> r = (R) create((ReturnTree) tree, parentTree, JTReturn::new);
+                    case REQUIRES -> r = (R) create((RequiresTree) tree, parentTree, JTRequires::new);
                     case SWITCH -> r = (R) create((SwitchTree) tree, parentTree, JTSwitch::new);
                     case SYNCHRONIZED -> r = (R) create((SynchronizedTree) tree, parentTree, JTSynchronized::new);
                     case THROW -> r = (R) create((ThrowTree) tree, parentTree, JTThrow::new);

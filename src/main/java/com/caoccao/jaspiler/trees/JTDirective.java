@@ -21,7 +21,7 @@ import com.sun.source.tree.Tree;
 
 public abstract class JTDirective<
         OriginalTree extends Tree,
-        NewTree extends JTExpression<OriginalTree, NewTree>>
+        NewTree extends JTDirective<OriginalTree, NewTree>>
         extends JTTree<OriginalTree, NewTree>
         implements DirectiveTree {
     JTDirective(OriginalTree originalTree, JTTree<?, ?> parentTree) {
