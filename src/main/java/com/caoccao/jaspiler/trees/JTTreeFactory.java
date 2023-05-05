@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.lang.model.element.Name;
-import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -53,81 +52,106 @@ public final class JTTreeFactory {
         Objects.requireNonNull(parentTree);
         R r = null;
         if (tree != null) {
-            switch (tree.getKind()) {
-                case AND, CONDITIONAL_AND, CONDITIONAL_OR, DIVIDE, EQUAL_TO,
-                        GREATER_THAN, GREATER_THAN_EQUAL, LEFT_SHIFT, LESS_THAN, LESS_THAN_EQUAL,
-                        MINUS, MULTIPLY, NOT_EQUAL_TO, OR, PLUS,
-                        REMAINDER, RIGHT_SHIFT, UNSIGNED_RIGHT_SHIFT, XOR ->
-                        r = (R) create((BinaryTree) tree, parentTree, JTBinary::new);
-                case AND_ASSIGNMENT, DIVIDE_ASSIGNMENT, LEFT_SHIFT_ASSIGNMENT, MINUS_ASSIGNMENT, MULTIPLY_ASSIGNMENT,
-                        OR_ASSIGNMENT, PLUS_ASSIGNMENT, REMAINDER_ASSIGNMENT, RIGHT_SHIFT_ASSIGNMENT, UNSIGNED_RIGHT_SHIFT_ASSIGNMENT,
-                        XOR_ASSIGNMENT -> r = (R) create((CompoundAssignmentTree) tree, parentTree, JTAssignOp::new);
-                case ANNOTATION -> r = (R) create((AnnotationTree) tree, parentTree, JTAnnotation::new);
-                case ANNOTATION_TYPE, CLASS, ENUM, INTERFACE, RECORD ->
-                        r = (R) create((ClassTree) tree, parentTree, JTClassDecl::new);
-                case ARRAY_ACCESS -> r = (R) create((ArrayAccessTree) tree, parentTree, JTArrayAccess::new);
-                case ARRAY_TYPE -> r = (R) create((ArrayTypeTree) tree, parentTree, JTArrayTypeTree::new);
-                case ASSERT -> r = (R) create((AssertTree) tree, parentTree, JTAssert::new);
-                case ASSIGNMENT -> r = (R) create((AssignmentTree) tree, parentTree, JTAssign::new);
-                case BINDING_PATTERN -> r = (R) create((BindingPatternTree) tree, parentTree, JTBindingPattern::new);
-                case BITWISE_COMPLEMENT, LOGICAL_COMPLEMENT, POSTFIX_DECREMENT, POSTFIX_INCREMENT, PREFIX_DECREMENT,
-                        PREFIX_INCREMENT, UNARY_MINUS, UNARY_PLUS ->
-                        r = (R) create((UnaryTree) tree, parentTree, JTUnary::new);
-                case BLOCK -> r = (R) create((BlockTree) tree, parentTree, JTBlock::new);
-                case BREAK -> r = (R) create((BreakTree) tree, parentTree, JTBreak::new);
-                case CASE -> r = (R) create((CaseTree) tree, parentTree, JTCase::new);
-                case CATCH -> r = (R) create((CatchTree) tree, parentTree, JTCatch::new);
-                case CONDITIONAL_EXPRESSION ->
-                        r = (R) create((ConditionalExpressionTree) tree, parentTree, JTConditional::new);
-                case CONTINUE -> r = (R) create((ContinueTree) tree, parentTree, JTContinue::new);
-                case DEFAULT_CASE_LABEL ->
-                        r = (R) create((DefaultCaseLabelTree) tree, parentTree, JTDefaultCaseLabel::new);
-                case DO_WHILE_LOOP -> r = (R) create((DoWhileLoopTree) tree, parentTree, JTDoWhileLoop::new);
-                case EMPTY_STATEMENT -> r = (R) create((EmptyStatementTree) tree, parentTree, JTSkip::new);
-                case ENHANCED_FOR_LOOP ->
-                        r = (R) create((EnhancedForLoopTree) tree, parentTree, JTEnhancedForLoop::new);
-                case EXPRESSION_STATEMENT ->
-                        r = (R) create((ExpressionStatementTree) tree, parentTree, JTExpressionStatement::new);
-                case EXTENDS_WILDCARD, SUPER_WILDCARD, UNBOUNDED_WILDCARD ->
-                        r = (R) create((WildcardTree) tree, parentTree, JTWildcard::new);
-                case FOR_LOOP -> r = (R) create((ForLoopTree) tree, parentTree, JTForLoop::new);
-                case IDENTIFIER -> r = (R) create((IdentifierTree) tree, parentTree, JTIdent::new);
-                case IF -> r = (R) create((IfTree) tree, parentTree, JTIf::new);
-                case INSTANCE_OF -> r = (R) create((InstanceOfTree) tree, parentTree, JTInstanceOf::new);
-                case INT_LITERAL, LONG_LITERAL, FLOAT_LITERAL, DOUBLE_LITERAL,
-                        BOOLEAN_LITERAL, CHAR_LITERAL, STRING_LITERAL, NULL_LITERAL ->
-                        r = (R) create((LiteralTree) tree, parentTree, JTLiteral::new);
-                case INTERSECTION_TYPE ->
-                        r = (R) create((IntersectionTypeTree) tree, parentTree, JTTypeIntersection::new);
-                case LABELED_STATEMENT -> r = (R) create((LabeledStatementTree) tree, parentTree, JTLabeledStatement::new);
-                case LAMBDA_EXPRESSION -> r = (R) create((LambdaExpressionTree) tree, parentTree, JTLambda::new);
-                case MEMBER_REFERENCE -> r = (R) create((MemberReferenceTree) tree, parentTree, JTMemberReference::new);
-                case MEMBER_SELECT -> r = (R) create((MemberSelectTree) tree, parentTree, JTFieldAccess::new);
-                case METHOD -> r = (R) create((MethodTree) tree, parentTree, JTMethodDecl::new);
-                case METHOD_INVOCATION ->
-                        r = (R) create((MethodInvocationTree) tree, parentTree, JTMethodInvocation::new);
-                case NEW_ARRAY -> r = (R) create((NewArrayTree) tree, parentTree, JTNewArray::new);
-                case NEW_CLASS -> r = (R) create((NewClassTree) tree, parentTree, JTNewClass::new);
-                case PARENTHESIZED -> r = (R) create((ParenthesizedTree) tree, parentTree, JTParens::new);
-                case PRIMITIVE_TYPE -> r = (R) create((PrimitiveTypeTree) tree, parentTree, JTPrimitiveTypeTree::new);
-                case PARAMETERIZED_TYPE -> r = (R) create((ParameterizedTypeTree) tree, parentTree, JTTypeApply::new);
-                case RETURN -> r = (R) create((ReturnTree) tree, parentTree, JTReturn::new);
-                case SWITCH -> r = (R) create((SwitchTree) tree, parentTree, JTSwitch::new);
-                case SYNCHRONIZED -> r = (R) create((SynchronizedTree) tree, parentTree, JTSynchronized::new);
-                case THROW -> r = (R) create((ThrowTree) tree, parentTree, JTThrow::new);
-                case TRY -> r = (R) create((TryTree) tree, parentTree, JTTry::new);
-                case TYPE_CAST -> r = (R) create((TypeCastTree) tree, parentTree, JTTypeCast::new);
-                case UNION_TYPE -> r = (R) create((UnionTypeTree) tree, parentTree, JTTypeUnion::new);
-                case VARIABLE -> r = (R) create((VariableTree) tree, parentTree, JTVariableDecl::new);
-                case WHILE_LOOP -> r = (R) create((WhileLoopTree) tree, parentTree, JTWhileLoop::new);
-                default -> {
-                    parentTree.getCompilationUnit().getUnsupportedTrees().add(tree);
-                    String message = MessageFormat.format(
-                            "Type {0} and kind {1} is not supported.",
-                            tree.getClass().getName(),
-                            tree.getKind().name());
-                    logger.warn("{}\n{}", message, tree);
+            if (logger.isTraceEnabled()) {
+                String text = tree.toString();
+                if (text.length() > 40) {
+                    text = text.substring(0, 40) + " ...";
                 }
+                text = text.replace("\n", "\\n").replace("\r", "\\r");
+                logger.trace("Parsing [{}] [{}].", tree.getKind().name(), text);
+            }
+            try {
+                switch (tree.getKind()) {
+                    case AND, CONDITIONAL_AND, CONDITIONAL_OR, DIVIDE, EQUAL_TO,
+                            GREATER_THAN, GREATER_THAN_EQUAL, LEFT_SHIFT, LESS_THAN, LESS_THAN_EQUAL,
+                            MINUS, MULTIPLY, NOT_EQUAL_TO, OR, PLUS,
+                            REMAINDER, RIGHT_SHIFT, UNSIGNED_RIGHT_SHIFT, XOR ->
+                            r = (R) create((BinaryTree) tree, parentTree, JTBinary::new);
+                    case AND_ASSIGNMENT, DIVIDE_ASSIGNMENT, LEFT_SHIFT_ASSIGNMENT, MINUS_ASSIGNMENT, MULTIPLY_ASSIGNMENT,
+                            OR_ASSIGNMENT, PLUS_ASSIGNMENT, REMAINDER_ASSIGNMENT, RIGHT_SHIFT_ASSIGNMENT, UNSIGNED_RIGHT_SHIFT_ASSIGNMENT,
+                            XOR_ASSIGNMENT ->
+                            r = (R) create((CompoundAssignmentTree) tree, parentTree, JTAssignOp::new);
+                    case ANNOTATION -> r = (R) create((AnnotationTree) tree, parentTree, JTAnnotation::new);
+                    case ANNOTATION_TYPE, CLASS, ENUM, INTERFACE, RECORD ->
+                            r = (R) create((ClassTree) tree, parentTree, JTClassDecl::new);
+                    case ARRAY_ACCESS -> r = (R) create((ArrayAccessTree) tree, parentTree, JTArrayAccess::new);
+                    case ARRAY_TYPE -> r = (R) create((ArrayTypeTree) tree, parentTree, JTArrayTypeTree::new);
+                    case ASSERT -> r = (R) create((AssertTree) tree, parentTree, JTAssert::new);
+                    case ASSIGNMENT -> r = (R) create((AssignmentTree) tree, parentTree, JTAssign::new);
+                    case BINDING_PATTERN ->
+                            r = (R) create((BindingPatternTree) tree, parentTree, JTBindingPattern::new);
+                    case BITWISE_COMPLEMENT, LOGICAL_COMPLEMENT, POSTFIX_DECREMENT, POSTFIX_INCREMENT, PREFIX_DECREMENT,
+                            PREFIX_INCREMENT, UNARY_MINUS, UNARY_PLUS ->
+                            r = (R) create((UnaryTree) tree, parentTree, JTUnary::new);
+                    case BLOCK -> r = (R) create((BlockTree) tree, parentTree, JTBlock::new);
+                    case BREAK -> r = (R) create((BreakTree) tree, parentTree, JTBreak::new);
+                    case CASE -> r = (R) create((CaseTree) tree, parentTree, JTCase::new);
+                    case CATCH -> r = (R) create((CatchTree) tree, parentTree, JTCatch::new);
+                    case CONDITIONAL_EXPRESSION ->
+                            r = (R) create((ConditionalExpressionTree) tree, parentTree, JTConditional::new);
+                    case CONTINUE -> r = (R) create((ContinueTree) tree, parentTree, JTContinue::new);
+                    case DEFAULT_CASE_LABEL ->
+                            r = (R) create((DefaultCaseLabelTree) tree, parentTree, JTDefaultCaseLabel::new);
+                    case DO_WHILE_LOOP -> r = (R) create((DoWhileLoopTree) tree, parentTree, JTDoWhileLoop::new);
+                    case EMPTY_STATEMENT -> r = (R) create((EmptyStatementTree) tree, parentTree, JTSkip::new);
+                    case ENHANCED_FOR_LOOP ->
+                            r = (R) create((EnhancedForLoopTree) tree, parentTree, JTEnhancedForLoop::new);
+                    case ERRONEOUS -> r = (R) create((ErroneousTree) tree, parentTree, JTErroneous::new);
+                    case EXPRESSION_STATEMENT ->
+                            r = (R) create((ExpressionStatementTree) tree, parentTree, JTExpressionStatement::new);
+                    case EXTENDS_WILDCARD, SUPER_WILDCARD, UNBOUNDED_WILDCARD ->
+                            r = (R) create((WildcardTree) tree, parentTree, JTWildcard::new);
+                    case FOR_LOOP -> r = (R) create((ForLoopTree) tree, parentTree, JTForLoop::new);
+                    case IDENTIFIER -> r = (R) create((IdentifierTree) tree, parentTree, JTIdent::new);
+                    case IF -> r = (R) create((IfTree) tree, parentTree, JTIf::new);
+                    case INSTANCE_OF -> r = (R) create((InstanceOfTree) tree, parentTree, JTInstanceOf::new);
+                    case INT_LITERAL, LONG_LITERAL, FLOAT_LITERAL, DOUBLE_LITERAL,
+                            BOOLEAN_LITERAL, CHAR_LITERAL, STRING_LITERAL, NULL_LITERAL ->
+                            r = (R) create((LiteralTree) tree, parentTree, JTLiteral::new);
+                    case INTERSECTION_TYPE ->
+                            r = (R) create((IntersectionTypeTree) tree, parentTree, JTTypeIntersection::new);
+                    case LABELED_STATEMENT ->
+                            r = (R) create((LabeledStatementTree) tree, parentTree, JTLabeledStatement::new);
+                    case LAMBDA_EXPRESSION -> r = (R) create((LambdaExpressionTree) tree, parentTree, JTLambda::new);
+                    case MEMBER_REFERENCE ->
+                            r = (R) create((MemberReferenceTree) tree, parentTree, JTMemberReference::new);
+                    case MEMBER_SELECT -> r = (R) create((MemberSelectTree) tree, parentTree, JTFieldAccess::new);
+                    case METHOD -> r = (R) create((MethodTree) tree, parentTree, JTMethodDecl::new);
+                    case METHOD_INVOCATION ->
+                            r = (R) create((MethodInvocationTree) tree, parentTree, JTMethodInvocation::new);
+                    case MODIFIERS -> r = (R) create((ModifiersTree) tree, parentTree, JTModifiers::new);
+                    case NEW_ARRAY -> r = (R) create((NewArrayTree) tree, parentTree, JTNewArray::new);
+                    case NEW_CLASS -> r = (R) create((NewClassTree) tree, parentTree, JTNewClass::new);
+                    case PARENTHESIZED -> r = (R) create((ParenthesizedTree) tree, parentTree, JTParens::new);
+                    case PRIMITIVE_TYPE ->
+                            r = (R) create((PrimitiveTypeTree) tree, parentTree, JTPrimitiveTypeTree::new);
+                    case PARAMETERIZED_TYPE ->
+                            r = (R) create((ParameterizedTypeTree) tree, parentTree, JTTypeApply::new);
+                    case RETURN -> r = (R) create((ReturnTree) tree, parentTree, JTReturn::new);
+                    case SWITCH -> r = (R) create((SwitchTree) tree, parentTree, JTSwitch::new);
+                    case SYNCHRONIZED -> r = (R) create((SynchronizedTree) tree, parentTree, JTSynchronized::new);
+                    case THROW -> r = (R) create((ThrowTree) tree, parentTree, JTThrow::new);
+                    case TRY -> r = (R) create((TryTree) tree, parentTree, JTTry::new);
+                    case TYPE_CAST -> r = (R) create((TypeCastTree) tree, parentTree, JTTypeCast::new);
+                    case UNION_TYPE -> r = (R) create((UnionTypeTree) tree, parentTree, JTTypeUnion::new);
+                    case VARIABLE -> r = (R) create((VariableTree) tree, parentTree, JTVariableDecl::new);
+                    case WHILE_LOOP -> r = (R) create((WhileLoopTree) tree, parentTree, JTWhileLoop::new);
+                    default -> {
+                        parentTree.getCompilationUnit().incrementUnsupportedTreeCount();
+                        logger.warn(
+                                "Type {} and kind {} is not supported in [{}].\n{}",
+                                tree.getClass().getName(),
+                                tree.getKind().name(),
+                                parentTree.getCompilationUnit().getSourceFile().getName(),
+                                tree);
+                    }
+                }
+            } catch (Throwable t) {
+                logger.error(
+                        "Failed to create [{}] for [{}].",
+                        tree.getKind().name(),
+                        parentTree.getCompilationUnit().getSourceFile().getName());
+                throw t;
             }
         }
         return r;
@@ -152,7 +176,21 @@ public final class JTTreeFactory {
             List<T> trees,
             JTTree<?, ?> parentTree,
             Consumer<R> consumer) {
-        createAndAdd(trees, parentTree, JTTreeFactory::create, consumer);
+        createAndAddWithoutAnalyze(trees, parentTree, JTTreeFactory::create, consumer);
+    }
+
+    public static <T extends Tree, R extends JTTree<?, ?>> void createAndAddWithoutAnalyze(
+            List<T> trees,
+            JTTree<?, ?> parentTree,
+            BiFunction<T, JTTree<?, ?>, R> constructor,
+            Consumer<R> consumer) {
+        if (CollectionUtils.isNotEmpty(trees)) {
+            trees.stream()
+                    .filter(Objects::nonNull)
+                    .map(o -> constructor.apply(o, parentTree))
+                    .filter(Objects::nonNull)
+                    .forEach(consumer);
+        }
     }
 
     public static JTFieldAccess createFieldAccess(String... strings) {

@@ -17,10 +17,8 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.BaseTestSuite;
-import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
 import com.caoccao.jaspiler.mock.MockIgnorePublicClass;
 import com.caoccao.jaspiler.visiters.JaspilerTransformScanner;
-import com.sun.source.util.TreePathScanner;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 

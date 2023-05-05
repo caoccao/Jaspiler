@@ -24,6 +24,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * The type Module Declaration.
+ *
+ * module a.b.c {
+ *     exports a.b.c;
+ *     opens a.b.c;
+ *     requires x.y.z;
+ * }
+ */
 public final class JTModuleDecl
         extends JTTree<ModuleTree, JTModuleDecl>
         implements ModuleTree {

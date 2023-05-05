@@ -56,10 +56,10 @@ public final class JTCompilationUnit
     private final SourcePositions sourcePositions;
     private final Trees trees;
     private final List<JTTree<?, ?>> typeDecls;
-    private final List<Tree> unsupportedTrees;
     private JTModuleDecl moduleTree;
     private String originalCode;
     private JTPackageDecl packageTree;
+    private int unsupportedTreeCount;
 
     public JTCompilationUnit(
             Trees trees,
@@ -77,7 +77,7 @@ public final class JTCompilationUnit
         sourcePositions = Objects.requireNonNull(trees).getSourcePositions();
         this.trees = trees;
         typeDecls = new ArrayList<>();
-        unsupportedTrees = new ArrayList<>();
+        unsupportedTreeCount = 0;
     }
 
     @Override
@@ -216,8 +216,13 @@ public final class JTCompilationUnit
         return typeDecls;
     }
 
-    public List<Tree> getUnsupportedTrees() {
-        return unsupportedTrees;
+    public int getUnsupportedTreeCount() {
+        return unsupportedTreeCount;
+    }
+
+    public JTCompilationUnit incrementUnsupportedTreeCount() {
+        unsupportedTreeCount++;
+        return this;
     }
 
     public boolean save(Path outputPath) throws IOException {

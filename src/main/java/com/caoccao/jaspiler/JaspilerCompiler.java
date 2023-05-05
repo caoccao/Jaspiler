@@ -23,6 +23,7 @@ import com.caoccao.jaspiler.trees.JTCompilationUnit;
 import com.caoccao.jaspiler.utils.BaseLoggingObject;
 import com.caoccao.jaspiler.utils.JavaFileStringObject;
 import com.sun.source.util.*;
+import org.apache.commons.collections4.CollectionUtils;
 
 import javax.tools.*;
 import java.io.File;
@@ -31,6 +32,9 @@ import java.io.Writer;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * The type Jaspiler compiler.
@@ -64,17 +68,17 @@ public final class JaspilerCompiler extends BaseLoggingObject {
     }
 
     public JaspilerCompiler addJavaFileObjects(String... names) {
-        javaFileManager.getJavaFileObjects(names).forEach(javaFileObjects::add);
+        javaFileManager.getJavaFileObjectsFromFiles(filterFiles(Stream.of(names).map(File::new))).forEach(javaFileObjects::add);
         return this;
     }
 
     public JaspilerCompiler addJavaFileObjects(File... files) {
-        javaFileManager.getJavaFileObjects(files).forEach(javaFileObjects::add);
+        javaFileManager.getJavaFileObjectsFromFiles(filterFiles(Stream.of(files))).forEach(javaFileObjects::add);
         return this;
     }
 
     public JaspilerCompiler addJavaFileObjects(Path... paths) {
-        javaFileManager.getJavaFileObjects(paths).forEach(javaFileObjects::add);
+        javaFileManager.getJavaFileObjectsFromFiles(filterFiles(Stream.of(paths).map(Path::toFile))).forEach(javaFileObjects::add);
         return this;
     }
 
@@ -86,6 +90,19 @@ public final class JaspilerCompiler extends BaseLoggingObject {
     public JaspilerCompiler clearJavaFileObject() {
         javaFileObjects.clear();
         return this;
+    }
+
+    private Iterable<File> filterFiles(Stream<File> fileStream) {
+        return fileStream
+                .map(file -> {
+                    if (file.exists() && file.isFile() && file.canRead() && file.length() > 9) {
+                        return file;
+                    }
+                    logger.warn("Ignored [{}].", file.getAbsolutePath());
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     public List<JaspilerDocContext> getDocContexts() {
@@ -103,13 +120,15 @@ public final class JaspilerCompiler extends BaseLoggingObject {
     public <Scanner extends TreePathScanner<Scanner, JaspilerParseContext>> JaspilerCompiler parse(Scanner scanner)
             throws IOException {
         parseContexts.clear();
-        var task = (JavacTask) javaCompiler.getTask(
-                null, javaFileManager, diagnosticCollector, null, null, javaFileObjects);
-        var trees = Trees.instance(task);
-        for (var compilationUnit : task.parse()) {
-            var parseContext = new JaspilerParseContext(compilationUnit);
-            parseContexts.add(parseContext);
-            scanner.scan(compilationUnit, parseContext);
+        if (CollectionUtils.isNotEmpty(javaFileObjects)) {
+            var task = (JavacTask) javaCompiler.getTask(
+                    null, javaFileManager, diagnosticCollector, null, null, javaFileObjects);
+            var trees = Trees.instance(task);
+            for (var compilationUnit : task.parse()) {
+                var parseContext = new JaspilerParseContext(compilationUnit);
+                parseContexts.add(parseContext);
+                scanner.scan(compilationUnit, parseContext);
+            }
         }
         return this;
     }
@@ -123,21 +142,23 @@ public final class JaspilerCompiler extends BaseLoggingObject {
             throws IOException {
         transformContexts.clear();
         docContexts.clear();
-        var task = (JavacTask) javaCompiler.getTask(
-                null, javaFileManager, diagnosticCollector, null, null, javaFileObjects);
-        var trees = Trees.instance(task);
-        var docTrees = DocTrees.instance(task);
-        for (var compilationUnit : task.parse()) {
-            var jtCompilationUnit = new JTCompilationUnit(trees, docTrees, compilationUnit, options).analyze();
-            var transformContext = new JaspilerTransformContext(jtCompilationUnit);
-            transformContexts.add(transformContext);
-            transformScanner.scan(jtCompilationUnit, transformContext);
-            if (docScanner != null) {
-                var docContext = new JaspilerDocContext(jtCompilationUnit);
-                docContexts.add(docContext);
-                docScanner.scan(jtCompilationUnit.getDocCommentTree(), docContext);
+        if (CollectionUtils.isNotEmpty(javaFileObjects)) {
+            var task = (JavacTask) javaCompiler.getTask(
+                    null, javaFileManager, diagnosticCollector, null, null, javaFileObjects);
+            var trees = Trees.instance(task);
+            var docTrees = DocTrees.instance(task);
+            for (var compilationUnit : task.parse()) {
+                var jtCompilationUnit = new JTCompilationUnit(trees, docTrees, compilationUnit, options).analyze();
+                var transformContext = new JaspilerTransformContext(jtCompilationUnit);
+                transformContexts.add(transformContext);
+                transformScanner.scan(jtCompilationUnit, transformContext);
+                if (docScanner != null) {
+                    var docContext = new JaspilerDocContext(jtCompilationUnit);
+                    docContexts.add(docContext);
+                    docScanner.scan(jtCompilationUnit.getDocCommentTree(), docContext);
+                }
+                jtCompilationUnit.save(writer);
             }
-            jtCompilationUnit.save(writer);
         }
         return this;
     }

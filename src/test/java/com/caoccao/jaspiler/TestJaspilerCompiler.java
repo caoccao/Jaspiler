@@ -34,7 +34,6 @@ import com.sun.source.doctree.DocTree;
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.ImportTree;
 import com.sun.source.tree.PackageTree;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -111,7 +110,7 @@ public class TestJaspilerCompiler extends BaseTestSuite {
 
     @Test
     @Tag("manual")
-    public void testUnsupported() throws IOException {
+    public void testUnsupported() {
         var dummyTransformScanner = new DummyTransformScanner();
         var dummyDocScanner = new DummyDocScanner();
         List<String> unsupportedParseFileNames = new ArrayList<>();
@@ -135,12 +134,12 @@ public class TestJaspilerCompiler extends BaseTestSuite {
                             } finally {
                                 compiler.getParseContexts().stream()
                                         .map(context -> (JTCompilationUnit) context.getCompilationUnitTree())
-                                        .filter(compilationUnit -> CollectionUtils.isNotEmpty(compilationUnit.getUnsupportedTrees()))
+                                        .filter(compilationUnit -> compilationUnit.getUnsupportedTreeCount() > 0)
                                         .map(compilationUnit -> compilationUnit.getSourceFile().getName())
                                         .forEach(unsupportedParseFileNames::add);
                                 compiler.getTransformContexts().stream()
                                         .map(BaseJaspilerContext::getCompilationUnitTree)
-                                        .filter(compilationUnit -> CollectionUtils.isNotEmpty(compilationUnit.getUnsupportedTrees()))
+                                        .filter(compilationUnit -> compilationUnit.getUnsupportedTreeCount() > 0)
                                         .map(compilationUnit -> compilationUnit.getSourceFile().getName())
                                         .forEach(unsupportedTransformFileNames::add);
                             }
@@ -148,9 +147,10 @@ public class TestJaspilerCompiler extends BaseTestSuite {
                             fail(e);
                         }
                     });
+        } catch (Throwable e) {
+            fail(e);
         }
-        unsupportedParseFileNames.forEach(fileName -> logger.error("Failed to parse [{}].", fileName));
-        unsupportedTransformFileNames.forEach(fileName -> logger.error("Failed to transform [{}].", fileName));
-        assertEquals(0, unsupportedParseFileNames.size(), "There shouldn't be any errors.");
+        assertEquals(0, unsupportedParseFileNames.size(), "There shouldn't be any errors during the parsing.");
+        assertEquals(0, unsupportedTransformFileNames.size(), "There shouldn't be any errors during the transforming.");
     }
 }
