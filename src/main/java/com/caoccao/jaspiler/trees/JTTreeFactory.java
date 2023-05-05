@@ -133,6 +133,8 @@ public final class JTTreeFactory {
                     case RETURN -> r = (R) create((ReturnTree) tree, parentTree, JTReturn::new);
                     case REQUIRES -> r = (R) create((RequiresTree) tree, parentTree, JTRequires::new);
                     case SWITCH -> r = (R) create((SwitchTree) tree, parentTree, JTSwitch::new);
+                    case SWITCH_EXPRESSION ->
+                            r = (R) create((SwitchExpressionTree) tree, parentTree, JTSwitchExpression::new);
                     case SYNCHRONIZED -> r = (R) create((SynchronizedTree) tree, parentTree, JTSynchronized::new);
                     case THROW -> r = (R) create((ThrowTree) tree, parentTree, JTThrow::new);
                     case TRY -> r = (R) create((TryTree) tree, parentTree, JTTry::new);
@@ -140,6 +142,7 @@ public final class JTTreeFactory {
                     case UNION_TYPE -> r = (R) create((UnionTypeTree) tree, parentTree, JTTypeUnion::new);
                     case VARIABLE -> r = (R) create((VariableTree) tree, parentTree, JTVariableDecl::new);
                     case WHILE_LOOP -> r = (R) create((WhileLoopTree) tree, parentTree, JTWhileLoop::new);
+                    case YIELD -> r = (R) create((YieldTree) tree, parentTree, JTYield::new);
                     default -> {
                         parentTree.getCompilationUnit().incrementUnsupportedTreeCount();
                         logger.warn(
