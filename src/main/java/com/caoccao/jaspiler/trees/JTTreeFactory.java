@@ -71,6 +71,7 @@ public final class JTTreeFactory {
                             OR_ASSIGNMENT, PLUS_ASSIGNMENT, REMAINDER_ASSIGNMENT, RIGHT_SHIFT_ASSIGNMENT, UNSIGNED_RIGHT_SHIFT_ASSIGNMENT,
                             XOR_ASSIGNMENT ->
                             r = (R) create((CompoundAssignmentTree) tree, parentTree, JTAssignOp::new);
+                    case ANNOTATED_TYPE -> r = (R) create((AnnotatedTypeTree) tree, parentTree, JTAnnotatedType::new);
                     case ANNOTATION -> r = (R) create((AnnotationTree) tree, parentTree, JTAnnotation::new);
                     case ANNOTATION_TYPE, CLASS, ENUM, INTERFACE, RECORD ->
                             r = (R) create((ClassTree) tree, parentTree, JTClassDecl::new);
