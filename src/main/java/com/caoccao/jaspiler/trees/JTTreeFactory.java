@@ -104,6 +104,8 @@ public final class JTTreeFactory {
                     case EXTENDS_WILDCARD, SUPER_WILDCARD, UNBOUNDED_WILDCARD ->
                             r = (R) create((WildcardTree) tree, parentTree, JTWildcard::new);
                     case FOR_LOOP -> r = (R) create((ForLoopTree) tree, parentTree, JTForLoop::new);
+                    case GUARDED_PATTERN ->
+                            r = (R) create((GuardedPatternTree) tree, parentTree, JTGuardedPattern::new);
                     case IDENTIFIER -> r = (R) create((IdentifierTree) tree, parentTree, JTIdent::new);
                     case IF -> r = (R) create((IfTree) tree, parentTree, JTIf::new);
                     case IMPORT -> r = (R) create((ImportTree) tree, parentTree, JTImport::new);
@@ -129,6 +131,8 @@ public final class JTTreeFactory {
                     case PARAMETERIZED_TYPE ->
                             r = (R) create((ParameterizedTypeTree) tree, parentTree, JTTypeApply::new);
                     case PARENTHESIZED -> r = (R) create((ParenthesizedTree) tree, parentTree, JTParens::new);
+                    case PARENTHESIZED_PATTERN ->
+                            r = (R) create((ParenthesizedPatternTree) tree, parentTree, JTParenthesizedPattern::new);
                     case PRIMITIVE_TYPE ->
                             r = (R) create((PrimitiveTypeTree) tree, parentTree, JTPrimitiveTypeTree::new);
                     case PROVIDES -> r = (R) create((ProvidesTree) tree, parentTree, JTProvides::new);
@@ -142,6 +146,7 @@ public final class JTTreeFactory {
                     case TRY -> r = (R) create((TryTree) tree, parentTree, JTTry::new);
                     case TYPE_CAST -> r = (R) create((TypeCastTree) tree, parentTree, JTTypeCast::new);
                     case UNION_TYPE -> r = (R) create((UnionTypeTree) tree, parentTree, JTTypeUnion::new);
+                    case USES -> r = (R) create((UsesTree) tree, parentTree, JTUses::new);
                     case VARIABLE -> r = (R) create((VariableTree) tree, parentTree, JTVariableDecl::new);
                     case WHILE_LOOP -> r = (R) create((WhileLoopTree) tree, parentTree, JTWhileLoop::new);
                     case YIELD -> r = (R) create((YieldTree) tree, parentTree, JTYield::new);

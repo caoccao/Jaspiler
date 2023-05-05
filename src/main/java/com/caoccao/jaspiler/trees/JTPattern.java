@@ -20,7 +20,7 @@ import com.sun.source.tree.PatternTree;
 
 public abstract class JTPattern<
         OriginalTree extends PatternTree,
-        NewTree extends JTCaseLabel<OriginalTree, NewTree>>
+        NewTree extends JTPattern<OriginalTree, NewTree>>
         extends JTCaseLabel<OriginalTree, NewTree>
         implements PatternTree {
     JTPattern(OriginalTree originalTree, JTTree<?, ?> parentTree) {
