@@ -106,6 +106,7 @@ public final class JTTreeFactory {
                     case FOR_LOOP -> r = (R) create((ForLoopTree) tree, parentTree, JTForLoop::new);
                     case IDENTIFIER -> r = (R) create((IdentifierTree) tree, parentTree, JTIdent::new);
                     case IF -> r = (R) create((IfTree) tree, parentTree, JTIf::new);
+                    case IMPORT -> r = (R) create((ImportTree) tree, parentTree, JTImport::new);
                     case INSTANCE_OF -> r = (R) create((InstanceOfTree) tree, parentTree, JTInstanceOf::new);
                     case INT_LITERAL, LONG_LITERAL, FLOAT_LITERAL, DOUBLE_LITERAL,
                             BOOLEAN_LITERAL, CHAR_LITERAL, STRING_LITERAL, NULL_LITERAL ->
