@@ -62,6 +62,7 @@ public final class JTTreeFactory {
                 case AND_ASSIGNMENT, DIVIDE_ASSIGNMENT, LEFT_SHIFT_ASSIGNMENT, MINUS_ASSIGNMENT, MULTIPLY_ASSIGNMENT,
                         OR_ASSIGNMENT, PLUS_ASSIGNMENT, REMAINDER_ASSIGNMENT, RIGHT_SHIFT_ASSIGNMENT, UNSIGNED_RIGHT_SHIFT_ASSIGNMENT,
                         XOR_ASSIGNMENT -> r = (R) create((CompoundAssignmentTree) tree, parentTree, JTAssignOp::new);
+                case ANNOTATION -> r = (R) create((AnnotationTree) tree, parentTree, JTAnnotation::new);
                 case ANNOTATION_TYPE, CLASS, ENUM, INTERFACE, RECORD ->
                         r = (R) create((ClassTree) tree, parentTree, JTClassDecl::new);
                 case ARRAY_ACCESS -> r = (R) create((ArrayAccessTree) tree, parentTree, JTArrayAccess::new);
@@ -98,6 +99,7 @@ public final class JTTreeFactory {
                         r = (R) create((LiteralTree) tree, parentTree, JTLiteral::new);
                 case INTERSECTION_TYPE ->
                         r = (R) create((IntersectionTypeTree) tree, parentTree, JTTypeIntersection::new);
+                case LABELED_STATEMENT -> r = (R) create((LabeledStatementTree) tree, parentTree, JTLabeledStatement::new);
                 case LAMBDA_EXPRESSION -> r = (R) create((LambdaExpressionTree) tree, parentTree, JTLambda::new);
                 case MEMBER_REFERENCE -> r = (R) create((MemberReferenceTree) tree, parentTree, JTMemberReference::new);
                 case MEMBER_SELECT -> r = (R) create((MemberSelectTree) tree, parentTree, JTFieldAccess::new);

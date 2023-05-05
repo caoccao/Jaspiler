@@ -16,8 +16,8 @@
 
 package com.caoccao.jaspiler;
 
+import com.caoccao.jaspiler.contexts.BaseJaspilerContext;
 import com.caoccao.jaspiler.contexts.JaspilerDocContext;
-import com.caoccao.jaspiler.contexts.JaspilerParseContext;
 import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
 import com.caoccao.jaspiler.mock.MockAllInOnePublicClass;
 import com.caoccao.jaspiler.mock.MockIgnorePublicClass;
@@ -114,9 +114,11 @@ public class TestJaspilerCompiler extends BaseTestSuite {
     public void testUnsupported() throws IOException {
         var dummyTransformScanner = new DummyTransformScanner();
         var dummyDocScanner = new DummyDocScanner();
-        List<JaspilerParseContext> parseContexts = new ArrayList<>();
-        List<JaspilerTransformContext> transformContexts = new ArrayList<>();
-        try (var stream = Files.walk(SystemUtils.WORKING_DIRECTORY.resolve("src"))) {
+        List<String> unsupportedParseFileNames = new ArrayList<>();
+        List<String> unsupportedTransformFileNames = new ArrayList<>();
+        var path = Path.of("");
+        path = SystemUtils.WORKING_DIRECTORY.resolve("src");
+        try (var stream = Files.walk(path)) {
             stream.filter(Files::isRegularFile)
                     .map(Path::toFile)
                     .filter(file -> file.getName().endsWith(".java"))
@@ -131,30 +133,24 @@ public class TestJaspilerCompiler extends BaseTestSuite {
                                         writer,
                                         JaspilerOptions.Default);
                             } finally {
-                                parseContexts.addAll(compiler.getParseContexts());
-                                transformContexts.addAll(compiler.getTransformContexts());
+                                compiler.getParseContexts().stream()
+                                        .map(context -> (JTCompilationUnit) context.getCompilationUnitTree())
+                                        .filter(compilationUnit -> CollectionUtils.isNotEmpty(compilationUnit.getUnsupportedTrees()))
+                                        .map(compilationUnit -> compilationUnit.getSourceFile().getName())
+                                        .forEach(unsupportedParseFileNames::add);
+                                compiler.getTransformContexts().stream()
+                                        .map(BaseJaspilerContext::getCompilationUnitTree)
+                                        .filter(compilationUnit -> CollectionUtils.isNotEmpty(compilationUnit.getUnsupportedTrees()))
+                                        .map(compilationUnit -> compilationUnit.getSourceFile().getName())
+                                        .forEach(unsupportedTransformFileNames::add);
                             }
                         } catch (IOException e) {
                             fail(e);
                         }
                     });
         }
-        List<Integer> errorCounts = new ArrayList<>();
-        parseContexts.forEach(context -> {
-            var compilationUnit = (JTCompilationUnit) context.getCompilationUnitTree();
-            if (CollectionUtils.isNotEmpty(compilationUnit.getUnsupportedTrees())) {
-                errorCounts.add(compilationUnit.getUnsupportedTrees().size());
-                logger.error("Failed to parse [{}].", compilationUnit.getSourceFile().getName());
-            }
-        });
-        transformContexts.forEach(context -> {
-            var compilationUnit = (JTCompilationUnit) context.getCompilationUnitTree();
-            if (CollectionUtils.isNotEmpty(compilationUnit.getUnsupportedTrees())) {
-                errorCounts.add(compilationUnit.getUnsupportedTrees().size());
-                logger.error("Failed to transform [{}].", compilationUnit.getSourceFile().getName());
-            }
-        });
-        assertEquals(0, errorCounts.stream().mapToInt(i -> i).sum(), "There shouldn't be any errors.");
+        unsupportedParseFileNames.forEach(fileName -> logger.error("Failed to parse [{}].", fileName));
+        unsupportedTransformFileNames.forEach(fileName -> logger.error("Failed to transform [{}].", fileName));
+        assertEquals(0, unsupportedParseFileNames.size(), "There shouldn't be any errors.");
     }
-
 }

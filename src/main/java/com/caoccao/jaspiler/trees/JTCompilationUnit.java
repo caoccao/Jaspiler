@@ -158,6 +158,7 @@ public final class JTCompilationUnit
             try {
                 originalCode = getOriginalTree().getSourceFile().getCharContent(true).toString();
             } catch (IOException e) {
+                logger.error("Failed to get the source code from [{}].", getSourceFile().getName());
                 throw new RuntimeException(e);
             }
         }
@@ -165,15 +166,25 @@ public final class JTCompilationUnit
     }
 
     public JTPosition getOriginalDocPosition(DocTree docTree) {
-        return docTree == null
-                ? JTPosition.Invalid
-                : JTPosition.from(docSourcePositions, this, docCommentTree, docTree);
+        try {
+            return docTree == null
+                    ? JTPosition.Invalid
+                    : JTPosition.from(docSourcePositions, this, docCommentTree, docTree);
+        } catch (Throwable e) {
+            logger.error("Failed to get position in [{}].", getSourceFile().getName());
+            throw e;
+        }
     }
 
     public JTPosition getOriginalPosition(Tree tree) {
-        return tree == null
-                ? JTPosition.Invalid
-                : JTPosition.from(sourcePositions, getOriginalTree(), tree);
+        try {
+            return tree == null
+                    ? JTPosition.Invalid
+                    : JTPosition.from(sourcePositions, getOriginalTree(), tree);
+        } catch (Throwable e) {
+            logger.error("Failed to get position in [{}].", getSourceFile().getName());
+            throw e;
+        }
     }
 
     @Override
