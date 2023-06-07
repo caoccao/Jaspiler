@@ -16,8 +16,6 @@
 
 /* test */package/* test */com./*1*/caoccao/*2*/.jaspiler.mock;
 
-import com.caoccao.jaspiler.JaspilerContract;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.annotation.*;
@@ -58,6 +56,8 @@ public class MockAllInOnePublicClass {
         }
         ++b;
         b -= 1;
+        System.out.println(StringUtils.isEmpty(a));
+        assertEquals(1, b);
     }
 }
 

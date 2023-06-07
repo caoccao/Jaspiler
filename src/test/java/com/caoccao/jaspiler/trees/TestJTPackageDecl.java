@@ -20,49 +20,36 @@ import com.caoccao.jaspiler.BaseTestSuite;
 import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
 import com.caoccao.jaspiler.mock.MockAllInOnePublicClass;
 import com.caoccao.jaspiler.visiters.JaspilerTransformScanner;
-import com.sun.source.tree.ImportTree;
+import com.sun.source.tree.PackageTree;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-public class TestJTImport extends BaseTestSuite {
-    protected static final String COMMONS_LANG_3_STRING_UTILS = "import org.apache.commons.lang3.StringUtils;";
-
+public class TestJTPackageDecl extends BaseTestSuite {
     @Test
     public void testIgnore() throws Exception {
         class TestTransformScanner extends JaspilerTransformScanner<TestTransformScanner> {
             @Override
-            public TestTransformScanner visitImport(ImportTree node, JaspilerTransformContext jaspilerTransformContext) {
-                if (node.toString().startsWith(COMMONS_LANG_3_STRING_UTILS)) {
-                    ((JTImport) node).setActionIgnore();
-                }
-                return super.visitImport(node, jaspilerTransformContext);
+            public TestTransformScanner visitPackage(PackageTree node, JaspilerTransformContext jaspilerTransformContext) {
+                ((JTPackageDecl) node).setActionIgnore();
+                return super.visitPackage(node, jaspilerTransformContext);
             }
         }
         String code = transform(new TestTransformScanner(), MockAllInOnePublicClass.class);
-        assertFalse(code.contains(COMMONS_LANG_3_STRING_UTILS));
-        var texts = List.of(
-                "* Copyright (c)",
-                "public class MockAllInOnePublicClass");
-        texts.forEach(text -> assertTrue(code.contains(text), text));
+        assertFalse(code.contains("package/* test */com./*1*/caoccao/*2*/.jaspiler.mock;"));
     }
 
     @Test
     public void testUpdate() throws Exception {
         class TestTransformScanner extends JaspilerTransformScanner<TestTransformScanner> {
             @Override
-            public TestTransformScanner visitImport(ImportTree node, JaspilerTransformContext jaspilerTransformContext) {
-                if (node.toString().startsWith(COMMONS_LANG_3_STRING_UTILS)) {
-                    ((JTImport) node)
-                            .setStaticImport(true)
-                            .setQualifiedIdentifier(JTTreeFactory.createFieldAccess("abc", "def"));
-                }
-                return super.visitImport(node, jaspilerTransformContext);
+            public TestTransformScanner visitPackage(PackageTree node, JaspilerTransformContext jaspilerTransformContext) {
+                ((JTPackageDecl) node).setPackageName(JTTreeFactory.createFieldAccess("abc", "def"));
+                return super.visitPackage(node, jaspilerTransformContext);
             }
         }
         String code = transform(new TestTransformScanner(), MockAllInOnePublicClass.class);
-        assertTrue(code.contains("import static abc.def;\n"));
+        assertTrue(code.contains("package abc.def;\n\n"));
     }
 }
