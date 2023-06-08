@@ -27,6 +27,12 @@ public final class ForEachUtils {
 
     public static <T> int forEach(
             List<T> list,
+            Consumer<T> itemConsumer) {
+        return forEach(list, itemConsumer, null, null, null);
+    }
+
+    public static <T> int forEach(
+            List<T> list,
             Consumer<T> itemConsumer,
             Consumer<T> interItemConsumer) {
         return forEach(list, itemConsumer, interItemConsumer, null, null);

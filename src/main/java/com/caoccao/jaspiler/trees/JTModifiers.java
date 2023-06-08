@@ -16,6 +16,7 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.utils.ForEachUtils;
 import com.caoccao.jaspiler.utils.StringBuilderPlus;
 import com.sun.source.tree.ModifiersTree;
 import com.sun.source.tree.TreeVisitor;
@@ -82,7 +83,9 @@ public final class JTModifiers
     public String toString() {
         if (isActionChange()) {
             final var sbp = new StringBuilderPlus();
-            sbp.append("<TODO>\n");
+            ForEachUtils.forEach(
+                    annotations.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
+                    sbp::append);
             return sbp.toString();
         }
         return super.toString();

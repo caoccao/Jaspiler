@@ -16,6 +16,7 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.utils.ForEachUtils;
 import com.caoccao.jaspiler.utils.StringBuilderPlus;
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.TreeVisitor;
@@ -102,15 +103,14 @@ public final class JTAnnotation
         if (isActionChange()) {
             int indent = getIndent();
             final var sbp = new StringBuilderPlus();
-            sbp.appendAt().append(annotationType).appendLeftParenthesis();
-            final int argumentCount = arguments.size();
-            for (int i = 0; i < argumentCount; i++) {
-                sbp.append(arguments.get(i));
-                if (i < argumentCount - 1) {
-                    sbp.append(IJTConstants.COMMA_);
-                }
-            }
-            sbp.appendRightParenthesis().append(JTLineSeparator.L1);
+            sbp.appendAt().append(annotationType);
+            ForEachUtils.forEach(
+                    arguments.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
+                    sbp::append,
+                    tree -> sbp.appendComma().appendSpace(),
+                    trees -> sbp.appendLeftParenthesis(),
+                    trees -> sbp.appendRightParenthesis());
+            sbp.appendLineSeparator();
             return sbp.toString();
         }
         return super.toString();

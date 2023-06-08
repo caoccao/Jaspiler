@@ -50,7 +50,7 @@ public class TestJTAnnotation extends BaseTestSuite {
         texts.forEach(text -> assertTrue(code.contains(text), text));
     }
 
-//    @Test
+    @Test
     public void testUpdate() throws Exception {
         class TestTransformScanner extends JaspilerTransformScanner<TestTransformScanner> {
             @Override
@@ -66,7 +66,6 @@ public class TestJTAnnotation extends BaseTestSuite {
             }
         }
         String code = transform(new TestTransformScanner(), MockAllInOnePublicClass.class);
-        System.out.println(code);
-        assertTrue(code.contains("@X.Y.Z(A1.B1.C1, A2.B2.C2)\n"));
+        assertTrue(code.contains("@X.Y.Z(RetentionPolicy.RUNTIME, A1.B1.C1, A2.B2.C2)\n"));
     }
 }

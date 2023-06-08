@@ -91,7 +91,6 @@ public class TestJaspilerCompiler extends BaseTestSuite {
         }
         {
             String code = transform(new TestTransformScanner(), new TestDocScanner(), MockAllInOnePublicClass.class);
-            logger.debug(code);
             var texts = List.of(
                     "* Copyright (c)",
                     "package a1.a2;",
