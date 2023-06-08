@@ -41,7 +41,7 @@ public class TestJTPackageDecl extends BaseTestSuite {
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdatePackageName() throws Exception {
         class TestTransformScanner extends JaspilerTransformScanner<TestTransformScanner> {
             @Override
             public TestTransformScanner visitPackage(PackageTree node, JaspilerTransformContext jaspilerTransformContext) {

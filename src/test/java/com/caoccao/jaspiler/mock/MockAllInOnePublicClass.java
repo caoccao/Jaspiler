@@ -14,18 +14,35 @@
  * limitations under the License.
  */
 
-/* test */package/* test */com./*1*/caoccao/*2*/.jaspiler.mock;
+/* test */
+package/* test */com./*1*/caoccao/*2*/.jaspiler.mock;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.annotation.*;
 import java.nio.file.FileAlreadyExistsException;
-import java.util./* test */ArrayList;
-import java.util.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import org.apache.commons.lang3.StringUtils;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
-public class MockAllInOnePublicClass {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@Documented
+@Inherited
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.ANNOTATION_TYPE)
+@interface Annotation1 {
+    String value() default "value";
+}
+
+@SuppressWarnings("unchecked")
+public abstract sealed class MockAllInOnePublicClass
+        extends Object
+        implements Serializable, AutoCloseable
+        permits MockChild {
     public int b;
     private String a;
     private List<Object> list;
@@ -59,13 +76,13 @@ public class MockAllInOnePublicClass {
         System.out.println(StringUtils.isEmpty(a));
         assertEquals(1, b);
     }
+
+    @Override
+    public void close() throws Exception {
+
+    }
 }
 
-@Documented
-@Inherited
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.ANNOTATION_TYPE)
-@interface Annotation1 {
-    String value() default "value";
-}
+final class MockChild extends MockAllInOnePublicClass {
 
+}

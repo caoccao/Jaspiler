@@ -16,6 +16,7 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.utils.StringBuilderPlus;
 import com.sun.source.tree.ImportTree;
 import com.sun.source.tree.TreeVisitor;
 
@@ -100,14 +101,13 @@ public final class JTImport
     @Override
     public String toString() {
         if (isActionChange()) {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append(IJTConstants.IMPORT_);
+            final var sbp = new StringBuilderPlus();
+            sbp.append(IJTConstants.IMPORT).appendSpace();
             if (staticImport) {
-                stringBuilder.append(IJTConstants.STATIC_);
+                sbp.append(IJTConstants.STATIC).appendSpace();
             }
-            stringBuilder.append(qualifiedIdentifier).append(IJTConstants.SEMI_COLON)
-                    .append(IJTConstants.LINE_SEPARATOR);
-            return stringBuilder.toString();
+            sbp.append(qualifiedIdentifier).append(IJTConstants.SEMI_COLON).appendLineSeparator();
+            return sbp.toString();
         }
         return super.toString();
     }

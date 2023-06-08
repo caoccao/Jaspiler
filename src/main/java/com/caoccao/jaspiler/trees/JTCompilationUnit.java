@@ -18,6 +18,8 @@ package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.JaspilerContract;
 import com.caoccao.jaspiler.JaspilerOptions;
+import com.caoccao.jaspiler.utils.ForEachUtils;
+import com.caoccao.jaspiler.utils.StringBuilderPlus;
 import com.sun.source.doctree.DocCommentTree;
 import com.sun.source.doctree.DocTree;
 import com.sun.source.tree.*;
@@ -26,7 +28,6 @@ import com.sun.source.util.DocTrees;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.Trees;
 
-import javax.lang.model.element.Modifier;
 import javax.tools.JavaFileObject;
 import java.io.File;
 import java.io.FileWriter;
@@ -104,7 +105,6 @@ public final class JTCompilationUnit
         var nodes = super.getAllNodes();
         Optional.ofNullable(packageTree).ifPresent(nodes::add);
         imports.stream().filter(Objects::nonNull).forEach(nodes::add);
-        nodes.add(JTLineSeparator.L2);
         typeDecls.stream().filter(Objects::nonNull).forEach(nodes::add);
         Optional.ofNullable(moduleTree).ifPresent(nodes::add);
         nodes.forEach(node -> node.setParentTree(this));
@@ -285,18 +285,9 @@ public final class JTCompilationUnit
              */
             boolean ignore = typeDecls.stream()
                     .filter(typeDecl -> typeDecl instanceof JTClassDecl)
-                    .anyMatch(typeDecl -> {
-                        var modifiers = ((JTClassDecl) typeDecl).getModifiers();
-                        if (modifiers.getFlags().contains(Modifier.PUBLIC)) {
-                            if (modifiers.getAnnotations().stream()
-                                    .anyMatch(annotation -> annotation.toString().startsWith("@JaspilerContract.Ignore"))) {
-                                return true;
-                            }
-                        }
-                        return false;
-                    });
+                    .anyMatch(IJTTree::isActionIgnore);
             if (ignore) {
-                return false;
+                setActionIgnore();
             }
         }
         return super.save(writer);
@@ -321,14 +312,31 @@ public final class JTCompilationUnit
     @Override
     public String toString() {
         if (isActionChange()) {
-            var stringBuilder = new StringBuilder();
+            final var sbp = new StringBuilderPlus();
             if (getOptions().isPreserveCopyrights()
                     && getOriginalPosition().isValid()
                     && getOriginalPosition().startPosition() > 0) {
-                stringBuilder.append(getOriginalCode(), 0, (int) getOriginalPosition().startPosition());
+                sbp.append(getOriginalCode(), 0, (int) getOriginalPosition().startPosition());
             }
-            getAllNodes().forEach(stringBuilder::append);
-            return stringBuilder.toString();
+            if (packageTree != null) {
+                sbp.append(packageTree);
+            }
+            ForEachUtils.forEach(
+                    imports.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
+                    sbp::append,
+                    null,
+                    null,
+                    trees -> sbp.appendLineSeparator());
+            ForEachUtils.forEach(
+                    typeDecls.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
+                    sbp::append,
+                    tree -> sbp.appendLineSeparator(),
+                    trees -> sbp.appendLineSeparator(),
+                    trees -> sbp.appendLineSeparator());
+            if (moduleTree != null) {
+                sbp.append(moduleTree).appendLineSeparator();
+            }
+            return sbp.toString();
         }
         return getOriginalCode();
     }

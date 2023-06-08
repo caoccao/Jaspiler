@@ -25,7 +25,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestJTImport extends BaseTestSuite {
     protected static final String COMMONS_LANG_3_STRING_UTILS = "import org.apache.commons.lang3.StringUtils;";
@@ -45,12 +46,12 @@ public class TestJTImport extends BaseTestSuite {
         assertFalse(code.contains(COMMONS_LANG_3_STRING_UTILS));
         var texts = List.of(
                 "* Copyright (c)",
-                "public class MockAllInOnePublicClass");
+                "public abstract sealed class MockAllInOnePublicClass");
         texts.forEach(text -> assertTrue(code.contains(text), text));
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    public void testUpdateQualifiedIdentifier() throws Exception {
         class TestTransformScanner extends JaspilerTransformScanner<TestTransformScanner> {
             @Override
             public TestTransformScanner visitImport(ImportTree node, JaspilerTransformContext jaspilerTransformContext) {

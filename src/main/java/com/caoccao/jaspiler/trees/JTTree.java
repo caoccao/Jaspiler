@@ -60,6 +60,22 @@ public abstract class JTTree<
         return new ArrayList<>();
     }
 
+    int getIndent() {
+        return getIndent(0);
+    }
+
+    int getIndent(int depth) {
+        int indent = depth * getCompilationUnit().getOptions().getIndentSize();
+        var ancestorTree = getParentTree();
+        while (ancestorTree != null && !(ancestorTree instanceof JTCompilationUnit)) {
+            if (ancestorTree instanceof JTClassDecl) {
+                indent += getCompilationUnit().getOptions().getIndentSize();
+            }
+            ancestorTree = ancestorTree.getParentTree();
+        }
+        return indent;
+    }
+
     protected int getLineSeparatorCount() {
         return 0;
     }

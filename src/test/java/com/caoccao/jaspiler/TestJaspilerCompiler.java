@@ -20,7 +20,6 @@ import com.caoccao.jaspiler.contexts.BaseJaspilerContext;
 import com.caoccao.jaspiler.contexts.JaspilerDocContext;
 import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
 import com.caoccao.jaspiler.mock.MockAllInOnePublicClass;
-import com.caoccao.jaspiler.mock.MockIgnorePublicClass;
 import com.caoccao.jaspiler.trees.JTCompilationUnit;
 import com.caoccao.jaspiler.trees.JTImport;
 import com.caoccao.jaspiler.trees.JTPackageDecl;
@@ -34,7 +33,6 @@ import com.sun.source.doctree.DocTree;
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.ImportTree;
 import com.sun.source.tree.PackageTree;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -68,7 +66,7 @@ public class TestJaspilerCompiler extends BaseTestSuite {
 
             @Override
             public TestTransformScanner visitImport(ImportTree node, JaspilerTransformContext jaspilerTransformContext) {
-                if (node.toString().contains("import java.util.*;")) {
+                if (node.toString().contains("import java.util.List;")) {
                     var jtImport = (JTImport) node;
                     jtImport.setStaticImport(true);
                     jtImport.setQualifiedIdentifier(JTTreeFactory.createFieldAccess("i1", "i2", "i3"));
@@ -88,7 +86,7 @@ public class TestJaspilerCompiler extends BaseTestSuite {
             var texts = List.of(
                     "* Copyright (c)",
                     "package/* test */com./*1*/caoccao/*2*/.jaspiler.mock;",
-                    "import java.util./* test */ArrayList;");
+                    "import java.util.ArrayList;");
             texts.forEach(text -> assertTrue(code.contains(text), text));
         }
         {
@@ -97,14 +95,10 @@ public class TestJaspilerCompiler extends BaseTestSuite {
             var texts = List.of(
                     "* Copyright (c)",
                     "package a1.a2;",
-                    "import java.util./* test */ArrayList;",
+                    "import java.util.ArrayList;",
                     "import static i1.i2.i3;",
                     "import i4.i5;");
             texts.forEach(text -> assertTrue(code.contains(text), text));
-        }
-        {
-            String code = transform(new TestTransformScanner(), new TestDocScanner(), MockIgnorePublicClass.class);
-            assertTrue(StringUtils.isEmpty(code));
         }
     }
 

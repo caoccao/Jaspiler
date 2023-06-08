@@ -16,6 +16,7 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.utils.StringBuilderPlus;
 import com.sun.source.tree.ModifiersTree;
 import com.sun.source.tree.TreeVisitor;
 
@@ -74,15 +75,15 @@ public final class JTModifiers
 
     @Override
     protected int getLineSeparatorCount() {
-        return 1;
+        return 0;
     }
 
     @Override
     public String toString() {
         if (isActionChange()) {
-            StringBuilder stringBuilder = new StringBuilder();
-            // TODO
-            return stringBuilder.toString();
+            final var sbp = new StringBuilderPlus();
+            sbp.append("<TODO>\n");
+            return sbp.toString();
         }
         return super.toString();
     }

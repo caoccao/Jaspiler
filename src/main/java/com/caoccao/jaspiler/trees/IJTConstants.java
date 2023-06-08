@@ -16,18 +16,30 @@
 
 package com.caoccao.jaspiler.trees;
 
-interface IJTConstants {
+public interface IJTConstants {
     String AT = "@";
+    String CLASS = "class";
+    String COMMA = ",";
     String COMMA_ = ", ";
     String DOT = ".";
     String EMPTY = "";
-    String IMPORT_ = "import ";
+    String ENUM = "enum";
+    String EXTENDS = "extends";
+    String IMPLEMENTS = "implements";
+    String IMPORT = "import";
+    String INTERFACE = "interface";
+    String LEFT_ARROW = "<";
+    String LEFT_CURLY_BRACKET = "{";
     String LEFT_PARENTHESIS = "(";
     String LINE_SEPARATOR = "\n";
-    String PACKAGE_ = "package ";
+    String PACKAGE = "package";
+    String PERMITS = "permits";
+    String RECORD = "record";
+    String RIGHT_ARROW = ">";
+    String RIGHT_CURLY_BRACKET = "}";
     String RIGHT_PARENTHESIS = ")";
     String SEMI_COLON = ";";
     String SPACE = " ";
-    String STATIC_ = "static ";
+    String STATIC = "static";
     String UNEXPECTED = "unexpected";
 }

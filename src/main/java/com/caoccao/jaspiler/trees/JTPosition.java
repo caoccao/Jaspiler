@@ -16,6 +16,7 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.utils.StringBuilderPlus;
 import com.sun.source.doctree.DocCommentTree;
 import com.sun.source.doctree.DocTree;
 import com.sun.source.tree.CompilationUnitTree;
@@ -71,11 +72,11 @@ public record JTPosition(
 
     @Override
     public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("S: ").append(startPosition).append(", ");
-        stringBuilder.append("E: ").append(endPosition).append(", ");
-        stringBuilder.append("L: ").append(lineNumber).append(", ");
-        stringBuilder.append("C: ").append(columnNumber);
-        return stringBuilder.toString();
+        final var sbp = new StringBuilderPlus();
+        sbp.append("S: ").append(startPosition).appendComma().appendSpace();
+        sbp.append("E: ").append(endPosition).appendComma().appendSpace();
+        sbp.append("L: ").append(lineNumber).appendComma().appendSpace();
+        sbp.append("C: ").append(columnNumber);
+        return sbp.toString();
     }
 }

@@ -17,6 +17,8 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerNotSupportedException;
+import com.caoccao.jaspiler.utils.ForEachUtils;
+import com.caoccao.jaspiler.utils.StringBuilderPlus;
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.TreeVisitor;
 
@@ -173,10 +175,49 @@ public final class JTClassDecl
     @Override
     public String toString() {
         if (isActionChange()) {
-            var stringBuilder = new StringBuilder();
-            getAllNodes().forEach(stringBuilder::append);
-            // TODO
-            return stringBuilder.toString();
+            int indent = getIndent();
+            int childIndent = getIndent(1);
+            final var sbp = new StringBuilderPlus();
+            sbp.appendSpace(indent).append(modifiers);
+            ForEachUtils.forEach(
+                    typeParameters.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
+                    sbp::append,
+                    tree -> sbp.appendComma().appendSpace(),
+                    trees -> sbp.appendSpaceIfNeeded().appendLeftArrow(),
+                    trees -> sbp.appendSpaceIfNeeded().appendRightArrow());
+            var classType = IJTConstants.EMPTY;
+            switch (kind) {
+                case ANNOTATION_TYPE, INTERFACE -> classType = IJTConstants.INTERFACE;
+                case CLASS -> classType = IJTConstants.CLASS;
+                case ENUM -> classType = IJTConstants.ENUM;
+                case RECORD -> classType = IJTConstants.RECORD;
+            }
+            sbp.appendSpaceIfNeeded().append(classType).appendSpace().append(simpleName);
+            if (extendsClause != null) {
+                sbp.appendSpaceIfNeeded().append(IJTConstants.EXTENDS).appendSpace().append(extendsClause);
+            }
+            ForEachUtils.forEach(
+                    implementsClauses.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
+                    sbp::append,
+                    tree -> sbp.appendComma().appendSpace(),
+                    trees -> sbp.appendSpaceIfNeeded().append(IJTConstants.IMPLEMENTS).appendSpace());
+            ForEachUtils.forEach(
+                    permitsClauses.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
+                    sbp::append,
+                    tree -> sbp.appendComma().appendSpace(),
+                    trees -> sbp.appendSpaceIfNeeded().append(IJTConstants.PERMITS).appendSpace());
+            sbp.appendSpaceIfNeeded().appendLeftCurlyBracket().appendLineSeparator();
+            ForEachUtils.forEach(
+                    members.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
+                    member -> {
+                        if (!member.isActionChange()) {
+                            sbp.appendSpace(childIndent);
+                        }
+                        sbp.append(member).appendLineSeparator();
+                    },
+                    tree -> sbp.appendLineSeparator());
+            sbp.appendSpace(indent).appendRightCurlyBracket().appendLineSeparator();
+            return sbp.toString();
         }
         return super.toString();
     }

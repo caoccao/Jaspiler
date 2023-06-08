@@ -142,15 +142,4 @@ public final class JTVariableDecl
         this.type = Optional.ofNullable(type).map(o -> o.setParentTree(this)).orElse(null);
         return setActionChange();
     }
-
-    @Override
-    public String toString() {
-        if (isActionChange()) {
-            var stringBuilder = new StringBuilder();
-            getAllNodes().forEach(stringBuilder::append);
-            // TODO
-            return stringBuilder.toString();
-        }
-        return super.toString();
-    }
 }

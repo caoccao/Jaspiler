@@ -16,6 +16,7 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.utils.StringBuilderPlus;
 import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.TreeVisitor;
 
@@ -99,14 +100,14 @@ public final class JTFieldAccess
     @Override
     public String toString() {
         if (isActionChange()) {
-            var stringBuilder = new StringBuilder();
+            final var sbp = new StringBuilderPlus();
             if (expression != null) {
-                stringBuilder.append(expression).append(IJTConstants.DOT);
+                sbp.append(expression).appendDot();
             }
             if (identifier != null) {
-                stringBuilder.append(identifier);
+                sbp.append(identifier);
             }
-            return stringBuilder.toString();
+            return sbp.toString();
         }
         return super.toString();
     }

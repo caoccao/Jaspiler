@@ -17,8 +17,11 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.BaseTestSuite;
+import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
+import com.caoccao.jaspiler.mock.MockAllInOnePublicClass;
 import com.caoccao.jaspiler.mock.MockIgnorePublicClass;
 import com.caoccao.jaspiler.visiters.JaspilerTransformScanner;
+import com.sun.source.tree.ClassTree;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
@@ -28,8 +31,30 @@ public class TestJTClassDecl extends BaseTestSuite {
     @Test
     public void testIgnore() throws Exception {
         class TestTransformScanner extends JaspilerTransformScanner<TestTransformScanner> {
+            @Override
+            public TestTransformScanner visitClass(ClassTree node, JaspilerTransformContext jaspilerTransformContext) {
+                ((JTClassDecl) node).setActionIgnore();
+                return super.visitClass(node, jaspilerTransformContext);
+            }
         }
         String code = transform(new TestTransformScanner(), MockIgnorePublicClass.class);
         assertTrue(StringUtils.isEmpty(code));
+    }
+
+    @Test
+    public void testUpdateSimpleName() throws Exception {
+        String newClassName = "ANewClassName";
+        class TestTransformScanner extends JaspilerTransformScanner<TestTransformScanner> {
+            @Override
+            public TestTransformScanner visitClass(ClassTree node, JaspilerTransformContext jaspilerTransformContext) {
+                var jtClassDecl = (JTClassDecl) node;
+                if (MockAllInOnePublicClass.class.getSimpleName().equals(jtClassDecl.getSimpleName().getValue())) {
+                    jtClassDecl.setSimpleName(new JTName(newClassName));
+                }
+                return super.visitClass(node, jaspilerTransformContext);
+            }
+        }
+        String code = transform(new TestTransformScanner(), MockAllInOnePublicClass.class);
+        assertTrue(code.contains("public abstract sealed class " + newClassName));
     }
 }

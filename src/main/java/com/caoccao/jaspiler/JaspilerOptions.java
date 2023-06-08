@@ -18,11 +18,20 @@ package com.caoccao.jaspiler;
 
 public final class JaspilerOptions {
     public static final JaspilerOptions Default = new JaspilerOptions().seal();
+    public static final int DEFAULT_INDENT_SIZE = 4;
+    public static final int MIN_INDENT_SIZE = 0;
+    public static final int MAX_INDENT_SIZE = 100;
+    private int indentSize;
     private boolean preserveCopyrights;
     private boolean sealed;
 
     public JaspilerOptions() {
+        setIndentSize(DEFAULT_INDENT_SIZE);
         setPreserveCopyrights(true);
+    }
+
+    public int getIndentSize() {
+        return indentSize;
     }
 
     public boolean isPreserveCopyrights() {
@@ -38,8 +47,15 @@ public final class JaspilerOptions {
         return this;
     }
 
+    public JaspilerOptions setIndentSize(int indentSize) {
+        if (!sealed) {
+            this.indentSize = Math.min(Math.max(indentSize, MIN_INDENT_SIZE), MAX_INDENT_SIZE);
+        }
+        return this;
+    }
+
     public JaspilerOptions setPreserveCopyrights(boolean preserveCopyrights) {
-        if (!isSealed()) {
+        if (!sealed) {
             this.preserveCopyrights = preserveCopyrights;
         }
         return this;
