@@ -24,6 +24,7 @@ public interface IJTConstants {
     String DOT = ".";
     String EMPTY = "";
     String ENUM = "enum";
+    String EQUAL = "=";
     String EXTENDS = "extends";
     String IMPLEMENTS = "implements";
     String IMPORT = "import";

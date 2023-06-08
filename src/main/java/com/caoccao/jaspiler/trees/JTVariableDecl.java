@@ -16,6 +16,7 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.utils.StringBuilderPlus;
 import com.sun.source.tree.TreeVisitor;
 import com.sun.source.tree.VariableTree;
 
@@ -144,5 +145,22 @@ public final class JTVariableDecl
         }
         this.type = Optional.ofNullable(type).map(o -> o.setParentTree(this)).orElse(null);
         return setActionChange();
+    }
+
+    @Override
+    public String toString() {
+        if (isActionChange()) {
+            int indent = getIndent();
+            final var sbp = new StringBuilderPlus();
+            Optional.ofNullable(modifiers).ifPresent(tree -> sbp.appendSpace(indent).append(tree));
+            Optional.ofNullable(type).ifPresent(tree -> sbp.appendSpaceIfNeeded().append(tree));
+            Optional.ofNullable(nameExpression).ifPresent(tree -> sbp.appendSpaceIfNeeded().append(tree));
+            Optional.ofNullable(name).ifPresent(tree -> sbp.appendSpaceIfNeeded().append(tree)
+                    .appendSpace().appendEqual());
+            Optional.ofNullable(initializer).ifPresent(tree -> sbp.appendSpaceIfNeeded().append(tree));
+            sbp.appendSemiColon();
+            return sbp.toString();
+        }
+        return super.toString();
     }
 }

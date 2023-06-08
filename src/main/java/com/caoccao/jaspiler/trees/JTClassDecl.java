@@ -207,11 +207,11 @@ public final class JTClassDecl
             sbp.appendSpaceIfNeeded().appendLeftCurlyBracket().appendLineSeparator();
             ForEachUtils.forEach(
                     members.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
-                    member -> {
-                        if (!member.isActionChange()) {
+                    tree -> {
+                        if (!tree.isActionChange()) {
                             sbp.appendSpace(childIndent);
                         }
-                        sbp.append(member).appendLineSeparator();
+                        sbp.append(tree).appendLineSeparator();
                     },
                     tree -> sbp.appendLineSeparator());
             sbp.appendSpace(indent).appendRightCurlyBracket().appendLineSeparator();

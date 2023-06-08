@@ -25,9 +25,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.annotation.*;
 import java.nio.file.FileAlreadyExistsException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -49,6 +47,11 @@ public abstract sealed class MockAllInOnePublicClass
     public int b;
     private String a;
     private List<Object> list;
+    @Deprecated
+    private Map<String, Object> map = new HashMap<>() {{
+        put("a", 1);
+        put("b", 2);
+    }};
 
     /**
      * Test.

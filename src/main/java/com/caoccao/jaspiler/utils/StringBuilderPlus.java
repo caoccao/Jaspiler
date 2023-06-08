@@ -99,6 +99,11 @@ public class StringBuilderPlus implements IJTConstants, Appendable, CharSequence
         return this;
     }
 
+    public StringBuilderPlus appendEqual() {
+        stringBuilder.append(EQUAL);
+        return this;
+    }
+
     public StringBuilderPlus appendLeftArrow() {
         stringBuilder.append(LEFT_ARROW);
         return this;

@@ -20,28 +20,26 @@ import com.caoccao.jaspiler.BaseTestSuite;
 import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
 import com.caoccao.jaspiler.mock.MockAllInOnePublicClass;
 import com.caoccao.jaspiler.visiters.JaspilerTransformScanner;
-import com.sun.source.tree.MethodTree;
+import com.sun.source.tree.VariableTree;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TestJTMethodDecl extends BaseTestSuite {
+public class TestJTVariableDecl extends BaseTestSuite {
     @Test
     public void testUpdateName() throws Exception {
-        String newMethodName = "ANewMethodName";
+        String newVariableName = "newVariableName";
         class TestTransformScanner extends JaspilerTransformScanner<TestTransformScanner> {
             @Override
-            public TestTransformScanner visitMethod(MethodTree node, JaspilerTransformContext jaspilerTransformContext) {
-                var jtMethodDecl = (JTMethodDecl) node;
-                if ("Test".equals(jtMethodDecl.getName().getValue())) {
-                    jtMethodDecl.setName(new JTName(newMethodName));
+            public TestTransformScanner visitVariable(VariableTree node, JaspilerTransformContext jaspilerTransformContext) {
+                var jtVariableDecl = (JTVariableDecl) node;
+                if ("map".equals(jtVariableDecl.getName().getValue())) {
+                    jtVariableDecl.setName(new JTName(newVariableName));
                 }
-                return super.visitMethod(node, jaspilerTransformContext);
+                return super.visitVariable(node, jaspilerTransformContext);
             }
         }
         String code = transform(new TestTransformScanner(), MockAllInOnePublicClass.class);
-        assertTrue(code.contains("public final <T> void " +
-                newMethodName + "(T x, @Deprecated int y) " +
-                "throws IOException, NoClassDefFoundError {"));
+        assertTrue(code.contains("private Map<String, Object> newVariableName = new HashMap<>() {{"));
     }
 }
