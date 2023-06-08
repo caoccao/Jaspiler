@@ -26,16 +26,16 @@ import java.util.Optional;
 
 /**
  * The type Module Declaration.
- *
+ * <p>
  * module a.b.c {
- *     exports a.b.c;
- *     opens a.b.c;
- *     requires x.y.z;
+ * exports a.b.c;
+ * opens a.b.c;
+ * requires x.y.z;
  * }
  */
 public final class JTModuleDecl
         extends JTTree<ModuleTree, JTModuleDecl>
-        implements ModuleTree {
+        implements ModuleTree, IJTAnnotatable {
     private final List<JTAnnotation> annotations;
     private final List<JTDirective<?, ?>> directives;
     private ModuleKind moduleType;
@@ -66,6 +66,9 @@ public final class JTModuleDecl
         name = JTTreeFactory.create(getOriginalTree().getName(), this);
         JTTreeFactory.createAndAdd(
                 getOriginalTree().getDirectives(), this, (JTDirective<?, ?> o) -> directives.add(o));
+        if (containsIgnore()) {
+            setActionIgnore();
+        }
         return this;
     }
 

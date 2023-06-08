@@ -134,6 +134,11 @@ public abstract class JTTree<
         return setAction(JaspilerContract.Action.Ignore);
     }
 
+    @Override
+    public NewTree setActionNoChange() {
+        return setAction(JaspilerContract.Action.NoChange);
+    }
+
     NewTree setParentTree(JTTree<?, ?> parentTree) {
         if (this.parentTree != parentTree) {
             this.parentTree = parentTree;

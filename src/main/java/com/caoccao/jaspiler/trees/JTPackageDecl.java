@@ -31,7 +31,7 @@ import java.util.Optional;
  */
 public final class JTPackageDecl
         extends JTTree<PackageTree, JTPackageDecl>
-        implements PackageTree {
+        implements PackageTree, IJTAnnotatable {
     private final List<JTAnnotation> annotations;
     private JTExpression<?, ?> packageName;
 

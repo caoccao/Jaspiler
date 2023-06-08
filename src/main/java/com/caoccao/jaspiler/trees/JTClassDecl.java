@@ -76,6 +76,9 @@ public final class JTClassDecl
                 getOriginalTree().getMembers(), this, members::add);
         simpleName = JTTreeFactory.createName(getOriginalTree().getSimpleName());
         kind = getOriginalTree().getKind();
+        if (Optional.ofNullable(modifiers).filter(IJTAnnotatable::containsIgnore).isPresent()) {
+            setActionIgnore();
+        }
         return this;
     }
 

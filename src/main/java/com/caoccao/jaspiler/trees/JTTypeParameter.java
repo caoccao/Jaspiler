@@ -25,7 +25,7 @@ import java.util.Objects;
 
 public final class JTTypeParameter
         extends JTTree<TypeParameterTree, JTTypeParameter>
-        implements TypeParameterTree {
+        implements TypeParameterTree, IJTAnnotatable {
     private final List<JTAnnotation> annotations;
     private final List<JTExpression<?, ?>> bounds;
     private JTName name;

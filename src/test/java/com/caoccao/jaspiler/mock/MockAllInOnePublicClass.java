@@ -17,6 +17,7 @@
 /* test */
 package/* test */com./*1*/caoccao/*2*/.jaspiler.mock;
 
+import com.caoccao.jaspiler.JaspilerContract;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.FileNotFoundException;
@@ -43,6 +44,8 @@ public abstract sealed class MockAllInOnePublicClass
         extends Object
         implements Serializable, AutoCloseable
         permits MockChild {
+    @Deprecated
+    @JaspilerContract.Ignore
     public int b;
     private String a;
     private List<Object> list;

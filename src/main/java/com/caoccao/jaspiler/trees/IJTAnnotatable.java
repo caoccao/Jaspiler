@@ -17,35 +17,22 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.JaspilerContract;
-import com.sun.source.tree.Tree;
+import org.apache.commons.lang3.StringUtils;
 
-public interface IJTTree<
-        OriginalTree extends Tree,
-        NewTree extends IJTTree<OriginalTree, NewTree>>
-        extends Tree {
-    JaspilerContract.Action getAction();
+import java.util.List;
 
-    default JTCompilationUnit getCompilationUnit() {
-        return getParentTree().getCompilationUnit();
+public interface IJTAnnotatable {
+    default boolean contains(String annotationString) {
+        if (StringUtils.isAllBlank(annotationString)) {
+            return false;
+        }
+        return getAnnotations().stream()
+                .anyMatch(annotation -> annotationString.equals(annotation.toString()));
     }
 
-    JTPosition getOriginalPosition();
-
-    OriginalTree getOriginalTree();
-
-    JTTree<?, ?> getParentTree();
-
-    boolean isActionChange();
-
-    default boolean isActionIgnore() {
-        return getAction().isIgnore();
+    default boolean containsIgnore() {
+        return contains(JaspilerContract.ANNOTATION_IGNORE);
     }
 
-    NewTree setAction(JaspilerContract.Action action);
-
-    NewTree setActionChange();
-
-    NewTree setActionIgnore();
-
-    NewTree setActionNoChange();
+    List<JTAnnotation> getAnnotations();
 }

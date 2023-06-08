@@ -26,7 +26,7 @@ import java.util.Optional;
 
 public final class JTAnnotatedType
         extends JTExpression<AnnotatedTypeTree, JTAnnotatedType>
-        implements AnnotatedTypeTree {
+        implements AnnotatedTypeTree, IJTAnnotatable {
 
     private final List<JTAnnotation> annotations;
     private JTExpression<?, ?> underlyingType;

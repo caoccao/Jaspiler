@@ -17,6 +17,7 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.BaseTestSuite;
+import com.caoccao.jaspiler.JaspilerContract;
 import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
 import com.caoccao.jaspiler.mock.MockAllInOnePublicClass;
 import com.caoccao.jaspiler.mock.MockIgnorePublicClass;
@@ -29,20 +30,30 @@ import org.junit.jupiter.api.Test;
 import javax.lang.model.element.Modifier;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestJTClassDecl extends BaseTestSuite {
     @Test
     public void testIgnore() throws Exception {
-        class TestTransformScanner extends JaspilerTransformScanner<TestTransformScanner> {
+        class TestIgnoreTransformScanner extends JaspilerTransformScanner<TestIgnoreTransformScanner> {
+        }
+        String code = transform(new TestIgnoreTransformScanner(), MockIgnorePublicClass.class);
+        assertTrue(StringUtils.isEmpty(code));
+        class TestNoChangeTransformScanner extends JaspilerTransformScanner<TestNoChangeTransformScanner> {
             @Override
-            public TestTransformScanner visitClass(ClassTree node, JaspilerTransformContext jaspilerTransformContext) {
-                ((JTClassDecl) node).setActionIgnore();
+            public TestNoChangeTransformScanner visitClass(ClassTree node, JaspilerTransformContext jaspilerTransformContext) {
+                ((JTClassDecl) node).setActionNoChange();
                 return super.visitClass(node, jaspilerTransformContext);
             }
         }
-        String code = transform(new TestTransformScanner(), MockIgnorePublicClass.class);
-        assertTrue(StringUtils.isEmpty(code));
+        code = transform(new TestNoChangeTransformScanner(), MockIgnorePublicClass.class);
+        assertTrue(StringUtils.isNotEmpty(code));
+        assertTrue(code.contains(JaspilerContract.ANNOTATION_IGNORE));
+        code = transform(new TestIgnoreTransformScanner(), MockAllInOnePublicClass.class);
+        assertTrue(StringUtils.isNotEmpty(code));
+        assertFalse(code.contains(JaspilerContract.ANNOTATION_IGNORE));
+        assertFalse(code.contains("public int b;"));
     }
 
     @Test

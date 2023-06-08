@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 
 public final class JTModifiers
         extends JTTree<ModifiersTree, JTModifiers>
-        implements ModifiersTree {
+        implements ModifiersTree, IJTAnnotatable {
     private final List<JTAnnotation> annotations;
     private final Set<Modifier> flags;
 

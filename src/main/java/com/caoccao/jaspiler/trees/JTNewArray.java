@@ -23,7 +23,7 @@ import java.util.*;
 
 public final class JTNewArray
         extends JTExpression<NewArrayTree, JTNewArray>
-        implements NewArrayTree {
+        implements NewArrayTree, IJTAnnotatable {
     private final List<JTAnnotation> annotations;
     private final List<List<JTAnnotation>> dimAnnotations;
     private final List<JTExpression<?, ?>> dimensions;
