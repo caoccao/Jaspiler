@@ -176,7 +176,7 @@ public final class JTClassDecl
             int indent = getIndent();
             int childIndent = getIndent(1);
             final var sbp = new StringBuilderPlus();
-            sbp.appendSpace(indent).append(modifiers);
+            Optional.ofNullable(modifiers).ifPresent(tree -> sbp.appendSpace(indent).append(tree));
             ForEachUtils.forEach(
                     typeParameters.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
                     sbp::append,
@@ -192,9 +192,8 @@ public final class JTClassDecl
                 case RECORD -> sbp.appendSpaceIfNeeded().append(IJTConstants.RECORD);
             }
             sbp.appendSpaceIfNeeded().append(simpleName);
-            if (extendsClause != null) {
-                sbp.appendSpaceIfNeeded().append(IJTConstants.EXTENDS).appendSpace().append(extendsClause);
-            }
+            Optional.ofNullable(extendsClause)
+                    .ifPresent(tree -> sbp.appendSpaceIfNeeded().append(IJTConstants.EXTENDS).appendSpace().append(tree));
             ForEachUtils.forEach(
                     implementsClauses.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
                     sbp::append,

@@ -41,5 +41,6 @@ public interface IJTConstants {
     String SEMI_COLON = ";";
     String SPACE = " ";
     String STATIC = "static";
+    String THROWS = "throws";
     String UNEXPECTED = "unexpected";
 }

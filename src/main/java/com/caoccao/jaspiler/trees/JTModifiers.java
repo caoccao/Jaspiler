@@ -78,11 +78,12 @@ public final class JTModifiers
     @Override
     public String toString() {
         if (isActionChange()) {
+            int indentAnnotation = getIndent(-1);
             final var sbp = new StringBuilderPlus();
             ForEachUtils.forEach(
                     annotations.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
                     sbp::append,
-                    tree -> sbp.appendLineSeparator(),
+                    tree -> sbp.appendLineSeparator().appendSpace(indentAnnotation),
                     null,
                     trees -> sbp.appendLineSeparator());
             ForEachUtils.forEach(

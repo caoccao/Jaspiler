@@ -318,9 +318,7 @@ public final class JTCompilationUnit
                     && getOriginalPosition().startPosition() > 0) {
                 sbp.append(getOriginalCode(), 0, (int) getOriginalPosition().startPosition());
             }
-            if (packageTree != null) {
-                sbp.append(packageTree).appendLineSeparator();
-            }
+            Optional.ofNullable(packageTree).ifPresent(tree -> sbp.append(tree).appendLineSeparator());
             ForEachUtils.forEach(
                     imports.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
                     sbp::append,
@@ -333,9 +331,7 @@ public final class JTCompilationUnit
                     tree -> sbp.appendLineSeparator(),
                     trees -> sbp.appendLineSeparator(),
                     trees -> sbp.appendLineSeparator());
-            if (moduleTree != null) {
-                sbp.append(moduleTree).appendLineSeparator();
-            }
+            Optional.ofNullable(moduleTree).ifPresent(tree -> sbp.append(tree).appendLineSeparator());
             return sbp.toString();
         }
         return getOriginalCode();

@@ -68,12 +68,13 @@ public abstract class JTTree<
         int indent = depth * getCompilationUnit().getOptions().getIndentSize();
         var ancestorTree = getParentTree();
         while (ancestorTree != null && !(ancestorTree instanceof JTCompilationUnit)) {
-            if (ancestorTree instanceof JTClassDecl) {
+            if (ancestorTree instanceof JTClassDecl
+                    || ancestorTree instanceof JTMethodDecl) {
                 indent += getCompilationUnit().getOptions().getIndentSize();
             }
             ancestorTree = ancestorTree.getParentTree();
         }
-        return indent;
+        return Math.max(0, indent);
     }
 
     protected long getOptionalEndPosition(long position) {

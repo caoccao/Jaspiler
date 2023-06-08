@@ -53,7 +53,8 @@ public abstract sealed class MockAllInOnePublicClass
     /**
      * Test.
      */
-    public void Test() throws IOException {
+    @SuppressWarnings("unchecked")
+    public final <T> void Test(T x, @Deprecated int y) throws IOException, NoClassDefFoundError {
         a = "abc";
         b = new Random().nextInt();
         list = new ArrayList<>();
@@ -81,6 +82,7 @@ public abstract sealed class MockAllInOnePublicClass
     }
 
     @Override
+    @JaspilerContract.Ignore
     public void close() throws Exception {
 
     }

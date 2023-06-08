@@ -16,6 +16,8 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.utils.ForEachUtils;
+import com.caoccao.jaspiler.utils.StringBuilderPlus;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.TreeVisitor;
 
@@ -195,5 +197,46 @@ public final class JTMethodDecl
         }
         this.returnType = Objects.requireNonNull(returnType).setParentTree(this);
         return setActionChange();
+    }
+
+    @Override
+    public String toString() {
+        if (isActionChange()) {
+            int indent = getIndent();
+            int childIndent = getIndent(1);
+            final var sbp = new StringBuilderPlus();
+            Optional.ofNullable(modifiers).ifPresent(tree -> sbp.appendSpace(indent).append(tree));
+            ForEachUtils.forEach(
+                    typeParameters.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
+                    sbp::append,
+                    tree -> sbp.appendComma().appendSpace(),
+                    trees -> sbp.appendSpaceIfNeeded().appendLeftArrow(),
+                    trees -> sbp.appendRightArrow());
+            Optional.of(returnType)
+                    .filter(tree -> !tree.isActionIgnore())
+                    .ifPresent(tree -> sbp.appendSpaceIfNeeded().append(tree));
+            sbp.appendSpaceIfNeeded().append(name).appendLeftParenthesis();
+            ForEachUtils.forEach(
+                    parameters.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
+                    sbp::append,
+                    tree -> sbp.appendComma().appendSpace());
+            sbp.appendRightParenthesis();
+            Optional.ofNullable(receiverParameter)
+                    .filter(tree -> !tree.isActionIgnore())
+                    .ifPresent(tree -> sbp.appendSpace().append(tree));
+            ForEachUtils.forEach(
+                    throwExpressions.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
+                    sbp::append,
+                    tree -> sbp.appendComma().appendSpace(),
+                    trees -> sbp.appendSpace().append(IJTConstants.THROWS).appendSpace());
+            Optional.ofNullable(body)
+                    .filter(tree -> !tree.isActionIgnore())
+                    .ifPresent(tree -> sbp.appendSpaceIfNeeded().append(tree));
+            Optional.ofNullable(defaultValue)
+                    .filter(tree -> !tree.isActionIgnore())
+                    .ifPresent(tree -> sbp.appendSpaceIfNeeded().append(tree));
+            return sbp.toString();
+        }
+        return super.toString();
     }
 }

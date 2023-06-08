@@ -54,6 +54,7 @@ public class TestJTClassDecl extends BaseTestSuite {
         assertTrue(StringUtils.isNotEmpty(code));
         assertFalse(code.contains(JaspilerContract.ANNOTATION_IGNORE));
         assertFalse(code.contains("public int b;"));
+        assertFalse(code.contains("public void close() throws Exception"));
     }
 
     @Test

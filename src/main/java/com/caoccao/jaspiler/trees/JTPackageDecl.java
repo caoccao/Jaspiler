@@ -16,6 +16,7 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.utils.ForEachUtils;
 import com.caoccao.jaspiler.utils.StringBuilderPlus;
 import com.sun.source.tree.PackageTree;
 import com.sun.source.tree.TreeVisitor;
@@ -96,11 +97,15 @@ public final class JTPackageDecl
     public String toString() {
         if (isActionChange()) {
             final var sbp = new StringBuilderPlus();
-            annotations.forEach(sbp::append);
-            if (packageName != null) {
-                sbp.append(IJTConstants.PACKAGE).appendSpace().append(packageName)
-                        .appendSemiColon().appendLineSeparator(2);
-            }
+            ForEachUtils.forEach(
+                    annotations.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
+                    sbp::append,
+                    tree -> sbp.appendLineSeparator(),
+                    null,
+                    trees -> sbp.appendLineSeparator());
+            Optional.ofNullable(packageName)
+                    .ifPresent(tree -> sbp.append(IJTConstants.PACKAGE).appendSpace().append(tree)
+                            .appendSemiColon().appendLineSeparator(2));
             return sbp.toString();
         }
         return super.toString();
