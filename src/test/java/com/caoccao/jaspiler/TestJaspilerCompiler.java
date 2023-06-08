@@ -66,7 +66,7 @@ public class TestJaspilerCompiler extends BaseTestSuite {
 
             @Override
             public TestTransformScanner visitImport(ImportTree node, JaspilerTransformContext jaspilerTransformContext) {
-                if (node.toString().contains("import java.util.List;")) {
+                if (node.toString().contains("import java.io.FileNotFoundException;")) {
                     var jtImport = (JTImport) node;
                     jtImport.setStaticImport(true);
                     jtImport.setQualifiedIdentifier(JTTreeFactory.createFieldAccess("i1", "i2", "i3"));
@@ -86,7 +86,7 @@ public class TestJaspilerCompiler extends BaseTestSuite {
             var texts = List.of(
                     "* Copyright (c)",
                     "package/* test */com./*1*/caoccao/*2*/.jaspiler.mock;",
-                    "import java.util.ArrayList;");
+                    "import java.util.*;");
             texts.forEach(text -> assertTrue(code.contains(text), text));
         }
         {
@@ -94,7 +94,7 @@ public class TestJaspilerCompiler extends BaseTestSuite {
             var texts = List.of(
                     "* Copyright (c)",
                     "package a1.a2;",
-                    "import java.util.ArrayList;",
+                    "import java.util.*;",
                     "import static i1.i2.i3;",
                     "import i4.i5;");
             texts.forEach(text -> assertTrue(code.contains(text), text));

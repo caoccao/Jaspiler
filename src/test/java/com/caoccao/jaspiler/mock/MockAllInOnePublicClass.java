@@ -47,6 +47,7 @@ public abstract sealed class MockAllInOnePublicClass
     public int b;
     private String a;
     private List<Object> list;
+
     @Deprecated
     private Map<String, Object> map = new HashMap<>() {{
         put("a", 1);

@@ -58,6 +58,28 @@ public class TestJTClassDecl extends BaseTestSuite {
     }
 
     @Test
+    public void testReorderMembers() throws Exception {
+        class TestTransformScanner extends JaspilerTransformScanner<TestTransformScanner> {
+            @Override
+            public TestTransformScanner visitClass(ClassTree node, JaspilerTransformContext jaspilerTransformContext) {
+                var jtClassDecl = (JTClassDecl) node;
+                if (MockAllInOnePublicClass.class.getSimpleName().equals(jtClassDecl.getSimpleName().getValue())) {
+                    var member1 = jtClassDecl.getMembers().get(1);
+                    var member2 = jtClassDecl.getMembers().get(2);
+                    jtClassDecl.getMembers().set(1, member2);
+                    jtClassDecl.getMembers().set(2, member1);
+                    jtClassDecl.setActionChange();
+                }
+                return super.visitClass(node, jaspilerTransformContext);
+            }
+        }
+        String code = transform(new TestTransformScanner(), MockAllInOnePublicClass.class);
+        assertTrue(code.contains("    private List<Object> list;\n" +
+                "\n" +
+                "    private String a;"));
+    }
+
+    @Test
     public void testUpdateAnnotationSimpleName() throws Exception {
         String newAnnotationName = "ANewAnnotationName";
         class TestTransformScanner extends JaspilerTransformScanner<TestTransformScanner> {
