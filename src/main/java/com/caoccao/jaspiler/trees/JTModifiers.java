@@ -23,6 +23,7 @@ import com.sun.source.tree.TreeVisitor;
 
 import javax.lang.model.element.Modifier;
 import java.util.*;
+import java.util.stream.Stream;
 
 public final class JTModifiers
         extends JTTree<ModifiersTree, JTModifiers>
@@ -75,17 +76,20 @@ public final class JTModifiers
     }
 
     @Override
-    protected int getLineSeparatorCount() {
-        return 0;
-    }
-
-    @Override
     public String toString() {
         if (isActionChange()) {
             final var sbp = new StringBuilderPlus();
             ForEachUtils.forEach(
                     annotations.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
-                    sbp::append);
+                    sbp::append,
+                    tree -> sbp.appendLineSeparator(),
+                    null,
+                    trees -> sbp.appendLineSeparator());
+            ForEachUtils.forEach(
+                    Stream.of(Modifier.values()).filter(flags::contains).toList(),
+                    sbp::append,
+                    tree -> sbp.appendSpace(),
+                    trees -> sbp.appendSpaceIfNeeded());
             return sbp.toString();
         }
         return super.toString();

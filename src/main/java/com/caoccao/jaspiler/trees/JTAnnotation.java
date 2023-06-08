@@ -85,11 +85,6 @@ public final class JTAnnotation
         return Kind.ANNOTATION;
     }
 
-    @Override
-    protected int getLineSeparatorCount() {
-        return 1;
-    }
-
     public JTAnnotation setAnnotationType(JTTree<?, ?> annotationType) {
         if (this.annotationType == annotationType) {
             return this;
@@ -110,7 +105,6 @@ public final class JTAnnotation
                     tree -> sbp.appendComma().appendSpace(),
                     trees -> sbp.appendLeftParenthesis(),
                     trees -> sbp.appendRightParenthesis());
-            sbp.appendLineSeparator();
             return sbp.toString();
         }
         return super.toString();

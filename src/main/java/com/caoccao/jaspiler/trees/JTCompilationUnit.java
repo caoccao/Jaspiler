@@ -319,13 +319,13 @@ public final class JTCompilationUnit
                 sbp.append(getOriginalCode(), 0, (int) getOriginalPosition().startPosition());
             }
             if (packageTree != null) {
-                sbp.append(packageTree);
+                sbp.append(packageTree).appendLineSeparator();
             }
             ForEachUtils.forEach(
                     imports.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
                     sbp::append,
-                    null,
-                    null,
+                    tree -> sbp.appendLineSeparator(),
+                    trees -> sbp.appendLineSeparator(),
                     trees -> sbp.appendLineSeparator());
             ForEachUtils.forEach(
                     typeDecls.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),

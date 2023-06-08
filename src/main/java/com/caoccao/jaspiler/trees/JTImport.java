@@ -68,11 +68,6 @@ public final class JTImport
     }
 
     @Override
-    protected int getLineSeparatorCount() {
-        return 1;
-    }
-
-    @Override
     public JTTree<?, ?> getQualifiedIdentifier() {
         return qualifiedIdentifier;
     }

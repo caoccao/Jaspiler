@@ -20,10 +20,14 @@ import com.caoccao.jaspiler.BaseTestSuite;
 import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
 import com.caoccao.jaspiler.mock.MockAllInOnePublicClass;
 import com.caoccao.jaspiler.mock.MockIgnorePublicClass;
+import com.caoccao.jaspiler.mock.MockPublicAnnotation;
 import com.caoccao.jaspiler.visiters.JaspilerTransformScanner;
 import com.sun.source.tree.ClassTree;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
+
+import javax.lang.model.element.Modifier;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -42,19 +46,46 @@ public class TestJTClassDecl extends BaseTestSuite {
     }
 
     @Test
-    public void testUpdateSimpleName() throws Exception {
+    public void testUpdateAnnotationSimpleName() throws Exception {
+        String newAnnotationName = "ANewAnnotationName";
+        class TestTransformScanner extends JaspilerTransformScanner<TestTransformScanner> {
+            @Override
+            public TestTransformScanner visitClass(ClassTree node, JaspilerTransformContext jaspilerTransformContext) {
+                var jtClassDecl = (JTClassDecl) node;
+                if (MockPublicAnnotation.class.getSimpleName().equals(jtClassDecl.getSimpleName().getValue())) {
+                    jtClassDecl.setSimpleName(new JTName(newAnnotationName));
+                    jtClassDecl.getModifiers().getFlags().add(Modifier.SEALED);
+                    jtClassDecl.getModifiers().setActionChange();
+                }
+                return super.visitClass(node, jaspilerTransformContext);
+            }
+        }
+        String code = transform(new TestTransformScanner(), MockPublicAnnotation.class);
+        assertTrue(code.contains("@Documented\n" +
+                "@Inherited\n" +
+                "public sealed @interface ANewAnnotationName {"));
+    }
+
+    @Test
+    public void testUpdateClassSimpleName() throws Exception {
         String newClassName = "ANewClassName";
+        String newAnnotationName = "ANewAnnotationName";
         class TestTransformScanner extends JaspilerTransformScanner<TestTransformScanner> {
             @Override
             public TestTransformScanner visitClass(ClassTree node, JaspilerTransformContext jaspilerTransformContext) {
                 var jtClassDecl = (JTClassDecl) node;
                 if (MockAllInOnePublicClass.class.getSimpleName().equals(jtClassDecl.getSimpleName().getValue())) {
                     jtClassDecl.setSimpleName(new JTName(newClassName));
+                } else if ("MockAnnotation".equals(jtClassDecl.getSimpleName().getValue())) {
+                    jtClassDecl.setSimpleName(new JTName(newAnnotationName));
                 }
                 return super.visitClass(node, jaspilerTransformContext);
             }
         }
         String code = transform(new TestTransformScanner(), MockAllInOnePublicClass.class);
-        assertTrue(code.contains("public abstract sealed class " + newClassName));
+        var texts = List.of(
+                "public abstract sealed class " + newClassName,
+                "@interface " + newAnnotationName + " {");
+        texts.forEach(text -> assertTrue(code.contains(text), text));
     }
 }

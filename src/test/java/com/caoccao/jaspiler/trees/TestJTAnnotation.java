@@ -66,6 +66,8 @@ public class TestJTAnnotation extends BaseTestSuite {
             }
         }
         String code = transform(new TestTransformScanner(), MockAllInOnePublicClass.class);
-        assertTrue(code.contains("@X.Y.Z(RetentionPolicy.RUNTIME, A1.B1.C1, A2.B2.C2)\n"));
+        assertTrue(code.contains("@Inherited\n" +
+                "@X.Y.Z(RetentionPolicy.RUNTIME, A1.B1.C1, A2.B2.C2)\n" +
+                "@Target(ElementType.ANNOTATION_TYPE)\n"));
     }
 }

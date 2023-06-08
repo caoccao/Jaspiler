@@ -76,10 +76,6 @@ public abstract class JTTree<
         return indent;
     }
 
-    protected int getLineSeparatorCount() {
-        return 0;
-    }
-
     protected long getOptionalEndPosition(long position) {
         return getOriginalPosition().isValid() ? getOriginalPosition().endPosition() : position;
     }
@@ -157,13 +153,9 @@ public abstract class JTTree<
         if (!getOriginalPosition().isValid()) {
             return IJTConstants.UNEXPECTED;
         }
-        String code = getOriginalCode().substring(
+        return getOriginalCode().substring(
                 (int) getOriginalPosition().startPosition(),
                 (int) getOriginalPosition().endPosition());
-        if (getLineSeparatorCount() > 0) {
-            code += IJTConstants.LINE_SEPARATOR.repeat(getLineSeparatorCount());
-        }
-        return code;
     }
 
     protected NewTree writeStrings(Writer writer, String... strings) throws IOException {

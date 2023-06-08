@@ -108,11 +108,6 @@ public final class JTClassDecl
     }
 
     @Override
-    protected int getLineSeparatorCount() {
-        return 2;
-    }
-
-    @Override
     public List<JTTree<?, ?>> getMembers() {
         return members;
     }
@@ -187,12 +182,13 @@ public final class JTClassDecl
                     trees -> sbp.appendSpaceIfNeeded().appendRightArrow());
             var classType = IJTConstants.EMPTY;
             switch (kind) {
-                case ANNOTATION_TYPE, INTERFACE -> classType = IJTConstants.INTERFACE;
-                case CLASS -> classType = IJTConstants.CLASS;
-                case ENUM -> classType = IJTConstants.ENUM;
-                case RECORD -> classType = IJTConstants.RECORD;
+                case ANNOTATION_TYPE -> sbp.appendSpaceIfNeeded().appendAt().append(IJTConstants.INTERFACE);
+                case CLASS -> sbp.appendSpaceIfNeeded().append(IJTConstants.CLASS);
+                case ENUM -> sbp.appendSpaceIfNeeded().append(IJTConstants.ENUM);
+                case INTERFACE -> sbp.appendSpaceIfNeeded().append(IJTConstants.INTERFACE);
+                case RECORD -> sbp.appendSpaceIfNeeded().append(IJTConstants.RECORD);
             }
-            sbp.appendSpaceIfNeeded().append(classType).appendSpace().append(simpleName);
+            sbp.appendSpaceIfNeeded().append(simpleName);
             if (extendsClause != null) {
                 sbp.appendSpaceIfNeeded().append(IJTConstants.EXTENDS).appendSpace().append(extendsClause);
             }

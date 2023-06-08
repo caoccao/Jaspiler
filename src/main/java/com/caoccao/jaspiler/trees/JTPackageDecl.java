@@ -80,11 +80,6 @@ public final class JTPackageDecl
     }
 
     @Override
-    protected int getLineSeparatorCount() {
-        return 2;
-    }
-
-    @Override
     public JTExpression<?, ?> getPackageName() {
         return packageName;
     }

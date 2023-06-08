@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)
-@interface Annotation1 {
+@interface MockAnnotation {
     String value() default "value";
 }
 
