@@ -46,7 +46,6 @@ public class TestJTMethodDecl extends BaseTestSuite {
             }
         }
         String code = transform(new TestTransformScanner(), MockAllInOnePublicClass.class);
-        logger.info(code);
         List<String> texts = List.of(
                 "public final <T> void " +
                         newMethodNames[0] + "(T x, @Deprecated int y) " +
