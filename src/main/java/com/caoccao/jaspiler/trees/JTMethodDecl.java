@@ -229,12 +229,14 @@ public final class JTMethodDecl
                     sbp::append,
                     tree -> sbp.appendComma().appendSpace(),
                     trees -> sbp.appendSpace().append(IJTConstants.THROWS).appendSpace());
-            Optional.ofNullable(body)
-                    .filter(tree -> !tree.isActionIgnore())
-                    .ifPresent(tree -> sbp.appendSpaceIfNeeded().append(tree));
             Optional.ofNullable(defaultValue)
                     .filter(tree -> !tree.isActionIgnore())
-                    .ifPresent(tree -> sbp.appendSpaceIfNeeded().append(tree));
+                    .ifPresent(tree -> sbp.appendSpaceIfNeeded().append(IJTConstants.DEFAULT).appendSpace().append(tree));
+            if (body != null && !body.isActionIgnore()) {
+                sbp.appendSpaceIfNeeded().append(body);
+            } else {
+                sbp.appendSemiColon();
+            }
             return sbp.toString();
         }
         return super.toString();

@@ -21,6 +21,7 @@ public interface IJTConstants {
     String CLASS = "class";
     String COMMA = ",";
     String COMMA_ = ", ";
+    String DEFAULT = "default";
     String DOT = ".";
     String EMPTY = "";
     String ENUM = "enum";

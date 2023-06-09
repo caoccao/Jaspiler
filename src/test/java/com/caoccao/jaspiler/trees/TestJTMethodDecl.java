@@ -23,25 +23,36 @@ import com.caoccao.jaspiler.visiters.JaspilerTransformScanner;
 import com.sun.source.tree.MethodTree;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestJTMethodDecl extends BaseTestSuite {
     @Test
     public void testUpdateName() throws Exception {
-        String newMethodName = "ANewMethodName";
+        String[] newMethodNames = new String[]{"ANewMethodName", "mockNames", "mockValue"};
         class TestTransformScanner extends JaspilerTransformScanner<TestTransformScanner> {
             @Override
             public TestTransformScanner visitMethod(MethodTree node, JaspilerTransformContext jaspilerTransformContext) {
                 var jtMethodDecl = (JTMethodDecl) node;
                 if ("Test".equals(jtMethodDecl.getName().getValue())) {
-                    jtMethodDecl.setName(new JTName(newMethodName));
+                    jtMethodDecl.setName(new JTName(newMethodNames[0]));
+                } else if ("names".equals(jtMethodDecl.getName().getValue())) {
+                    jtMethodDecl.setName(new JTName(newMethodNames[1]));
+                } else if ("value".equals(jtMethodDecl.getName().getValue())) {
+                    jtMethodDecl.setName(new JTName(newMethodNames[2]));
                 }
                 return super.visitMethod(node, jaspilerTransformContext);
             }
         }
         String code = transform(new TestTransformScanner(), MockAllInOnePublicClass.class);
-        assertTrue(code.contains("public final <T> void " +
-                newMethodName + "(T x, @Deprecated int y) " +
-                "throws IOException, NoClassDefFoundError {"));
+        logger.info(code);
+        List<String> texts = List.of(
+                "public final <T> void " +
+                        newMethodNames[0] + "(T x, @Deprecated int y) " +
+                        "throws IOException, NoClassDefFoundError {",
+                "String[] mockNames() default {\"A\", \"B\"};",
+                "String mockValue() default \"value\";");
+        texts.forEach(text -> assertTrue(code.contains(text)));
     }
 }

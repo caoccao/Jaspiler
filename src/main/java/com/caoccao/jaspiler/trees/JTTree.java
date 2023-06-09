@@ -157,7 +157,7 @@ public abstract class JTTree<
             throw new JaspilerNotImplementedException(getClass().getSimpleName() + "{} is not implemented yet.");
         }
         if (!getOriginalPosition().isValid()) {
-            return IJTConstants.UNEXPECTED;
+            return IJTConstants.EMPTY;
         }
         return getOriginalCode().substring(
                 (int) getOriginalPosition().startPosition(),

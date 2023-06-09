@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import javax.lang.model.element.Modifier;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -64,10 +65,7 @@ public class TestJTClassDecl extends BaseTestSuite {
             public TestTransformScanner visitClass(ClassTree node, JaspilerTransformContext jaspilerTransformContext) {
                 var jtClassDecl = (JTClassDecl) node;
                 if (MockAllInOnePublicClass.class.getSimpleName().equals(jtClassDecl.getSimpleName().getValue())) {
-                    var member1 = jtClassDecl.getMembers().get(1);
-                    var member2 = jtClassDecl.getMembers().get(2);
-                    jtClassDecl.getMembers().set(1, member2);
-                    jtClassDecl.getMembers().set(2, member1);
+                    Collections.swap(jtClassDecl.getMembers(), 1, 2);
                     jtClassDecl.setActionChange();
                 }
                 return super.visitClass(node, jaspilerTransformContext);
