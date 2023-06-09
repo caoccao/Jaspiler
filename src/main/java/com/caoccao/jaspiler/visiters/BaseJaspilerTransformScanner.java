@@ -16,5 +16,17 @@
 
 package com.caoccao.jaspiler.visiters;
 
-public class DummyTransformScanner extends BaseJaspilerTransformScanner<DummyTransformScanner> {
+import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
+import com.sun.source.util.TreePathScanner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public abstract class BaseJaspilerTransformScanner<Scanner extends BaseJaspilerTransformScanner<Scanner>>
+        extends TreePathScanner<Scanner, JaspilerTransformContext> {
+    protected final Logger logger;
+
+    public BaseJaspilerTransformScanner() {
+        super();
+        logger = LoggerFactory.getLogger(getClass());
+    }
 }

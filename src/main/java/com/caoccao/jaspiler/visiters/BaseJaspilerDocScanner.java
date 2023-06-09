@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2023. caoccao.com Sam Cao
+ * Copyright (c) 2023. caoccao.com Sam Cao
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,16 @@
 
 package com.caoccao.jaspiler.visiters;
 
-import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
-import com.sun.source.tree.*;
-import com.sun.source.util.TreePathScanner;
+import com.caoccao.jaspiler.contexts.JaspilerDocContext;
+import com.sun.source.util.DocTreeScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class JaspilerTransformScanner<Scanner extends JaspilerTransformScanner<Scanner>>
-        extends TreePathScanner<Scanner, JaspilerTransformContext> {
+public abstract class BaseJaspilerDocScanner<Scanner extends BaseJaspilerDocScanner<Scanner>>
+        extends DocTreeScanner<Scanner, JaspilerDocContext> {
     protected final Logger logger;
 
-    public JaspilerTransformScanner() {
+    public BaseJaspilerDocScanner() {
         super();
         logger = LoggerFactory.getLogger(getClass());
     }

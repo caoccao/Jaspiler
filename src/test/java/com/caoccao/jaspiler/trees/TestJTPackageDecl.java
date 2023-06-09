@@ -19,7 +19,7 @@ package com.caoccao.jaspiler.trees;
 import com.caoccao.jaspiler.BaseTestSuite;
 import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
 import com.caoccao.jaspiler.mock.MockAllInOnePublicClass;
-import com.caoccao.jaspiler.visiters.JaspilerTransformScanner;
+import com.caoccao.jaspiler.visiters.BaseJaspilerTransformScanner;
 import com.sun.source.tree.PackageTree;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TestJTPackageDecl extends BaseTestSuite {
     @Test
     public void testIgnore() throws Exception {
-        class TestTransformScanner extends JaspilerTransformScanner<TestTransformScanner> {
+        class TestTransformScanner extends BaseJaspilerTransformScanner<TestTransformScanner> {
             @Override
             public TestTransformScanner visitPackage(PackageTree node, JaspilerTransformContext jaspilerTransformContext) {
                 ((JTPackageDecl) node).setActionIgnore();
@@ -42,7 +42,7 @@ public class TestJTPackageDecl extends BaseTestSuite {
 
     @Test
     public void testUpdatePackageName() throws Exception {
-        class TestTransformScanner extends JaspilerTransformScanner<TestTransformScanner> {
+        class TestTransformScanner extends BaseJaspilerTransformScanner<TestTransformScanner> {
             @Override
             public TestTransformScanner visitPackage(PackageTree node, JaspilerTransformContext jaspilerTransformContext) {
                 ((JTPackageDecl) node).setPackageName(JTTreeFactory.createFieldAccess("abc", "def"));

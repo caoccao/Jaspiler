@@ -19,7 +19,7 @@ package com.caoccao.jaspiler.trees;
 import com.caoccao.jaspiler.BaseTestSuite;
 import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
 import com.caoccao.jaspiler.mock.MockAllInOnePublicClass;
-import com.caoccao.jaspiler.visiters.JaspilerTransformScanner;
+import com.caoccao.jaspiler.visiters.BaseJaspilerTransformScanner;
 import com.sun.source.tree.VariableTree;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +29,7 @@ public class TestJTVariableDecl extends BaseTestSuite {
     @Test
     public void testUpdateName() throws Exception {
         String newVariableName = "newVariableName";
-        class TestTransformScanner extends JaspilerTransformScanner<TestTransformScanner> {
+        class TestTransformScanner extends BaseJaspilerTransformScanner<TestTransformScanner> {
             @Override
             public TestTransformScanner visitVariable(VariableTree node, JaspilerTransformContext jaspilerTransformContext) {
                 var jtVariableDecl = (JTVariableDecl) node;

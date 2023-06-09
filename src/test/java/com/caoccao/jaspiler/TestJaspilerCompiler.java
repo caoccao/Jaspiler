@@ -28,8 +28,8 @@ import com.caoccao.jaspiler.trees.JTTreeFactory;
 import com.caoccao.jaspiler.utils.SystemUtils;
 import com.caoccao.jaspiler.visiters.DummyDocScanner;
 import com.caoccao.jaspiler.visiters.DummyTransformScanner;
-import com.caoccao.jaspiler.visiters.JaspilerDocScanner;
-import com.caoccao.jaspiler.visiters.JaspilerTransformScanner;
+import com.caoccao.jaspiler.visiters.BaseJaspilerDocScanner;
+import com.caoccao.jaspiler.visiters.BaseJaspilerTransformScanner;
 import com.sun.source.doctree.DocTree;
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.ImportTree;
@@ -49,14 +49,14 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TestJaspilerCompiler extends BaseTestSuite {
     @Test
     public void testTransform() throws IOException {
-        class TestDocScanner extends JaspilerDocScanner<TestDocScanner> {
+        class TestDocScanner extends BaseJaspilerDocScanner<TestDocScanner> {
             @Override
             public TestDocScanner scan(DocTree node, JaspilerDocContext jaspilerDocContext) {
                 var position = jaspilerDocContext.getCompilationUnitTree().getOriginalDocPosition(node);
                 return super.scan(node, jaspilerDocContext);
             }
         }
-        class TestTransformScanner extends JaspilerTransformScanner<TestTransformScanner> {
+        class TestTransformScanner extends BaseJaspilerTransformScanner<TestTransformScanner> {
             @Override
             public TestTransformScanner visitCompilationUnit(CompilationUnitTree node, JaspilerTransformContext jaspilerTransformContext) {
                 var jtCompilationUnit = (JTCompilationUnit) node;

@@ -17,9 +17,9 @@
 package com.caoccao.jaspiler;
 
 import com.caoccao.jaspiler.contexts.JaspilerParseContext;
+import com.caoccao.jaspiler.visiters.BaseJaspilerParseScanner;
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.AssignmentTree;
-import com.sun.source.util.TreePathScanner;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TestJaspilerContract extends BaseTestSuite {
     @Test
     public void testIgnore() throws IOException {
-        class TestScanner extends TreePathScanner<TestScanner, JaspilerParseContext> {
+        class TestScanner extends BaseJaspilerParseScanner<TestScanner> {
             @Override
             public TestScanner visitAnnotation(AnnotationTree node, JaspilerParseContext jaspilerContext) {
                 assertEquals(1, node.getArguments().size());

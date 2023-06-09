@@ -16,16 +16,16 @@
 
 package com.caoccao.jaspiler.visiters;
 
-import com.caoccao.jaspiler.contexts.JaspilerDocContext;
-import com.sun.source.util.DocTreeScanner;
+import com.caoccao.jaspiler.contexts.JaspilerParseContext;
+import com.sun.source.util.TreePathScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class JaspilerDocScanner<Scanner extends JaspilerDocScanner<Scanner>>
-        extends DocTreeScanner<Scanner, JaspilerDocContext> {
+public abstract class BaseJaspilerParseScanner<Scanner extends BaseJaspilerParseScanner<Scanner>>
+        extends TreePathScanner<Scanner, JaspilerParseContext> {
     protected final Logger logger;
 
-    public JaspilerDocScanner() {
+    public BaseJaspilerParseScanner() {
         super();
         logger = LoggerFactory.getLogger(getClass());
     }

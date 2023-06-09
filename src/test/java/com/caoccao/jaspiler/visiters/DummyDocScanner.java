@@ -16,5 +16,5 @@
 
 package com.caoccao.jaspiler.visiters;
 
-public class DummyDocScanner extends JaspilerDocScanner<DummyDocScanner> {
+public class DummyDocScanner extends BaseJaspilerDocScanner<DummyDocScanner> {
 }

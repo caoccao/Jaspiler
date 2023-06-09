@@ -22,7 +22,7 @@ import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
 import com.caoccao.jaspiler.mock.MockAllInOnePublicClass;
 import com.caoccao.jaspiler.mock.MockIgnorePublicClass;
 import com.caoccao.jaspiler.mock.MockPublicAnnotation;
-import com.caoccao.jaspiler.visiters.JaspilerTransformScanner;
+import com.caoccao.jaspiler.visiters.BaseJaspilerTransformScanner;
 import com.sun.source.tree.ClassTree;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
@@ -37,11 +37,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TestJTClassDecl extends BaseTestSuite {
     @Test
     public void testIgnore() throws Exception {
-        class TestIgnoreTransformScanner extends JaspilerTransformScanner<TestIgnoreTransformScanner> {
+        class TestIgnoreTransformScanner extends BaseJaspilerTransformScanner<TestIgnoreTransformScanner> {
         }
         String code = transform(new TestIgnoreTransformScanner(), MockIgnorePublicClass.class);
         assertTrue(StringUtils.isEmpty(code));
-        class TestNoChangeTransformScanner extends JaspilerTransformScanner<TestNoChangeTransformScanner> {
+        class TestNoChangeTransformScanner extends BaseJaspilerTransformScanner<TestNoChangeTransformScanner> {
             @Override
             public TestNoChangeTransformScanner visitClass(ClassTree node, JaspilerTransformContext jaspilerTransformContext) {
                 ((JTClassDecl) node).setActionNoChange();
@@ -60,7 +60,7 @@ public class TestJTClassDecl extends BaseTestSuite {
 
     @Test
     public void testReorderMembers() throws Exception {
-        class TestTransformScanner extends JaspilerTransformScanner<TestTransformScanner> {
+        class TestTransformScanner extends BaseJaspilerTransformScanner<TestTransformScanner> {
             @Override
             public TestTransformScanner visitClass(ClassTree node, JaspilerTransformContext jaspilerTransformContext) {
                 var jtClassDecl = (JTClassDecl) node;
@@ -80,7 +80,7 @@ public class TestJTClassDecl extends BaseTestSuite {
     @Test
     public void testUpdateAnnotationSimpleName() throws Exception {
         String newAnnotationName = "ANewAnnotationName";
-        class TestTransformScanner extends JaspilerTransformScanner<TestTransformScanner> {
+        class TestTransformScanner extends BaseJaspilerTransformScanner<TestTransformScanner> {
             @Override
             public TestTransformScanner visitClass(ClassTree node, JaspilerTransformContext jaspilerTransformContext) {
                 var jtClassDecl = (JTClassDecl) node;
@@ -102,7 +102,7 @@ public class TestJTClassDecl extends BaseTestSuite {
     public void testUpdateClassSimpleName() throws Exception {
         String newClassName = "ANewClassName";
         String newAnnotationName = "ANewAnnotationName";
-        class TestTransformScanner extends JaspilerTransformScanner<TestTransformScanner> {
+        class TestTransformScanner extends BaseJaspilerTransformScanner<TestTransformScanner> {
             @Override
             public TestTransformScanner visitClass(ClassTree node, JaspilerTransformContext jaspilerTransformContext) {
                 var jtClassDecl = (JTClassDecl) node;

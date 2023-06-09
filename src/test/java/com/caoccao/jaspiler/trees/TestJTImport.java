@@ -19,7 +19,7 @@ package com.caoccao.jaspiler.trees;
 import com.caoccao.jaspiler.BaseTestSuite;
 import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
 import com.caoccao.jaspiler.mock.MockAllInOnePublicClass;
-import com.caoccao.jaspiler.visiters.JaspilerTransformScanner;
+import com.caoccao.jaspiler.visiters.BaseJaspilerTransformScanner;
 import com.sun.source.tree.ImportTree;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +33,7 @@ public class TestJTImport extends BaseTestSuite {
 
     @Test
     public void testIgnore() throws Exception {
-        class TestTransformScanner extends JaspilerTransformScanner<TestTransformScanner> {
+        class TestTransformScanner extends BaseJaspilerTransformScanner<TestTransformScanner> {
             @Override
             public TestTransformScanner visitImport(ImportTree node, JaspilerTransformContext jaspilerTransformContext) {
                 if (node.toString().startsWith(COMMONS_LANG_3_STRING_UTILS)) {
@@ -52,7 +52,7 @@ public class TestJTImport extends BaseTestSuite {
 
     @Test
     public void testUpdateQualifiedIdentifier() throws Exception {
-        class TestTransformScanner extends JaspilerTransformScanner<TestTransformScanner> {
+        class TestTransformScanner extends BaseJaspilerTransformScanner<TestTransformScanner> {
             @Override
             public TestTransformScanner visitImport(ImportTree node, JaspilerTransformContext jaspilerTransformContext) {
                 if (node.toString().startsWith(COMMONS_LANG_3_STRING_UTILS)) {
