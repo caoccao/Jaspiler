@@ -17,7 +17,7 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.JaspilerContract;
-import com.caoccao.jaspiler.JaspilerOptions;
+import com.caoccao.jaspiler.options.JaspilerTransformOptions;
 import com.caoccao.jaspiler.utils.ForEachUtils;
 import com.caoccao.jaspiler.utils.StringBuilderPlus;
 import com.sun.source.doctree.DocCommentTree;
@@ -53,7 +53,7 @@ public final class JTCompilationUnit
     private final DocSourcePositions docSourcePositions;
     private final DocTrees docTrees;
     private final List<JTImport> imports;
-    private final JaspilerOptions options;
+    private final JaspilerTransformOptions options;
     private final SourcePositions sourcePositions;
     private final Trees trees;
     private final List<JTTree<?, ?>> typeDecls;
@@ -66,7 +66,7 @@ public final class JTCompilationUnit
             Trees trees,
             DocTrees docTrees,
             CompilationUnitTree originalTree,
-            JaspilerOptions options) {
+            JaspilerTransformOptions options) {
         super(Objects.requireNonNull(originalTree), null);
         docCommentTree = Objects.requireNonNull(docTrees).getDocCommentTree(getOriginalTree().getSourceFile());
         docSourcePositions = docTrees.getSourcePositions();
@@ -148,7 +148,7 @@ public final class JTCompilationUnit
         return moduleTree;
     }
 
-    public JaspilerOptions getOptions() {
+    public JaspilerTransformOptions getOptions() {
         return options;
     }
 

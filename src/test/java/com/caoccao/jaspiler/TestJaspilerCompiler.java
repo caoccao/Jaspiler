@@ -20,6 +20,7 @@ import com.caoccao.jaspiler.contexts.BaseJaspilerContext;
 import com.caoccao.jaspiler.contexts.JaspilerDocContext;
 import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
 import com.caoccao.jaspiler.mock.MockAllInOnePublicClass;
+import com.caoccao.jaspiler.options.JaspilerTransformOptions;
 import com.caoccao.jaspiler.trees.JTCompilationUnit;
 import com.caoccao.jaspiler.trees.JTImport;
 import com.caoccao.jaspiler.trees.JTPackageDecl;
@@ -123,7 +124,7 @@ public class TestJaspilerCompiler extends BaseTestSuite {
                                         dummyTransformScanner,
                                         dummyDocScanner,
                                         writer,
-                                        JaspilerOptions.Default);
+                                        JaspilerTransformOptions.Default);
                             } finally {
                                 compiler.getParseContexts().stream()
                                         .map(context -> (JTCompilationUnit) context.getCompilationUnitTree())

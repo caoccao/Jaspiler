@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. caoccao.com Sam Cao
+ * Copyright (c) 2023-2023. caoccao.com Sam Cao
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,15 @@ import java.nio.file.Path;
 public final class SystemUtils {
     public static final String SYSTEM_PROPERTY_JAVA_IO_TMPDIR = "java.io.tmpdir";
     public static final String SYSTEM_PROPERTY_USER_DIR = "user.dir";
-    public static final Path SYSTEM_TMP_PATH = Path.of(System.getProperty(SYSTEM_PROPERTY_JAVA_IO_TMPDIR));
-    public static final Path WORKING_DIRECTORY = Path.of(System.getProperty(SYSTEM_PROPERTY_USER_DIR));
 
     private SystemUtils() {
+    }
+
+    public static Path getSystemTmpPath() {
+        return Path.of(System.getProperty(SYSTEM_PROPERTY_JAVA_IO_TMPDIR));
+    }
+
+    public static Path getWorkingDirectory() {
+        return Path.of(System.getProperty(SYSTEM_PROPERTY_USER_DIR));
     }
 }

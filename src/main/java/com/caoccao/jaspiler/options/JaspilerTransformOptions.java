@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. caoccao.com Sam Cao
+ * Copyright (c) 2023-2023. caoccao.com Sam Cao
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.caoccao.jaspiler;
+package com.caoccao.jaspiler.options;
 
-public final class JaspilerOptions {
-    public static final JaspilerOptions Default = new JaspilerOptions().seal();
+public final class JaspilerTransformOptions {
+    public static final JaspilerTransformOptions Default = new JaspilerTransformOptions().seal();
     public static final int DEFAULT_INDENT_SIZE = 4;
     public static final int MIN_INDENT_SIZE = 0;
     public static final int MAX_INDENT_SIZE = 100;
@@ -25,7 +25,7 @@ public final class JaspilerOptions {
     private boolean preserveCopyrights;
     private boolean sealed;
 
-    public JaspilerOptions() {
+    public JaspilerTransformOptions() {
         setIndentSize(DEFAULT_INDENT_SIZE);
         setPreserveCopyrights(true);
     }
@@ -42,19 +42,19 @@ public final class JaspilerOptions {
         return sealed;
     }
 
-    public JaspilerOptions seal() {
+    public JaspilerTransformOptions seal() {
         sealed = true;
         return this;
     }
 
-    public JaspilerOptions setIndentSize(int indentSize) {
+    public JaspilerTransformOptions setIndentSize(int indentSize) {
         if (!sealed) {
             this.indentSize = Math.min(Math.max(indentSize, MIN_INDENT_SIZE), MAX_INDENT_SIZE);
         }
         return this;
     }
 
-    public JaspilerOptions setPreserveCopyrights(boolean preserveCopyrights) {
+    public JaspilerTransformOptions setPreserveCopyrights(boolean preserveCopyrights) {
         if (!sealed) {
             this.preserveCopyrights = preserveCopyrights;
         }

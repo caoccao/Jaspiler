@@ -19,6 +19,7 @@ package com.caoccao.jaspiler;
 import com.caoccao.jaspiler.contexts.JaspilerDocContext;
 import com.caoccao.jaspiler.contexts.JaspilerParseContext;
 import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
+import com.caoccao.jaspiler.options.JaspilerTransformOptions;
 import com.caoccao.jaspiler.trees.JTCompilationUnit;
 import com.caoccao.jaspiler.utils.BaseLoggingObject;
 import com.caoccao.jaspiler.utils.JavaFileStringObject;
@@ -139,7 +140,7 @@ public final class JaspilerCompiler extends BaseLoggingObject {
             TransformScanner transformScanner,
             DocScanner docScanner,
             Writer writer,
-            JaspilerOptions options)
+            JaspilerTransformOptions options)
             throws IOException {
         transformContexts.clear();
         docContexts.clear();

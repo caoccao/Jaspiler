@@ -20,10 +20,19 @@ object Config {
     object Projects {
         // https://mvnrepository.com/artifact/commons-cli/commons-cli
         const val COMMONS_CLI = "commons-cli:commons-cli:${Versions.COMMONS_CLI}"
+
         // https://mvnrepository.com/artifact/org.apache.commons/commons-collections4
         const val COMMONS_COLLECTIONS4 = "org.apache.commons:commons-collections4:${Versions.COMMONS_COLLECTIONS4}"
+
         // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
         const val COMMONS_LANG3 = "org.apache.commons:commons-lang3:${Versions.COMMONS_LANG3}"
+
+        // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+        const val JACKSON_DATABIND = "com.fasterxml.jackson.core:jackson-databind:${Versions.JACKSON}"
+
+        // https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
+        const val JACKSON_DATATYPE_JSR310 = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${Versions.JACKSON}"
+
         const val JAVET = "com.caoccao.javet:javet:${Versions.JAVET}"
         const val JAVET_MACOS = "com.caoccao.javet:javet-macos:${Versions.JAVET}"
         const val JUNIT_BOM = "org.junit:junit-bom:${Versions.JUNIT}"
@@ -36,6 +45,7 @@ object Config {
         const val COMMONS_CLI = "1.5.0"
         const val COMMONS_COLLECTIONS4 = "4.4"
         const val COMMONS_LANG3 = "3.12.0"
+        const val JACKSON = "2.15.2"
         const val JAVET = "2.2.0"
         const val JUNIT = "5.9.1"
         const val SLF4J = "2.0.7"
@@ -57,6 +67,8 @@ dependencies {
     implementation(Config.Projects.COMMONS_CLI)
     implementation(Config.Projects.COMMONS_COLLECTIONS4)
     implementation(Config.Projects.COMMONS_LANG3)
+    implementation(Config.Projects.JACKSON_DATABIND)
+    implementation(Config.Projects.JACKSON_DATATYPE_JSR310)
     if (OperatingSystem.current().isMacOsX) {
         implementation(Config.Projects.JAVET_MACOS)
     } else {

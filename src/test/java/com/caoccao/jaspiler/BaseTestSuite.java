@@ -18,6 +18,7 @@ package com.caoccao.jaspiler;
 
 import com.caoccao.jaspiler.contexts.JaspilerDocContext;
 import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
+import com.caoccao.jaspiler.options.JaspilerTransformOptions;
 import com.caoccao.jaspiler.utils.BaseLoggingObject;
 import com.caoccao.jaspiler.utils.MockUtils;
 import com.sun.source.util.DocTreeScanner;
@@ -65,7 +66,7 @@ public abstract class BaseTestSuite extends BaseLoggingObject {
                     transformScanner,
                     docScanner,
                     writer,
-                    JaspilerOptions.Default);
+                    JaspilerTransformOptions.Default);
             return writer.toString();
         }
     }
