@@ -110,7 +110,7 @@ public class TestJaspilerCompiler extends BaseTestSuite {
         List<String> unsupportedParseFileNames = new ArrayList<>();
         List<String> unsupportedTransformFileNames = new ArrayList<>();
         var path = Path.of("");
-        path = SystemUtils.WORKING_DIRECTORY.resolve("src");
+        path = SystemUtils.getWorkingDirectory().resolve("src");
         try (var stream = Files.walk(path)) {
             stream.filter(Files::isRegularFile)
                     .map(Path::toFile)

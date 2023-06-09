@@ -30,13 +30,13 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.util.Optional;
 
-public class JaspilerMain extends BaseLoggingObject {
-    protected static final String JS_VAR_JASPILER_OPTIONS = "jaspilerOptions";
-    protected static final String OPTION_CONFIG = "config";
-    protected static final String OPTION_HELP = "help";
-    protected final Options options;
-    protected File configFile;
-    protected boolean helpRequested;
+public final class JaspilerMain extends BaseLoggingObject {
+    private static final String JS_VAR_JASPILER_OPTIONS = "jaspilerOptions";
+    private static final String OPTION_CONFIG = "config";
+    private static final String OPTION_HELP = "help";
+    private final Options options;
+    private File configFile;
+    private boolean helpRequested;
 
     public JaspilerMain() {
         super();
@@ -52,7 +52,7 @@ public class JaspilerMain extends BaseLoggingObject {
         System.exit(jaspilerMain.run().getExitCode());
     }
 
-    protected void buildOptions(String[] args) {
+    private void buildOptions(String[] args) {
         logger.info("Jaspiler is a Java to Java transpiler.\n");
         logger.info("Arguments: {}\n", StringUtils.join(args, " "));
         options.addOption(Option.builder(OPTION_HELP.substring(0, 1)).longOpt(OPTION_HELP)
@@ -69,7 +69,7 @@ public class JaspilerMain extends BaseLoggingObject {
                 .required(true).numberOfArgs(1).type(String.class).build());
     }
 
-    protected void parseOptions(String[] args) {
+    private void parseOptions(String[] args) {
         if (helpRequested) {
             printHelp(JaspilerExitCode.NoError);
         }
@@ -85,7 +85,7 @@ public class JaspilerMain extends BaseLoggingObject {
         }
     }
 
-    protected void printHelp(JaspilerExitCode jaspilerExitCode) {
+    private void printHelp(JaspilerExitCode jaspilerExitCode) {
         logger.info(StringUtils.EMPTY);
         HelpFormatter helpFormatter = new HelpFormatter();
         helpFormatter.printHelp(JaspilerContract.NAME, options);

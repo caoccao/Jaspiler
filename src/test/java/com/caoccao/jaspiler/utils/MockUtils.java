@@ -26,7 +26,7 @@ public final class MockUtils {
     }
 
     public static Path getSourcePath(Class<?> clazz) {
-        return SystemUtils.WORKING_DIRECTORY.resolve(
+        return SystemUtils.getWorkingDirectory().resolve(
                 "src/test/java/"
                         + clazz.getName().replace('.', '/')
                         + JavaFileObject.Kind.SOURCE.extension);
