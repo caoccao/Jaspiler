@@ -23,11 +23,19 @@ import com.sun.source.tree.TreeVisitor;
 
 import javax.lang.model.element.Modifier;
 import java.util.*;
-import java.util.stream.Stream;
 
 public final class JTModifiers
         extends JTTree<ModifiersTree, JTModifiers>
         implements ModifiersTree, IJTAnnotatable {
+    private static final List<Modifier> ABSTRACT_OR_DEFAULT_OR_STATIC_MODIFIERS = List.of(
+            Modifier.ABSTRACT, Modifier.DEFAULT, Modifier.STATIC);
+    private static final List<Modifier> OTHER_MODIFIERS = List.of(
+            Modifier.FINAL, Modifier.TRANSIENT, Modifier.VOLATILE,
+            Modifier.SYNCHRONIZED, Modifier.NATIVE, Modifier.STRICTFP);
+    private static final List<Modifier> SCOPE_MODIFIERS = List.of(
+            Modifier.PUBLIC, Modifier.PROTECTED, Modifier.PRIVATE);
+    private static final List<Modifier> SEALED_OR_NON_SEALED_MODIFIERS = List.of(
+            Modifier.SEALED, Modifier.NON_SEALED);
     private final List<JTAnnotation> annotations;
     private final Set<Modifier> flags;
 
@@ -86,8 +94,13 @@ public final class JTModifiers
                     tree -> sbp.appendLineSeparator().appendSpace(indentAnnotation),
                     null,
                     trees -> sbp.appendLineSeparator());
+            List<Modifier> modifiers = new ArrayList<>();
+            SCOPE_MODIFIERS.stream().filter(flags::contains).findFirst().ifPresent(modifiers::add);
+            ABSTRACT_OR_DEFAULT_OR_STATIC_MODIFIERS.stream().filter(flags::contains).findFirst().ifPresent(modifiers::add);
+            SEALED_OR_NON_SEALED_MODIFIERS.stream().filter(flags::contains).findFirst().ifPresent(modifiers::add);
+            OTHER_MODIFIERS.stream().filter(flags::contains).forEach(modifiers::add);
             ForEachUtils.forEach(
-                    Stream.of(Modifier.values()).filter(flags::contains).toList(),
+                    modifiers,
                     sbp::append,
                     tree -> sbp.appendSpace(),
                     trees -> sbp.appendSpaceIfNeeded());
