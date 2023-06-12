@@ -18,9 +18,6 @@ import org.gradle.internal.os.OperatingSystem
 
 object Config {
     object Projects {
-        // https://mvnrepository.com/artifact/commons-cli/commons-cli
-        const val COMMONS_CLI = "commons-cli:commons-cli:${Versions.COMMONS_CLI}"
-
         // https://mvnrepository.com/artifact/org.apache.commons/commons-collections4
         const val COMMONS_COLLECTIONS4 = "org.apache.commons:commons-collections4:${Versions.COMMONS_COLLECTIONS4}"
 
@@ -37,17 +34,21 @@ object Config {
         const val JAVET_MACOS = "com.caoccao.javet:javet-macos:${Versions.JAVET}"
         const val JUNIT_BOM = "org.junit:junit-bom:${Versions.JUNIT}"
         const val JUNIT_JUPITER = "org.junit.jupiter:junit-jupiter"
+
+        // https://mvnrepository.com/artifact/info.picocli/picocli
+        const val PICOCLI = "info.picocli:picocli:${Versions.PICOCLI}"
+
         const val SLF4J_API = "org.slf4j:slf4j-api:${Versions.SLF4J}"
         const val SLF4J_LOG4J12 = "org.slf4j:slf4j-log4j12:${Versions.SLF4J}"
     }
 
     object Versions {
-        const val COMMONS_CLI = "1.5.0"
         const val COMMONS_COLLECTIONS4 = "4.4"
         const val COMMONS_LANG3 = "3.12.0"
         const val JACKSON = "2.15.2"
         const val JAVET = "2.2.0"
         const val JUNIT = "5.9.1"
+        const val PICOCLI = "4.7.4"
         const val SLF4J = "2.0.7"
     }
 }
@@ -64,7 +65,6 @@ repositories {
 }
 
 dependencies {
-    implementation(Config.Projects.COMMONS_CLI)
     implementation(Config.Projects.COMMONS_COLLECTIONS4)
     implementation(Config.Projects.COMMONS_LANG3)
     implementation(Config.Projects.JACKSON_DATABIND)
@@ -74,6 +74,7 @@ dependencies {
     } else {
         implementation(Config.Projects.JAVET)
     }
+    implementation(Config.Projects.PICOCLI)
     implementation(Config.Projects.SLF4J_API)
     implementation(Config.Projects.SLF4J_LOG4J12)
     testImplementation(platform(Config.Projects.JUNIT_BOM))

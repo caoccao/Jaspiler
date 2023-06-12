@@ -16,16 +16,12 @@
 
 package com.caoccao.jaspiler.exceptions;
 
-public class JaspilerNotSupportedException extends JaspilerUncheckedException {
-    public JaspilerNotSupportedException() {
-        super();
-    }
-
-    public JaspilerNotSupportedException(String message) {
+public abstract class JaspilerCheckedException extends Exception {
+    public JaspilerCheckedException(String message) {
         super(message);
     }
 
-    public JaspilerNotSupportedException(String message, Throwable cause) {
+    public JaspilerCheckedException(String message, Throwable cause) {
         super(message, cause);
     }
 }

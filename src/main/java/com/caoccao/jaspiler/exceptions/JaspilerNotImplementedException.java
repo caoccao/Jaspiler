@@ -16,7 +16,7 @@
 
 package com.caoccao.jaspiler.exceptions;
 
-public class JaspilerNotImplementedException extends RuntimeException {
+public class JaspilerNotImplementedException extends JaspilerUncheckedException {
     public JaspilerNotImplementedException() {
         super();
     }

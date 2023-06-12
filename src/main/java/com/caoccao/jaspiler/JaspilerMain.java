@@ -17,110 +17,66 @@
 package com.caoccao.jaspiler;
 
 import com.caoccao.jaspiler.enums.JaspilerExitCode;
-import com.caoccao.jaspiler.options.JaspilerOptions;
 import com.caoccao.jaspiler.utils.BaseLoggingObject;
-import com.caoccao.jaspiler.utils.SystemUtils;
+import com.caoccao.jaspiler.v8.V8Jaspiler;
 import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interop.NodeRuntime;
 import com.caoccao.javet.interop.V8Host;
-import com.caoccao.javet.values.reference.V8ValueObject;
-import org.apache.commons.cli.*;
-import org.apache.commons.lang3.StringUtils;
+import com.caoccao.javet.interop.converters.JavetProxyConverter;
+import picocli.CommandLine;
 
 import java.io.File;
-import java.util.Optional;
+import java.util.concurrent.Callable;
 
-public final class JaspilerMain extends BaseLoggingObject {
-    private static final String JS_VAR_JASPILER_OPTIONS = "jaspilerOptions";
-    private static final String OPTION_CONFIG = "config";
-    private static final String OPTION_HELP = "help";
-    private final Options options;
-    private File configFile;
-    private boolean helpRequested;
+@CommandLine.Command(
+        name = JaspilerContract.NAME,
+        mixinStandardHelpOptions = true,
+        version = JaspilerContract.VERSION,
+        description = JaspilerContract.DESCRIPTION)
+public final class JaspilerMain extends BaseLoggingObject implements Callable<Integer> {
+    @CommandLine.Parameters(index = "0", description = "The JavaScript file to be executed.")
+    private File file;
 
     public JaspilerMain() {
         super();
-        configFile = null;
-        helpRequested = false;
-        options = new Options();
+        file = null;
     }
 
     public static void main(String[] args) {
-        var jaspilerMain = new JaspilerMain();
-        jaspilerMain.buildOptions(args);
-        jaspilerMain.parseOptions(args);
-        System.exit(jaspilerMain.run().getExitCode());
+        System.exit(new CommandLine(new JaspilerMain()).execute(args));
     }
 
-    private void buildOptions(String[] args) {
-        logger.info("Jaspiler is a Java to Java transpiler.\n");
-        logger.info("Arguments: {}\n", StringUtils.join(args, " "));
-        options.addOption(Option.builder(OPTION_HELP.substring(0, 1)).longOpt(OPTION_HELP)
-                .desc("print the help")
-                .required(false).optionalArg(true).type(String.class).build());
-        CommandLineParser commandLineParser = new DefaultParser();
-        try {
-            CommandLine commandLine = commandLineParser.parse(options, args);
-            helpRequested = commandLine.hasOption(OPTION_HELP);
-        } catch (Throwable ignored) {
-        }
-        options.addOption(Option.builder(OPTION_CONFIG.substring(0, 1)).longOpt(OPTION_CONFIG)
-                .desc("config script path")
-                .required(true).numberOfArgs(1).type(String.class).build());
-    }
-
-    private void parseOptions(String[] args) {
-        if (helpRequested) {
-            printHelp(JaspilerExitCode.NoError);
-        }
-        CommandLineParser commandLineParser = new DefaultParser();
-        try {
-            CommandLine commandLine = commandLineParser.parse(options, args);
-            configFile = Optional.ofNullable(commandLine.getOptionValue(OPTION_CONFIG))
-                    .map(config -> SystemUtils.getWorkingDirectory().resolve(config).toFile())
-                    .orElse(null);
-        } catch (Throwable t) {
-            logger.error(t.getMessage());
-            printHelp(JaspilerExitCode.OptionsInvalid);
-        }
-    }
-
-    private void printHelp(JaspilerExitCode jaspilerExitCode) {
-        logger.info(StringUtils.EMPTY);
-        HelpFormatter helpFormatter = new HelpFormatter();
-        helpFormatter.printHelp(JaspilerContract.NAME, options);
-        System.exit(jaspilerExitCode.getExitCode());
-    }
-
-    public JaspilerExitCode run() {
-        if (configFile == null) {
+    @Override
+    public Integer call() throws Exception {
+        JaspilerExitCode jaspilerExitCode = JaspilerExitCode.NoError;
+        if (file == null) {
             logger.error(JaspilerExitCode.ConfigInvalid.getMessageFormat());
-            return JaspilerExitCode.ConfigInvalid;
-        }
-        if (!configFile.exists() || !configFile.isFile() || !configFile.canRead()) {
-            logger.error(JaspilerExitCode.ConfigNotFound.getMessageFormat(), configFile.getAbsolutePath());
-            return JaspilerExitCode.ConfigNotFound;
-        }
-        logger.info("Processing [{}]...", configFile.getPath());
-        try (NodeRuntime nodeRuntime = V8Host.getNodeInstance().createV8Runtime()) {
-            nodeRuntime.getExecutor(configFile).executeVoid();
-            JaspilerOptions jaspilerOptions;
-            try (V8ValueObject v8ValueObject = nodeRuntime.getExecutor(JS_VAR_JASPILER_OPTIONS).execute()) {
-                jaspilerOptions = JaspilerOptions.deserialize(v8ValueObject);
+            jaspilerExitCode = JaspilerExitCode.ConfigInvalid;
+        } else if (!file.exists() || !file.isFile() || !file.canRead()) {
+            logger.error(JaspilerExitCode.ConfigNotFound.getMessageFormat(), file.getAbsolutePath());
+            jaspilerExitCode = JaspilerExitCode.ConfigNotFound;
+        } else {
+            // Covert the file to an absolute file to avoid the impact from the working directory changes.
+            file = file.getAbsoluteFile();
+            logger.info("Executing [{}]...", file.getPath());
+            try (NodeRuntime nodeRuntime = V8Host.getNodeInstance().createV8Runtime()) {
+                var javetProxyConverter = new JavetProxyConverter();
+                nodeRuntime.setConverter(javetProxyConverter);
+                try (V8Jaspiler v8Jaspiler = new V8Jaspiler(nodeRuntime)) {
+                    nodeRuntime.getGlobalObject().set(V8Jaspiler.NAME, v8Jaspiler);
+                    nodeRuntime.getExecutor(file).executeVoid();
+                } finally {
+                    nodeRuntime.getGlobalObject().delete(V8Jaspiler.NAME);
+                    nodeRuntime.lowMemoryNotification();
+                }
+            } catch (JavetException e) {
+                logger.error(JaspilerExitCode.EngineUnknownError.getMessageFormat(), e.getMessage());
+                jaspilerExitCode = JaspilerExitCode.EngineUnknownError;
+            } catch (Throwable t) {
+                logger.error(JaspilerExitCode.UnknownError.getMessageFormat(), t.getMessage());
+                jaspilerExitCode = JaspilerExitCode.UnknownError;
             }
-            if (!jaspilerOptions.isValid()) {
-                logger.error(JaspilerExitCode.ConfigEmpty.getMessageFormat(), configFile.getPath());
-                return JaspilerExitCode.ConfigEmpty;
-            }
-            logger.info("Processing [{}]...", JS_VAR_JASPILER_OPTIONS);
-            logger.info(jaspilerOptions.toJson());
-            return JaspilerExitCode.NoError;
-        } catch (JavetException e) {
-            logger.error(JaspilerExitCode.EngineUnknownError.getMessageFormat(), e.getMessage());
-            return JaspilerExitCode.EngineUnknownError;
-        } catch (Throwable t) {
-            logger.error(JaspilerExitCode.UnknownError.getMessageFormat(), t.getMessage());
-            return JaspilerExitCode.UnknownError;
         }
+        return jaspilerExitCode.getExitCode();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. caoccao.com Sam Cao
+ * Copyright (c) 2023-2023. caoccao.com Sam Cao
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.caoccao.jaspiler.options;
+package com.caoccao.jaspiler.v8;
 
 import com.caoccao.jaspiler.utils.JsonUtils;
 import com.caoccao.javet.exceptions.JavetException;
@@ -28,20 +28,20 @@ import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.*;
 
-public final class JaspilerOptions {
+public final class V8JaspilerOptions {
     public static final String PROPERTY_PARSE_RULES = "parseRules";
     public static final String PROPERTY_TRANSFORM_RULES = "transformRules";
 
     private final List<Rule> parseRules;
     private final List<Rule> transformRules;
 
-    public JaspilerOptions() {
+    public V8JaspilerOptions() {
         parseRules = new ArrayList<>();
         transformRules = new ArrayList<>();
     }
 
-    public static JaspilerOptions deserialize(V8ValueObject v8ValueObject) throws JavetException {
-        var jaspilerOptions = new JaspilerOptions();
+    public static V8JaspilerOptions deserialize(V8ValueObject v8ValueObject) throws JavetException {
+        var jaspilerOptions = new V8JaspilerOptions();
         try (V8Value v8Value = v8ValueObject.get(PROPERTY_PARSE_RULES)) {
             if (v8Value instanceof V8ValueArray v8ValueArray) {
                 v8ValueArray.forEach(v8ValueRule -> {

@@ -14,18 +14,9 @@
  * limitations under the License.
  */
 
-package com.caoccao.jaspiler.exceptions;
+package com.caoccao.jaspiler.v8;
 
-public class JaspilerNotSupportedException extends JaspilerUncheckedException {
-    public JaspilerNotSupportedException() {
-        super();
-    }
+import com.caoccao.jaspiler.visiters.BaseJaspilerParseScanner;
 
-    public JaspilerNotSupportedException(String message) {
-        super(message);
-    }
-
-    public JaspilerNotSupportedException(String message, Throwable cause) {
-        super(message, cause);
-    }
+public class V8JaspilerParseScanner extends BaseJaspilerParseScanner<V8JaspilerParseScanner> {
 }

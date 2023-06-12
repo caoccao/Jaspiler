@@ -26,6 +26,7 @@ import java.lang.annotation.RetentionPolicy;
  */
 public final class JaspilerContract {
     public static final String ANNOTATION_IGNORE = "@JaspilerContract.Ignore";
+    public static final String DESCRIPTION = "Jaspiler is a Java to Java transpiler.";
     public static final String NAME = "Jaspiler";
     public static final String VERSION = "0.1.0";
 
