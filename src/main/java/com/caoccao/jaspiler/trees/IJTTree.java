@@ -17,12 +17,14 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.JaspilerContract;
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.javet.interop.proxy.IJavetDirectProxyHandler;
 import com.sun.source.tree.Tree;
 
 public interface IJTTree<
         OriginalTree extends Tree,
         NewTree extends IJTTree<OriginalTree, NewTree>>
-        extends Tree {
+        extends Tree, IJavetDirectProxyHandler<JaspilerCheckedException> {
     JaspilerContract.Action getAction();
 
     default JTCompilationUnit getCompilationUnit() {

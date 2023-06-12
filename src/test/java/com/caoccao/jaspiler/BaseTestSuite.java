@@ -45,9 +45,9 @@ public abstract class BaseTestSuite extends BaseLoggingObject {
     protected <TransformScanner extends TreePathScanner<TransformScanner, JaspilerTransformContext>>
     String transform(
             TransformScanner transformScanner,
-            Class<?>... classes)
+            Class<?> clazz)
             throws IOException {
-        return transform(transformScanner, null, classes);
+        return transform(transformScanner, null, clazz);
     }
 
     protected <TransformScanner extends TreePathScanner<TransformScanner, JaspilerTransformContext>,
@@ -55,18 +55,16 @@ public abstract class BaseTestSuite extends BaseLoggingObject {
     String transform(
             TransformScanner transformScanner,
             DocScanner docScanner,
-            Class<?>... classes)
+            Class<?> clazz)
             throws IOException {
         compiler.clearJavaFileObject();
-        for (var clazz : classes) {
-            compiler.addJavaFileObjects(MockUtils.getSourcePath(clazz));
-        }
+        compiler.addJavaFileObjects(MockUtils.getSourcePath(clazz));
+        compiler.transform(
+                transformScanner,
+                docScanner,
+                JaspilerTransformOptions.Default);
         try (StringWriter writer = new StringWriter()) {
-            compiler.transform(
-                    transformScanner,
-                    docScanner,
-                    writer,
-                    JaspilerTransformOptions.Default);
+            compiler.getTransformContexts().get(0).getCompilationUnitTree().save(writer);
             return writer.toString();
         }
     }

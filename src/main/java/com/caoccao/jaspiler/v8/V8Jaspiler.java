@@ -20,6 +20,7 @@ import com.caoccao.jaspiler.JaspilerCompiler;
 import com.caoccao.jaspiler.exceptions.JaspilerArgumentException;
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.exceptions.JaspilerParseException;
+import com.caoccao.jaspiler.options.JaspilerTransformOptions;
 import com.caoccao.jaspiler.utils.BaseLoggingObject;
 import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
@@ -31,10 +32,10 @@ import com.caoccao.javet.interop.callback.JavetCallbackType;
 import com.caoccao.javet.interop.proxy.IJavetDirectProxyHandler;
 import com.caoccao.javet.values.V8Value;
 import com.caoccao.javet.values.primitive.V8ValueString;
-import com.caoccao.javet.values.reference.V8ValueObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,8 +44,9 @@ public class V8Jaspiler
         extends BaseLoggingObject
         implements IJavetDirectProxyHandler<JaspilerCheckedException>, AutoCloseable {
     public static final String NAME = "jaspiler";
-    protected static final String FUNCTION_PARSE_SYNC = "parseSync";
+    protected static final String FUNCTION_TRANSFORM_SYNC = "transformSync";
     protected static final String PROPERTIES_AST = "ast";
+    protected static final String PROPERTIES_CODE = "code";
     protected JaspilerCompiler jaspilerCompiler;
     protected Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> stringGetterMap;
     protected V8Runtime v8Runtime;
@@ -66,37 +68,67 @@ public class V8Jaspiler
         return v8Runtime;
     }
 
-    public V8Value parseSync(V8Value... v8Values) throws JavetException, JaspilerCheckedException {
-        String filePath = validateString(FUNCTION_PARSE_SYNC, v8Values, 0);
-        try (V8Scope v8Scope = v8Runtime.getV8Scope()) {
-            var scanner = new V8JaspilerParseScanner();
-            jaspilerCompiler.clearJavaFileObject();
-            jaspilerCompiler.addJavaFileObjects(new File(filePath));
-            jaspilerCompiler.parse(scanner);
-            V8ValueObject v8ValueObjectResult = v8Scope.createV8ValueObject();
-            v8ValueObjectResult.set(
-                    PROPERTIES_AST,
-                    "TODO jaspilerCompiler.getParseContexts().get(0).getCompilationUnitTree()");
-            v8Scope.setEscapable();
-            return v8ValueObjectResult;
-        } catch (IOException e) {
-            throw new JaspilerParseException(e.getMessage(), e);
-        }
-    }
-
     @Override
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             stringGetterMap = new HashMap<>();
             stringGetterMap.put(
-                    FUNCTION_PARSE_SYNC,
-                    (propertyName) -> v8Runtime.createV8ValueFunction(
+                    FUNCTION_TRANSFORM_SYNC,
+                    propertyName -> v8Runtime.createV8ValueFunction(
                             new JavetCallbackContext(
                                     propertyName,
                                     JavetCallbackType.DirectCallNoThisAndResult,
-                                    (IJavetDirectCallable.NoThisAndResult<?>) this::parseSync)));
+                                    (IJavetDirectCallable.NoThisAndResult<?>) this::transformSync)));
         }
         return stringGetterMap;
+    }
+
+    public V8Value transformSync(V8Value... v8Values) throws JavetException, JaspilerCheckedException {
+        File file = validateFile(validateString(FUNCTION_TRANSFORM_SYNC, v8Values, 0));
+        try (var jaspilerTransformScanner = new V8JaspilerTransformScanner();
+             var jaspilerDocScanner = new V8JaspilerDocScanner();
+             var stringWriter = new StringWriter()) {
+            jaspilerCompiler.clearJavaFileObject();
+            jaspilerCompiler.addJavaFileObjects(file);
+            jaspilerCompiler.transform(
+                    jaspilerTransformScanner,
+                    jaspilerDocScanner,
+                    JaspilerTransformOptions.Default);
+            var compilationUnitTree = jaspilerCompiler.getTransformContexts().get(0).getCompilationUnitTree();
+            try (V8Scope v8Scope = v8Runtime.getV8Scope()) {
+                var v8ValueObjectResult = v8Scope.createV8ValueObject();
+                if (compilationUnitTree.save(stringWriter)) {
+                    v8ValueObjectResult.set(
+                            PROPERTIES_AST, compilationUnitTree,
+                            PROPERTIES_CODE, stringWriter.toString());
+                } else {
+                    v8ValueObjectResult.set(
+                            PROPERTIES_AST, null,
+                            PROPERTIES_CODE, null);
+                }
+                v8Scope.setEscapable();
+                return v8ValueObjectResult;
+            }
+        } catch (IOException e) {
+            throw new JaspilerParseException(e.getMessage(), e);
+        }
+    }
+
+    protected File validateFile(String filePath) throws JaspilerArgumentException {
+        File file = new File(filePath);
+        if (!file.exists()) {
+            throw new JaspilerArgumentException(
+                    MessageFormat.format("[{0}] is not found.", file.getAbsolutePath()));
+        }
+        if (!file.isFile()) {
+            throw new JaspilerArgumentException(
+                    MessageFormat.format("[{0}] is not a file.", file.getAbsolutePath()));
+        }
+        if (!file.canRead()) {
+            throw new JaspilerArgumentException(
+                    MessageFormat.format("File [{0}] cannot be read.", file.getAbsolutePath()));
+        }
+        return file;
     }
 
     protected void validateLength(

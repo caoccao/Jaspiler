@@ -26,10 +26,10 @@ import com.caoccao.jaspiler.trees.JTImport;
 import com.caoccao.jaspiler.trees.JTPackageDecl;
 import com.caoccao.jaspiler.trees.JTTreeFactory;
 import com.caoccao.jaspiler.utils.SystemUtils;
-import com.caoccao.jaspiler.visiters.DummyDocScanner;
-import com.caoccao.jaspiler.visiters.DummyTransformScanner;
 import com.caoccao.jaspiler.visiters.BaseJaspilerDocScanner;
 import com.caoccao.jaspiler.visiters.BaseJaspilerTransformScanner;
+import com.caoccao.jaspiler.visiters.DummyDocScanner;
+import com.caoccao.jaspiler.visiters.DummyTransformScanner;
 import com.sun.source.doctree.DocTree;
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.ImportTree;
@@ -38,7 +38,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -119,11 +118,10 @@ public class TestJaspilerCompiler extends BaseTestSuite {
                         try {
                             compiler.clearJavaFileObject();
                             compiler.addJavaFileObjects(file);
-                            try (StringWriter writer = new StringWriter()) {
+                            try {
                                 compiler.transform(
                                         dummyTransformScanner,
                                         dummyDocScanner,
-                                        writer,
                                         JaspilerTransformOptions.Default);
                             } finally {
                                 compiler.getParseContexts().stream()

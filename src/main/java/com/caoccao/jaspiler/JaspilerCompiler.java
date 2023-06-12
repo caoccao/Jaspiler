@@ -29,7 +29,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import javax.tools.*;
 import java.io.File;
 import java.io.IOException;
-import java.io.Writer;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -139,7 +138,6 @@ public final class JaspilerCompiler extends BaseLoggingObject {
             DocScanner extends DocTreeScanner<DocScanner, JaspilerDocContext>> JaspilerCompiler transform(
             TransformScanner transformScanner,
             DocScanner docScanner,
-            Writer writer,
             JaspilerTransformOptions options)
             throws IOException {
         transformContexts.clear();
@@ -159,7 +157,6 @@ public final class JaspilerCompiler extends BaseLoggingObject {
                     docContexts.add(docContext);
                     docScanner.scan(jtCompilationUnit.getDocCommentTree(), docContext);
                 }
-                jtCompilationUnit.save(writer);
             }
         }
         return this;

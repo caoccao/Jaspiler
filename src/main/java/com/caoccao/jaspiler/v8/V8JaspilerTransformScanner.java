@@ -16,7 +16,14 @@
 
 package com.caoccao.jaspiler.v8;
 
-import com.caoccao.jaspiler.visiters.BaseJaspilerParseScanner;
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.visiters.BaseJaspilerTransformScanner;
 
-public class V8JaspilerParseScanner extends BaseJaspilerParseScanner<V8JaspilerParseScanner> {
+public class V8JaspilerTransformScanner
+        extends BaseJaspilerTransformScanner<V8JaspilerTransformScanner>
+        implements AutoCloseable {
+    @Override
+    public void close() throws JaspilerCheckedException {
+
+    }
 }

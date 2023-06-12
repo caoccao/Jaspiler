@@ -17,14 +17,25 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.JaspilerContract;
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.exceptions.JaspilerNotImplementedException;
 import com.caoccao.jaspiler.utils.BaseLoggingObject;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.interop.V8Runtime;
+import com.caoccao.javet.interop.callback.IJavetDirectCallable;
+import com.caoccao.javet.interop.callback.JavetCallbackContext;
+import com.caoccao.javet.interop.callback.JavetCallbackType;
+import com.caoccao.javet.values.V8Value;
+import com.caoccao.javet.values.reference.V8ValueSymbol;
+import com.caoccao.javet.values.reference.builtin.V8ValueBuiltInSymbol;
 import com.sun.source.tree.Tree;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("unchecked")
 public abstract class JTTree<
@@ -33,10 +44,14 @@ public abstract class JTTree<
         extends BaseLoggingObject
         implements IJTTree<OriginalTree, NewTree> {
     protected static final long INVALID_POSITION = -1L;
+    protected static final String PROPERTY_TO_STRING = "toString";
     protected JaspilerContract.Action action;
     protected JTPosition originalPosition;
     protected OriginalTree originalTree;
     protected JTTree<?, ?> parentTree;
+    protected Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> stringGetterMap;
+    protected Map<String, IJavetUniFunction<V8ValueSymbol, ? extends V8Value, JaspilerCheckedException>> symbolGetterMap;
+    protected V8Runtime v8Runtime;
 
     JTTree(OriginalTree originalTree, JTTree<?, ?> parentTree) {
         super();
@@ -44,6 +59,9 @@ public abstract class JTTree<
         this.originalTree = originalTree;
         this.parentTree = parentTree;
         setAction(JaspilerContract.Action.NoChange);
+        stringGetterMap = null;
+        symbolGetterMap = null;
+        v8Runtime = null;
     }
 
     NewTree analyze() {
@@ -101,6 +119,11 @@ public abstract class JTTree<
     }
 
     @Override
+    public V8Runtime getV8Runtime() {
+        return v8Runtime;
+    }
+
+    @Override
     public boolean isActionChange() {
         if (isActionIgnore()) {
             return false;
@@ -110,6 +133,38 @@ public abstract class JTTree<
         }
         return getAllNodes().stream()
                 .anyMatch(jtTree -> jtTree.isActionChange() || jtTree.isActionIgnore());
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            stringGetterMap = new HashMap<>();
+            stringGetterMap.put(
+                    PROPERTY_TO_STRING,
+                    propertyName -> v8Runtime.createV8ValueFunction(
+                            new JavetCallbackContext(
+                                    propertyName,
+                                    JavetCallbackType.DirectCallNoThisAndResult,
+                                    (IJavetDirectCallable.NoThisAndResult<?>)
+                                            property -> v8Runtime.createV8ValueString(toString()))));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<V8ValueSymbol, ? extends V8Value, JaspilerCheckedException>> proxyGetSymbolGetterMap() {
+        if (symbolGetterMap == null) {
+            symbolGetterMap = new HashMap<>();
+            symbolGetterMap.put(
+                    V8ValueBuiltInSymbol.SYMBOL_PROPERTY_TO_PRIMITIVE,
+                    propertySymbol -> v8Runtime.createV8ValueFunction(
+                            new JavetCallbackContext(
+                                    propertySymbol.getDescription(),
+                                    JavetCallbackType.DirectCallNoThisAndResult,
+                                    (IJavetDirectCallable.NoThisAndResult<?>)
+                                            property -> v8Runtime.createV8ValueString(toString()))));
+        }
+        return symbolGetterMap;
     }
 
     protected boolean save(Writer writer) throws IOException {
@@ -146,6 +201,11 @@ public abstract class JTTree<
             return setActionChange();
         }
         return (NewTree) this;
+    }
+
+    @Override
+    public void setV8Runtime(V8Runtime v8Runtime) {
+        this.v8Runtime = v8Runtime;
     }
 
     @Override
