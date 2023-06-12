@@ -22,6 +22,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 public interface IJTAnnotatable {
+    String PROPERTY_ANNOTATIONS = "annotations";
+
     default boolean contains(String annotationString) {
         if (StringUtils.isAllBlank(annotationString)) {
             return false;

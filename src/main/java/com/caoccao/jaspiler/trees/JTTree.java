@@ -44,7 +44,7 @@ public abstract class JTTree<
         extends BaseLoggingObject
         implements IJTTree<OriginalTree, NewTree> {
     protected static final long INVALID_POSITION = -1L;
-    protected static final String PROPERTY_TO_STRING = "toString";
+    protected static final String FUNCTION_TO_STRING = "toString";
     protected JaspilerContract.Action action;
     protected JTPosition originalPosition;
     protected OriginalTree originalTree;
@@ -140,7 +140,7 @@ public abstract class JTTree<
         if (stringGetterMap == null) {
             stringGetterMap = new HashMap<>();
             stringGetterMap.put(
-                    PROPERTY_TO_STRING,
+                    FUNCTION_TO_STRING,
                     propertyName -> v8Runtime.createV8ValueFunction(
                             new JavetCallbackContext(
                                     propertyName,

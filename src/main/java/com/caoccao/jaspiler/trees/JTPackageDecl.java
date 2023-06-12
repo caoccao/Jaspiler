@@ -16,15 +16,15 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.utils.ForEachUtils;
 import com.caoccao.jaspiler.utils.StringBuilderPlus;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.PackageTree;
 import com.sun.source.tree.TreeVisitor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * The type Jt package tree.
@@ -33,6 +33,7 @@ import java.util.Optional;
 public final class JTPackageDecl
         extends JTTree<PackageTree, JTPackageDecl>
         implements PackageTree, IJTAnnotatable {
+    private static final String PROPERTY_PACKAGE_NAME = "packageName";
     private final List<JTAnnotation> annotations;
     private JTExpression<?, ?> packageName;
 
@@ -83,6 +84,20 @@ public final class JTPackageDecl
     @Override
     public JTExpression<?, ?> getPackageName() {
         return packageName;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            stringGetterMap.put(
+                    PROPERTY_ANNOTATIONS,
+                    propertyName -> v8Runtime.toV8Value(getAnnotations()));
+            stringGetterMap.put(
+                    PROPERTY_PACKAGE_NAME,
+                    propertyName -> v8Runtime.toV8Value(getPackageName()));
+        }
+        return stringGetterMap;
     }
 
     public JTPackageDecl setPackageName(JTExpression<?, ?> packageName) {

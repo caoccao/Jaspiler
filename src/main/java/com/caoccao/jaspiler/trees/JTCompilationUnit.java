@@ -17,9 +17,12 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.JaspilerContract;
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.options.JaspilerTransformOptions;
 import com.caoccao.jaspiler.utils.ForEachUtils;
 import com.caoccao.jaspiler.utils.StringBuilderPlus;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
 import com.sun.source.doctree.DocCommentTree;
 import com.sun.source.doctree.DocTree;
 import com.sun.source.tree.*;
@@ -37,10 +40,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * The type Jt compilation unit.
@@ -49,6 +49,10 @@ import java.util.Optional;
 public final class JTCompilationUnit
         extends JTTree<CompilationUnitTree, JTCompilationUnit>
         implements CompilationUnitTree {
+    private static final String PROPERTY_IMPORTS = "imports";
+    private static final String PROPERTY_MODULE = "module";
+    private static final String PROPERTY_PACKAGE = "package";
+    private static final String PROPERTY_TYPE_DECLS = "typeDecls";
     private final DocCommentTree docCommentTree;
     private final DocSourcePositions docSourcePositions;
     private final DocTrees docTrees;
@@ -141,10 +145,6 @@ public final class JTCompilationUnit
 
     @Override
     public ModuleTree getModule() {
-        return null;
-    }
-
-    public JTModuleDecl getModuleTree() {
         return moduleTree;
     }
 
@@ -225,6 +225,26 @@ public final class JTCompilationUnit
         return this;
     }
 
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            stringGetterMap.put(
+                    PROPERTY_IMPORTS,
+                    propertyName -> v8Runtime.toV8Value(getImports()));
+            stringGetterMap.put(
+                    PROPERTY_MODULE,
+                    propertyName -> v8Runtime.toV8Value(getModule()));
+            stringGetterMap.put(
+                    PROPERTY_PACKAGE,
+                    propertyName -> v8Runtime.toV8Value(getPackage()));
+            stringGetterMap.put(
+                    PROPERTY_TYPE_DECLS,
+                    propertyName -> v8Runtime.toV8Value(getTypeDecls()));
+        }
+        return stringGetterMap;
+    }
+
     public boolean save(Path outputPath) throws IOException {
         return save(outputPath, StandardCharsets.UTF_8);
     }
@@ -293,7 +313,7 @@ public final class JTCompilationUnit
         return super.save(writer);
     }
 
-    public JTCompilationUnit setModuleTree(JTModuleDecl moduleTree) {
+    public JTCompilationUnit setModule(JTModuleDecl moduleTree) {
         if (this.moduleTree == moduleTree) {
             return this;
         }
