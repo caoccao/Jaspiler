@@ -7,7 +7,7 @@ const pathMockPublicAnnotation = path.join(
   workingDirectory,
   '../../../src/test/java/com/caoccao/jaspiler/mock/MockPublicAnnotation.java');
 
-function testWithoutOptions() {
+function testBasicTransform() {
   const result = jaspiler.transformSync(pathMockPublicAnnotation);
   // Assert result, result.ast, result.code
   assert.isObject(result);
@@ -35,6 +35,19 @@ function testWithoutOptions() {
   assert.include(typeDecls[0].toString(), expectedLine, 'The typeDecls[0].toString() should work.');
 }
 
+function testIgnorePackage() {
+  const result = jaspiler.transformSync(pathMockPublicAnnotation, {
+    plugins: [{
+      visitor: {
+        Package(node) {
+          assert.isTrue(node.setIgnore());
+        },
+      },
+    }],
+  });
+  assert.notInclude(result.code, 'package com.caoccao.jaspiler.mock;');
+}
+
 function testReplacePackageName() {
   const result = jaspiler.transformSync(pathMockPublicAnnotation, {
     plugins: [{
@@ -45,9 +58,9 @@ function testReplacePackageName() {
       },
     }],
   });
-  console.info(result.code);
   assert.include(result.code, 'package abc.def.ghi;');
 }
 
-testWithoutOptions();
+testBasicTransform();
+testIgnorePackage();
 testReplacePackageName();

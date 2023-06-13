@@ -42,6 +42,7 @@ public abstract class JTTree<
         NewTree extends JTTree<OriginalTree, NewTree>>
         extends BaseLoggingObject
         implements IJTTree<OriginalTree, NewTree> {
+    protected static final String FUNCTION_SET_IGNORE = "setIgnore";
     protected static final String FUNCTION_TO_STRING = "toString";
     protected static final long INVALID_POSITION = -1L;
     protected JaspilerContract.Action action;
@@ -140,6 +141,10 @@ public abstract class JTTree<
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             stringGetterMap = new HashMap<>();
+            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_SET_IGNORE, property -> {
+                setActionIgnore();
+                return v8Runtime.createV8ValueBoolean(true);
+            });
             V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_TO_STRING, property -> v8Runtime.createV8ValueString(toString()));
         }
         return stringGetterMap;
