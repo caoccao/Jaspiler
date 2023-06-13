@@ -110,20 +110,25 @@ public final class V8JaspilerOptions implements IJavetClosable {
     }
 
     public static final class Visitor implements IJavetClosable {
+        private static final String PROPERTY_COMPILATION_UNIT = "CompilationUnit";
         private static final String PROPERTY_PACKAGE = "Package";
+        private V8ValueFunction visitCompilationUnit;
         private V8ValueFunction visitPackage;
 
         public Visitor() {
-            setVisitPackage(null);
+            reset();
         }
 
         @Override
         public void close() {
-            JavetResourceUtils.safeClose(visitPackage);
-            setVisitPackage(null);
+            JavetResourceUtils.safeClose(
+                    visitCompilationUnit,
+                    visitPackage);
+            reset();
         }
 
         public Visitor deserialize(V8ValueObject v8ValueObject) throws JavetException {
+            deserializeFunction(v8ValueObject, PROPERTY_COMPILATION_UNIT, this::setVisitCompilationUnit);
             deserializeFunction(v8ValueObject, PROPERTY_PACKAGE, this::setVisitPackage);
             return this;
         }
@@ -140,17 +145,30 @@ public final class V8JaspilerOptions implements IJavetClosable {
             }
         }
 
+        public V8ValueFunction getVisitCompilationUnit() {
+            return visitCompilationUnit;
+        }
+
         public V8ValueFunction getVisitPackage() {
             return visitPackage;
         }
 
         @Override
         public boolean isClosed() {
-            return ObjectUtils.allNull(visitPackage);
+            return ObjectUtils.allNull(visitCompilationUnit, visitPackage);
         }
 
         public boolean isValid() {
-            return !ObjectUtils.allNull(visitPackage);
+            return !isClosed();
+        }
+
+        private void reset() {
+            setVisitCompilationUnit(null);
+            setVisitPackage(null);
+        }
+
+        public void setVisitCompilationUnit(V8ValueFunction visitCompilationUnit) {
+            this.visitCompilationUnit = visitCompilationUnit;
         }
 
         public void setVisitPackage(V8ValueFunction visitPackage) {

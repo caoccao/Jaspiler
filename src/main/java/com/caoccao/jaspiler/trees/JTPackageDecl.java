@@ -102,14 +102,14 @@ public final class JTPackageDecl
     public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_PACKAGE_NAME, (propertyName, propertyValue) -> {
-                var value = v8Runtime.toObject(propertyValue);
-                if (value instanceof JTExpression<?, ?> typedValue) {
-                    packageName = typedValue;
-                    return true;
-                }
-                return false;
-            });
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_PACKAGE_NAME,
+                    (propertyName, propertyValue) -> {
+                        if (v8Runtime.toObject(propertyValue) instanceof JTExpression<?, ?> expression) {
+                            packageName = expression;
+                            return true;
+                        }
+                        return false;
+                    });
         }
         return stringSetterMap;
     }

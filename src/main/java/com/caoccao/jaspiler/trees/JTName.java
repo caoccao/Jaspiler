@@ -16,13 +16,36 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.interop.V8Runtime;
+import com.caoccao.javet.interop.proxy.IJavetDirectProxyHandler;
+import com.caoccao.javet.values.V8Value;
+import com.caoccao.javet.values.primitive.V8ValueString;
+import com.caoccao.javet.values.reference.V8ValueSymbol;
+import com.caoccao.javet.values.reference.builtin.V8ValueBuiltInSymbol;
+
 import javax.lang.model.element.Name;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
-public final class JTName implements Name {
+public final class JTName implements Name, IJavetDirectProxyHandler<JaspilerCheckedException> {
+    public static final String PROPERTY_VALUE = "value";
+    private static final String FUNCTION_TO_STRING = "toString";
+    private Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> stringGetterMap;
+    private Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> stringSetterMap;
+    private Map<String, IJavetUniFunction<V8ValueSymbol, ? extends V8Value, JaspilerCheckedException>> symbolGetterMap;
+    private V8Runtime v8Runtime;
     private String value;
 
     public JTName(String value) {
+        stringGetterMap = null;
+        stringSetterMap = null;
+        symbolGetterMap = null;
+        setV8Runtime(null);
         setValue(value);
     }
 
@@ -39,6 +62,11 @@ public final class JTName implements Name {
         return value.equals(cs.toString());
     }
 
+    @Override
+    public V8Runtime getV8Runtime() {
+        return v8Runtime;
+    }
+
     public String getValue() {
         return value;
     }
@@ -46,6 +74,49 @@ public final class JTName implements Name {
     @Override
     public int length() {
         return value.length();
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            stringGetterMap = new HashMap<>();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_VALUE,
+                    property -> v8Runtime.createV8ValueString(getValue()));
+            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_TO_STRING, property ->
+                    v8Runtime.createV8ValueString(toString()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            stringSetterMap = new HashMap<>();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_VALUE,
+                    (propertyName, propertyValue) -> {
+                        if (propertyValue instanceof V8ValueString v8ValueStringValue) {
+                            setValue(v8ValueStringValue.getValue());
+                            return true;
+                        }
+                        return false;
+                    });
+        }
+        return stringSetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<V8ValueSymbol, ? extends V8Value, JaspilerCheckedException>> proxyGetSymbolGetterMap() {
+        if (symbolGetterMap == null) {
+            symbolGetterMap = new HashMap<>();
+            V8Register.putSymbolGetter(v8Runtime, symbolGetterMap, V8ValueBuiltInSymbol.SYMBOL_PROPERTY_TO_PRIMITIVE,
+                    description -> v8Runtime.createV8ValueString(toString()));
+        }
+        return symbolGetterMap;
+    }
+
+    @Override
+    public void setV8Runtime(V8Runtime v8Runtime) {
+        this.v8Runtime = v8Runtime;
     }
 
     public JTName setValue(String value) {

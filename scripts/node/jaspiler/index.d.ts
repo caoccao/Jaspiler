@@ -1,5 +1,9 @@
 /// <reference no-default-lib="true"/>
 
+interface JTName {
+  value: string;
+}
+
 interface JTTree<Tree extends JTTree<Tree>> {
   isActionChange(): boolean;
   isActionIgnore(): boolean;
@@ -16,9 +20,17 @@ interface JTCaseLabel<Tree extends JTCaseLabel<Tree>> extends JTTree<JTCaseLabel
 interface JTExpression<Tree extends JTExpression<Tree>> extends JTCaseLabel<JTExpression> {
 }
 
+interface JTFieldAccess extends JTExpression<JTFieldAccess> {
+  expression: JTExpression<?>;
+  identifier: JTName;
+}
+
 interface JTAnnotation extends JTExpression<JTAnnotation> {
   arguments: JTExpression<?>[];
   annotationType: JTTree<?>;
+}
+
+interface JTModuleDecl extends JTTree<JTModuleDecl> {
 }
 
 interface JTPackageDecl extends JTTree<JTPackageDecl> {
@@ -26,7 +38,20 @@ interface JTPackageDecl extends JTTree<JTPackageDecl> {
   packageName: JTExpression<?>;
 }
 
+interface JTImport extends JTTree<JTImport> {
+  qualifiedIdentifier: JTTree<?>;
+  staticImport: boolean;
+}
+
+interface JTCompilationUnit extends JTTree<JTCompilationUnit> {
+  package: JTPackageDecl;
+  imports: JTImport[];
+  typeDecls: JTTree<?>[];
+  module: JTModuleDecl;
+}
+
 interface TransformOptionsPluginVisitor {
+  CompilationUnit(node: JTCompilationUnit): void;
   Package(node: JTPackageDecl): void;
 }
 
@@ -40,14 +65,14 @@ interface TransformOptions {
 
 interface TransformResult {
   code: string;
-  ast: JTTree<?>;
+  ast: JTCompilationUnit;
 }
 
-declare const jaspiler = {
-  createFieldAccess(...strings: string[]): object { },
-  transformSync(path: string, options: TransformOptions): TransformResult { },
-};
+declare namespace jaspiler {
+  function createFieldAccess(...strings: string[]): JTFieldAccess;
+  function createName(value: string): JTName;
 
-module.exports = {
-  jaspiler: jaspiler,
+  function newImport(): JTImport;
+
+  function transformSync(path: string, options: TransformOptions): TransformResult;
 }

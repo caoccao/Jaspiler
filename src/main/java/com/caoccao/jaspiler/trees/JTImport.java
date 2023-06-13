@@ -16,17 +16,26 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.utils.StringBuilderPlus;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
+import com.caoccao.javet.values.primitive.V8ValueBoolean;
 import com.sun.source.tree.ImportTree;
 import com.sun.source.tree.TreeVisitor;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 public final class JTImport
         extends JTTree<ImportTree, JTImport>
         implements ImportTree {
+    public static final String PROPERTY_QUALIFIED_IDENTIFIER = "qualifiedIdentifier";
+    public static final String PROPERTY_STATIC_IMPORT = "staticImport";
     private JTTree<?, ?> qualifiedIdentifier;
     private boolean staticImport;
 
@@ -75,6 +84,40 @@ public final class JTImport
     @Override
     public boolean isStatic() {
         return staticImport;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_QUALIFIED_IDENTIFIER, propertyName -> v8Runtime.toV8Value(getQualifiedIdentifier()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_STATIC_IMPORT, propertyName -> v8Runtime.createV8ValueBoolean(isStatic()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_QUALIFIED_IDENTIFIER,
+                    (propertyName, propertyValue) -> {
+                        if (v8Runtime.toObject(propertyValue) instanceof JTTree<?, ?> propertyQualifiedIdentifier) {
+                            setQualifiedIdentifier(propertyQualifiedIdentifier);
+                            return true;
+                        }
+                        return false;
+                    });
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_STATIC_IMPORT,
+                    (propertyName, propertyValue) -> {
+                        if (propertyValue instanceof V8ValueBoolean v8ValueBooleanStaticImport) {
+                            setStaticImport(v8ValueBooleanStaticImport.getValue());
+                            return true;
+                        }
+                        return false;
+                    });
+        }
+        return stringSetterMap;
     }
 
     public JTImport setQualifiedIdentifier(JTTree<?, ?> qualifiedIdentifier) {

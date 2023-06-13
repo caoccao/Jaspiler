@@ -21,6 +21,8 @@ import com.caoccao.jaspiler.exceptions.JaspilerArgumentException;
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.exceptions.JaspilerParseException;
 import com.caoccao.jaspiler.options.JaspilerTransformOptions;
+import com.caoccao.jaspiler.trees.JTImport;
+import com.caoccao.jaspiler.trees.JTName;
 import com.caoccao.jaspiler.trees.JTTreeFactory;
 import com.caoccao.jaspiler.utils.BaseLoggingObject;
 import com.caoccao.jaspiler.utils.V8Register;
@@ -34,6 +36,7 @@ import com.caoccao.javet.values.V8Value;
 import com.caoccao.javet.values.primitive.V8ValueString;
 import com.caoccao.javet.values.reference.V8ValueObject;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,6 +50,8 @@ public class V8Jaspiler
         implements IJavetDirectProxyHandler<JaspilerCheckedException>, IJavetClosable {
     public static final String NAME = "jaspiler";
     protected static final String FUNCTION_CREATE_FIELD_ACCESS = "createFieldAccess";
+    protected static final String FUNCTION_CREATE_NAME = "createName";
+    protected static final String FUNCTION_NEW_IMPORT = "newImport";
     protected static final String FUNCTION_TRANSFORM_SYNC = "transformSync";
     protected static final String PROPERTIES_AST = "ast";
     protected static final String PROPERTIES_CODE = "code";
@@ -79,6 +84,16 @@ public class V8Jaspiler
         return v8Runtime.toV8Value(JTTreeFactory.createFieldAccess(strings));
     }
 
+    public V8Value createName(V8Value... v8Values) throws JavetException {
+        String value = StringUtils.EMPTY;
+        if (ArrayUtils.isNotEmpty(v8Values)) {
+            if (v8Values[0] instanceof V8ValueString v8ValueString) {
+                value = v8ValueString.getValue();
+            }
+        }
+        return v8Runtime.toV8Value(new JTName(value));
+    }
+
     @Override
     public V8Runtime getV8Runtime() {
         return v8Runtime;
@@ -94,6 +109,9 @@ public class V8Jaspiler
         if (stringGetterMap == null) {
             stringGetterMap = new HashMap<>();
             V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_CREATE_FIELD_ACCESS, this::createFieldAccess);
+            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_CREATE_NAME, this::createName);
+            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_NEW_IMPORT,
+                    v8Values -> v8Runtime.toV8Value(new JTImport()));
             V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_TRANSFORM_SYNC, this::transformSync);
         }
         return stringGetterMap;

@@ -37,11 +37,14 @@ function testBasicTransform() {
   assert.include(typeDecls[0].toString(), expectedLine, 'The typeDecls[0].toString() should work.');
 }
 
+// Package
+
 function testIgnorePackage() {
   const result = jaspiler.transformSync(pathMockPublicAnnotation, {
     plugins: [{
       visitor: {
         Package(node) {
+          assert.equal(0, node.annotations.length);
           assert.isTrue(node.isActionNoChange());
           assert.isFalse(node.isActionChange());
           assert.isFalse(node.isActionIgnore());
@@ -71,6 +74,35 @@ function testReplacePackageName() {
   assert.include(result.code, 'package abc.def.ghi;');
 }
 
+// Imports
+
+function testImports() {
+  const result = jaspiler.transformSync(pathMockPublicAnnotation, {
+    plugins: [{
+      visitor: {
+        CompilationUnit(node) {
+          const imports = node.imports;
+          assert.equal(2, imports.length);
+          imports.push(imports.shift());
+          const newImport = jaspiler.newImport();
+          newImport.qualifiedIdentifier = jaspiler.createFieldAccess('abc', 'def', 'ghi');
+          newImport.staticImport = true;
+          imports.push(newImport);
+          node.imports = imports;
+        },
+      },
+    }],
+  });
+  assert.include(
+    result.code,
+    'import java.lang.annotation.Inherited;\n'
+    + 'import java.lang.annotation.Documented;\n'
+    + 'import static abc.def.ghi;\n');
+}
+
 testBasicTransform();
+// Package
 testIgnorePackage();
 testReplacePackageName();
+// Imports
+testImports();

@@ -20,6 +20,7 @@ import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.visiters.BaseJaspilerTransformScanner;
 import com.caoccao.javet.values.reference.V8ValueFunction;
+import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.PackageTree;
 import com.sun.source.tree.Tree;
 
@@ -52,6 +53,14 @@ public class V8JaspilerTransformScanner
                         logger.warn(t.getMessage(), t);
                     }
                 });
+    }
+
+    @Override
+    public V8JaspilerTransformScanner visitCompilationUnit(
+            CompilationUnitTree node,
+            JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitCompilationUnit());
+        return super.visitCompilationUnit(node, jaspilerTransformContext);
     }
 
     @Override

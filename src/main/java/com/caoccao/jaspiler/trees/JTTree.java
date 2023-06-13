@@ -68,7 +68,7 @@ public abstract class JTTree<
         stringGetterMap = null;
         stringSetterMap = null;
         symbolGetterMap = null;
-        v8Runtime = null;
+        setV8Runtime(null);
     }
 
     NewTree analyze() {
@@ -146,26 +146,29 @@ public abstract class JTTree<
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             stringGetterMap = new HashMap<>();
-            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_IS_ACTION_CHANGE, property ->
-                    v8Runtime.createV8ValueBoolean(isActionChange()));
-            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_IS_ACTION_IGNORE, property ->
-                    v8Runtime.createV8ValueBoolean(isActionIgnore()));
-            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_IS_ACTION_NO_CHANGE, property ->
-                    v8Runtime.createV8ValueBoolean(isActionNoChange()));
-            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_SET_ACTION_CHANGE, property -> {
-                setActionChange();
-                return v8Runtime.createV8ValueBoolean(true);
-            });
-            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_SET_ACTION_IGNORE, property -> {
-                setActionIgnore();
-                return v8Runtime.createV8ValueBoolean(true);
-            });
-            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_SET_ACTION_NO_CHANGE, property -> {
-                setActionNoChange();
-                return v8Runtime.createV8ValueBoolean(true);
-            });
-            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_TO_STRING, property ->
-                    v8Runtime.createV8ValueString(toString()));
+            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_IS_ACTION_CHANGE,
+                    property -> v8Runtime.createV8ValueBoolean(isActionChange()));
+            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_IS_ACTION_IGNORE,
+                    property -> v8Runtime.createV8ValueBoolean(isActionIgnore()));
+            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_IS_ACTION_NO_CHANGE,
+                    property -> v8Runtime.createV8ValueBoolean(isActionNoChange()));
+            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_SET_ACTION_CHANGE,
+                    property -> {
+                        setActionChange();
+                        return v8Runtime.createV8ValueBoolean(true);
+                    });
+            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_SET_ACTION_IGNORE,
+                    property -> {
+                        setActionIgnore();
+                        return v8Runtime.createV8ValueBoolean(true);
+                    });
+            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_SET_ACTION_NO_CHANGE,
+                    property -> {
+                        setActionNoChange();
+                        return v8Runtime.createV8ValueBoolean(true);
+                    });
+            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_TO_STRING,
+                    property -> v8Runtime.createV8ValueString(toString()));
         }
         return stringGetterMap;
     }
@@ -182,7 +185,8 @@ public abstract class JTTree<
     public Map<String, IJavetUniFunction<V8ValueSymbol, ? extends V8Value, JaspilerCheckedException>> proxyGetSymbolGetterMap() {
         if (symbolGetterMap == null) {
             symbolGetterMap = new HashMap<>();
-            V8Register.putSymbolGetter(v8Runtime, symbolGetterMap, V8ValueBuiltInSymbol.SYMBOL_PROPERTY_TO_PRIMITIVE, description -> v8Runtime.createV8ValueString(toString()));
+            V8Register.putSymbolGetter(v8Runtime, symbolGetterMap, V8ValueBuiltInSymbol.SYMBOL_PROPERTY_TO_PRIMITIVE,
+                    description -> v8Runtime.createV8ValueString(toString()));
         }
         return symbolGetterMap;
     }

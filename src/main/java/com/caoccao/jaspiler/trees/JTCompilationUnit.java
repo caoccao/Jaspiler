@@ -22,6 +22,7 @@ import com.caoccao.jaspiler.options.JaspilerTransformOptions;
 import com.caoccao.jaspiler.utils.ForEachUtils;
 import com.caoccao.jaspiler.utils.StringBuilderPlus;
 import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
 import com.sun.source.doctree.DocCommentTree;
@@ -238,6 +239,27 @@ public final class JTCompilationUnit
         return stringGetterMap;
     }
 
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_IMPORTS,
+                    (propertyName, propertyValue) -> {
+                        if (v8Runtime.toObject(propertyValue) instanceof List<?> propertyImports) {
+                            imports.clear();
+                            propertyImports.stream()
+                                    .filter(i -> i instanceof JTImport)
+                                    .map(i -> (JTImport) i)
+                                    .forEach(imports::add);
+                            setActionChange();
+                            return true;
+                        }
+                        return false;
+                    });
+        }
+        return stringSetterMap;
+    }
+
     public boolean save(Path outputPath) throws IOException {
         return save(outputPath, StandardCharsets.UTF_8);
     }
@@ -331,7 +353,12 @@ public final class JTCompilationUnit
                     && getOriginalPosition().startPosition() > 0) {
                 sbp.append(getOriginalCode(), 0, (int) getOriginalPosition().startPosition());
             }
-            Optional.ofNullable(packageTree).ifPresent(sbp::append);
+            Optional.ofNullable(packageTree).ifPresent(tree -> {
+                sbp.append(tree);
+                if (tree.isActionNoChange()) {
+                    sbp.appendLineSeparator();
+                }
+            });
             ForEachUtils.forEach(
                     imports.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
                     sbp::append,
