@@ -20,11 +20,10 @@ import com.caoccao.jaspiler.JaspilerContract;
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.exceptions.JaspilerNotImplementedException;
 import com.caoccao.jaspiler.utils.BaseLoggingObject;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.interop.V8Runtime;
-import com.caoccao.javet.interop.callback.IJavetDirectCallable;
-import com.caoccao.javet.interop.callback.JavetCallbackContext;
-import com.caoccao.javet.interop.callback.JavetCallbackType;
 import com.caoccao.javet.values.V8Value;
 import com.caoccao.javet.values.reference.V8ValueSymbol;
 import com.caoccao.javet.values.reference.builtin.V8ValueBuiltInSymbol;
@@ -43,13 +42,14 @@ public abstract class JTTree<
         NewTree extends JTTree<OriginalTree, NewTree>>
         extends BaseLoggingObject
         implements IJTTree<OriginalTree, NewTree> {
-    protected static final long INVALID_POSITION = -1L;
     protected static final String FUNCTION_TO_STRING = "toString";
+    protected static final long INVALID_POSITION = -1L;
     protected JaspilerContract.Action action;
     protected JTPosition originalPosition;
     protected OriginalTree originalTree;
     protected JTTree<?, ?> parentTree;
     protected Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> stringGetterMap;
+    protected Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> stringSetterMap;
     protected Map<String, IJavetUniFunction<V8ValueSymbol, ? extends V8Value, JaspilerCheckedException>> symbolGetterMap;
     protected V8Runtime v8Runtime;
 
@@ -60,6 +60,7 @@ public abstract class JTTree<
         this.parentTree = parentTree;
         setAction(JaspilerContract.Action.NoChange);
         stringGetterMap = null;
+        stringSetterMap = null;
         symbolGetterMap = null;
         v8Runtime = null;
     }
@@ -139,30 +140,24 @@ public abstract class JTTree<
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             stringGetterMap = new HashMap<>();
-            stringGetterMap.put(
-                    FUNCTION_TO_STRING,
-                    propertyName -> v8Runtime.createV8ValueFunction(
-                            new JavetCallbackContext(
-                                    propertyName,
-                                    JavetCallbackType.DirectCallNoThisAndResult,
-                                    (IJavetDirectCallable.NoThisAndResult<?>)
-                                            property -> v8Runtime.createV8ValueString(toString()))));
+            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_TO_STRING, property -> v8Runtime.createV8ValueString(toString()));
         }
         return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            stringSetterMap = new HashMap<>();
+        }
+        return stringSetterMap;
     }
 
     @Override
     public Map<String, IJavetUniFunction<V8ValueSymbol, ? extends V8Value, JaspilerCheckedException>> proxyGetSymbolGetterMap() {
         if (symbolGetterMap == null) {
             symbolGetterMap = new HashMap<>();
-            symbolGetterMap.put(
-                    V8ValueBuiltInSymbol.SYMBOL_PROPERTY_TO_PRIMITIVE,
-                    propertySymbol -> v8Runtime.createV8ValueFunction(
-                            new JavetCallbackContext(
-                                    propertySymbol.getDescription(),
-                                    JavetCallbackType.DirectCallNoThisAndResult,
-                                    (IJavetDirectCallable.NoThisAndResult<?>)
-                                            property -> v8Runtime.createV8ValueString(toString()))));
+            V8Register.putSymbolGetter(v8Runtime, symbolGetterMap, V8ValueBuiltInSymbol.SYMBOL_PROPERTY_TO_PRIMITIVE, description -> v8Runtime.createV8ValueString(toString()));
         }
         return symbolGetterMap;
     }

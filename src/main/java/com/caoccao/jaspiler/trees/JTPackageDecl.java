@@ -19,6 +19,7 @@ package com.caoccao.jaspiler.trees;
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.utils.ForEachUtils;
 import com.caoccao.jaspiler.utils.StringBuilderPlus;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.PackageTree;
@@ -90,14 +91,28 @@ public final class JTPackageDecl
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
-            stringGetterMap.put(
-                    PROPERTY_ANNOTATIONS,
-                    propertyName -> v8Runtime.toV8Value(getAnnotations()));
-            stringGetterMap.put(
-                    PROPERTY_PACKAGE_NAME,
-                    propertyName -> v8Runtime.toV8Value(getPackageName()));
+            stringGetterMap.put(PROPERTY_ANNOTATIONS, propertyName -> v8Runtime.toV8Value(getAnnotations()));
+            stringGetterMap.put(PROPERTY_PACKAGE_NAME, propertyName -> v8Runtime.toV8Value(getPackageName()));
         }
         return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            stringSetterMap.put(
+                    PROPERTY_PACKAGE_NAME,
+                    (propertyName, propertyValue) -> {
+                        var value = v8Runtime.toObject(propertyValue);
+                        if (value instanceof JTExpression<?, ?> typedValue) {
+                            packageName = typedValue;
+                            return true;
+                        }
+                        return false;
+                    });
+        }
+        return stringSetterMap;
     }
 
     public JTPackageDecl setPackageName(JTExpression<?, ?> packageName) {
@@ -120,7 +135,7 @@ public final class JTPackageDecl
                     trees -> sbp.appendLineSeparator());
             Optional.ofNullable(packageName)
                     .ifPresent(tree -> sbp.append(IJTConstants.PACKAGE).appendSpace().append(tree)
-                            .appendSemiColon().appendLineSeparator(2));
+                            .appendSemiColon().appendLineSeparator());
             return sbp.toString();
         }
         return super.toString();

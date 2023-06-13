@@ -338,7 +338,7 @@ public final class JTCompilationUnit
                     && getOriginalPosition().startPosition() > 0) {
                 sbp.append(getOriginalCode(), 0, (int) getOriginalPosition().startPosition());
             }
-            Optional.ofNullable(packageTree).ifPresent(tree -> sbp.append(tree).appendLineSeparator());
+            Optional.ofNullable(packageTree).ifPresent(sbp::append);
             ForEachUtils.forEach(
                     imports.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
                     sbp::append,

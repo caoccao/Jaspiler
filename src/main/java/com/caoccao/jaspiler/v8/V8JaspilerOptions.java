@@ -16,140 +16,145 @@
 
 package com.caoccao.jaspiler.v8;
 
-import com.caoccao.jaspiler.utils.JsonUtils;
 import com.caoccao.javet.exceptions.JavetException;
+import com.caoccao.javet.interfaces.IJavetClosable;
+import com.caoccao.javet.utils.JavetResourceUtils;
 import com.caoccao.javet.values.V8Value;
-import com.caoccao.javet.values.primitive.V8ValueString;
 import com.caoccao.javet.values.reference.V8ValueArray;
+import com.caoccao.javet.values.reference.V8ValueFunction;
 import com.caoccao.javet.values.reference.V8ValueObject;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
-public final class V8JaspilerOptions {
-    public static final String PROPERTY_PARSE_RULES = "parseRules";
-    public static final String PROPERTY_TRANSFORM_RULES = "transformRules";
+public final class V8JaspilerOptions implements IJavetClosable {
+    public static final String PROPERTY_PLUGINS = "plugins";
 
-    private final List<Rule> parseRules;
-    private final List<Rule> transformRules;
+    private final List<Plugin> plugins;
 
     public V8JaspilerOptions() {
-        parseRules = new ArrayList<>();
-        transformRules = new ArrayList<>();
+        plugins = new ArrayList<>();
     }
 
-    public static V8JaspilerOptions deserialize(V8ValueObject v8ValueObject) throws JavetException {
-        var jaspilerOptions = new V8JaspilerOptions();
-        try (V8Value v8Value = v8ValueObject.get(PROPERTY_PARSE_RULES)) {
+    @Override
+    public void close() {
+        JavetResourceUtils.safeClose(plugins);
+        plugins.clear();
+    }
+
+    public V8JaspilerOptions deserialize(V8ValueObject v8ValueObject) throws JavetException {
+        try (V8Value v8Value = v8ValueObject.get(PROPERTY_PLUGINS)) {
             if (v8Value instanceof V8ValueArray v8ValueArray) {
                 v8ValueArray.forEach(v8ValueRule -> {
-                    if (v8ValueRule instanceof V8ValueObject v8ValueObjectRule) {
-                        Optional.of(Rule.deserialize(v8ValueObjectRule))
-                                .filter(Rule::isValid)
-                                .ifPresent(jaspilerOptions.getParseRules()::add);
+                    if (v8ValueRule instanceof V8ValueObject v8ValueObjectPlugin) {
+                        plugins.add(new Plugin().deserialize(v8ValueObjectPlugin));
                     }
                 });
             }
         }
-        try (V8Value v8Value = v8ValueObject.get(PROPERTY_TRANSFORM_RULES)) {
-            if (v8Value instanceof V8ValueArray v8ValueArray) {
-                v8ValueArray.forEach(v8ValueRule -> {
-                    if (v8ValueRule instanceof V8ValueObject v8ValueObjectRule) {
-                        Optional.of(Rule.deserialize(v8ValueObjectRule))
-                                .filter(Rule::isValid)
-                                .ifPresent(jaspilerOptions.getTransformRules()::add);
-                    }
-                });
-            }
-        }
-        return jaspilerOptions;
+        return this;
     }
 
-    public List<Rule> getParseRules() {
-        return parseRules;
+    public List<Plugin> getPlugins() {
+        return plugins;
     }
 
-    public List<Rule> getTransformRules() {
-        return transformRules;
+    @Override
+    public boolean isClosed() {
+        return CollectionUtils.isEmpty(plugins);
     }
 
-    @JsonIgnore
-    public boolean isValid() {
-        return CollectionUtils.isNotEmpty(parseRules) || CollectionUtils.isNotEmpty(transformRules);
-    }
+    public static final class Plugin implements IJavetClosable {
+        private static final String PROPERTY_VISITOR = "visitor";
 
-    @JsonIgnore
-    public String toJson() {
-        return JsonUtils.getJsonStringBeautified(this, true);
-    }
+        private Visitor visitor;
 
-    public static final class Rule {
-        private static final String PROPERTY_FILTERS = "filters";
-        private static final String PROPERTY_PATH = "path";
-        private static final String PROPERTY_SOURCE_ROOT_PATH = "sourceRootPath";
-        private static final String PROPERTY_TARGET_ROOT_PATH = "targetRootPath";
-        private final Set<String> filters;
-        private String path;
-        private String sourceRootPath;
-        private String targetRootPath;
-
-        public Rule() {
-            filters = new HashSet<>();
-            setPath(null);
-            setSourceRootPath(null);
-            setTargetRootPath(null);
+        public Plugin() {
+            setVisitor(null);
         }
 
-        public static Rule deserialize(V8ValueObject v8ValueObject) throws JavetException {
-            var rule = new Rule();
-            rule.setPath(v8ValueObject.getString(PROPERTY_PATH));
-            rule.setSourceRootPath(v8ValueObject.getString(PROPERTY_SOURCE_ROOT_PATH));
-            rule.setTargetRootPath(v8ValueObject.getString(PROPERTY_TARGET_ROOT_PATH));
-            try (V8Value v8Value = v8ValueObject.get(PROPERTY_FILTERS)) {
-                if (v8Value instanceof V8ValueArray v8ValueArray) {
-                    v8ValueArray.forEach(v8ValueFilter -> {
-                        if (v8ValueFilter instanceof V8ValueString v8ValueStringFilter) {
-                            Optional.ofNullable(v8ValueStringFilter.getValue()).ifPresent(rule.getFilters()::add);
-                        }
-                    });
+        @Override
+        public void close() {
+            JavetResourceUtils.safeClose(visitor);
+            setVisitor(null);
+        }
+
+        public Plugin deserialize(V8ValueObject v8ValueObject) throws JavetException {
+            try (var v8Value = v8ValueObject.get(PROPERTY_VISITOR)) {
+                if (v8Value instanceof V8ValueObject v8ValueObjectVisitor) {
+                    setVisitor(new Visitor().deserialize(v8ValueObjectVisitor));
                 }
             }
-            return rule;
+            return this;
         }
 
-        public Set<String> getFilters() {
-            return filters;
+        public Visitor getVisitor() {
+            return visitor;
         }
 
-        public String getPath() {
-            return path;
+        @Override
+        public boolean isClosed() {
+            return ObjectUtils.allNull(visitor);
         }
 
-        public String getSourceRootPath() {
-            return sourceRootPath;
-        }
-
-        public String getTargetRootPath() {
-            return targetRootPath;
-        }
-
-        @JsonIgnore
         public boolean isValid() {
-            return ObjectUtils.allNotNull(path, sourceRootPath, targetRootPath);
+            return ObjectUtils.allNotNull(visitor) && visitor.isValid();
         }
 
-        public void setPath(String path) {
-            this.path = path;
+        public void setVisitor(Visitor visitor) {
+            this.visitor = visitor;
+        }
+    }
+
+    public static final class Visitor implements IJavetClosable {
+        private static final String PROPERTY_PACKAGE = "Package";
+        private V8ValueFunction visitPackage;
+
+        public Visitor() {
+            setVisitPackage(null);
         }
 
-        public void setSourceRootPath(String sourceRootPath) {
-            this.sourceRootPath = sourceRootPath;
+        @Override
+        public void close() {
+            JavetResourceUtils.safeClose(visitPackage);
+            setVisitPackage(null);
         }
 
-        public void setTargetRootPath(String targetRootPath) {
-            this.targetRootPath = targetRootPath;
+        public Visitor deserialize(V8ValueObject v8ValueObject) throws JavetException {
+            deserializeFunction(v8ValueObject, PROPERTY_PACKAGE, this::setVisitPackage);
+            return this;
+        }
+
+        private void deserializeFunction(
+                V8ValueObject v8ValueObject,
+                String propertyName,
+                Consumer<V8ValueFunction> setter) throws JavetException {
+            V8Value v8Value = v8ValueObject.get(propertyName);
+            if (v8Value instanceof V8ValueFunction v8ValueFunction) {
+                setter.accept(v8ValueFunction);
+            } else {
+                JavetResourceUtils.safeClose(v8Value);
+            }
+        }
+
+        public V8ValueFunction getVisitPackage() {
+            return visitPackage;
+        }
+
+        @Override
+        public boolean isClosed() {
+            return ObjectUtils.allNull(visitPackage);
+        }
+
+        public boolean isValid() {
+            return !ObjectUtils.allNull(visitPackage);
+        }
+
+        public void setVisitPackage(V8ValueFunction visitPackage) {
+            this.visitPackage = visitPackage;
         }
     }
 }

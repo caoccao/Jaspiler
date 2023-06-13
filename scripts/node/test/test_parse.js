@@ -1,13 +1,14 @@
 const assert = require('chai').assert;
 const path = require('path');
 const process = require('process');
+
 const workingDirectory = process.cwd();
+const pathMockPublicAnnotation = path.join(
+  workingDirectory,
+  '../../../src/test/java/com/caoccao/jaspiler/mock/MockPublicAnnotation.java');
 
 function testWithoutOptions() {
-  const result = jaspiler.transformSync(
-    path.join(
-      workingDirectory,
-      '../../../src/test/java/com/caoccao/jaspiler/mock/MockPublicAnnotation.java'));
+  const result = jaspiler.transformSync(pathMockPublicAnnotation);
   // Assert result, result.ast, result.code
   assert.isObject(result);
   assert.isObject(result.ast);
@@ -34,4 +35,19 @@ function testWithoutOptions() {
   assert.include(typeDecls[0].toString(), expectedLine, 'The typeDecls[0].toString() should work.');
 }
 
+function testReplacePackageName() {
+  const result = jaspiler.transformSync(pathMockPublicAnnotation, {
+    plugins: [{
+      visitor: {
+        Package(node) {
+          node.packageName = jaspiler.createFieldAccess('abc', 'def', 'ghi');
+        },
+      },
+    }],
+  });
+  console.info(result.code);
+  assert.include(result.code, 'package abc.def.ghi;');
+}
+
 testWithoutOptions();
+testReplacePackageName();

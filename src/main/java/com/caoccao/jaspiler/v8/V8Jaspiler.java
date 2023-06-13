@@ -21,17 +21,19 @@ import com.caoccao.jaspiler.exceptions.JaspilerArgumentException;
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.exceptions.JaspilerParseException;
 import com.caoccao.jaspiler.options.JaspilerTransformOptions;
+import com.caoccao.jaspiler.trees.JTTreeFactory;
 import com.caoccao.jaspiler.utils.BaseLoggingObject;
+import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.exceptions.JavetException;
+import com.caoccao.javet.interfaces.IJavetClosable;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.interop.V8Runtime;
 import com.caoccao.javet.interop.V8Scope;
-import com.caoccao.javet.interop.callback.IJavetDirectCallable;
-import com.caoccao.javet.interop.callback.JavetCallbackContext;
-import com.caoccao.javet.interop.callback.JavetCallbackType;
 import com.caoccao.javet.interop.proxy.IJavetDirectProxyHandler;
 import com.caoccao.javet.values.V8Value;
 import com.caoccao.javet.values.primitive.V8ValueString;
+import com.caoccao.javet.values.reference.V8ValueObject;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,8 +44,9 @@ import java.util.Map;
 
 public class V8Jaspiler
         extends BaseLoggingObject
-        implements IJavetDirectProxyHandler<JaspilerCheckedException>, AutoCloseable {
+        implements IJavetDirectProxyHandler<JaspilerCheckedException>, IJavetClosable {
     public static final String NAME = "jaspiler";
+    protected static final String FUNCTION_CREATE_FIELD_ACCESS = "createFieldAccess";
     protected static final String FUNCTION_TRANSFORM_SYNC = "transformSync";
     protected static final String PROPERTIES_AST = "ast";
     protected static final String PROPERTIES_CODE = "code";
@@ -59,8 +62,21 @@ public class V8Jaspiler
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
+        jaspilerCompiler = null;
+    }
 
+    public V8Value createFieldAccess(V8Value... v8Values) throws JavetException {
+        if (ArrayUtils.isEmpty(v8Values)) {
+            return v8Runtime.createV8ValueUndefined();
+        }
+        String[] strings = new String[v8Values.length];
+        for (int i = 0; i < v8Values.length; ++i) {
+            if (v8Values[i] instanceof V8ValueString v8ValueString) {
+                strings[i] = v8ValueString.getValue();
+            }
+        }
+        return v8Runtime.toV8Value(JTTreeFactory.createFieldAccess(strings));
     }
 
     @Override
@@ -69,25 +85,29 @@ public class V8Jaspiler
     }
 
     @Override
+    public boolean isClosed() {
+        return jaspilerCompiler == null;
+    }
+
+    @Override
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             stringGetterMap = new HashMap<>();
-            stringGetterMap.put(
-                    FUNCTION_TRANSFORM_SYNC,
-                    propertyName -> v8Runtime.createV8ValueFunction(
-                            new JavetCallbackContext(
-                                    propertyName,
-                                    JavetCallbackType.DirectCallNoThisAndResult,
-                                    (IJavetDirectCallable.NoThisAndResult<?>) this::transformSync)));
+            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_CREATE_FIELD_ACCESS, this::createFieldAccess);
+            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_TRANSFORM_SYNC, this::transformSync);
         }
         return stringGetterMap;
     }
 
     public V8Value transformSync(V8Value... v8Values) throws JavetException, JaspilerCheckedException {
         File file = validateFile(validateString(FUNCTION_TRANSFORM_SYNC, v8Values, 0));
-        try (var jaspilerTransformScanner = new V8JaspilerTransformScanner();
+        try (var v8JaspilerOptions = new V8JaspilerOptions();
+             var jaspilerTransformScanner = new V8JaspilerTransformScanner(v8JaspilerOptions);
              var jaspilerDocScanner = new V8JaspilerDocScanner();
              var stringWriter = new StringWriter()) {
+            if (v8Values.length > 1) {
+                v8JaspilerOptions.deserialize(validateObject(FUNCTION_TRANSFORM_SYNC, v8Values, 1));
+            }
             jaspilerCompiler.clearJavaFileObject();
             jaspilerCompiler.addJavaFileObjects(file);
             jaspilerCompiler.transform(
@@ -140,11 +160,23 @@ public class V8Jaspiler
         }
     }
 
+    protected V8ValueObject validateObject(
+            String functionName, V8Value[] v8Values, int index)
+            throws JaspilerArgumentException {
+        validateLength(functionName, v8Values, index);
+        V8Value v8Value = v8Values[index];
+        if (v8Value instanceof V8ValueObject v8ValueObject) {
+            return v8ValueObject;
+        }
+        throw new JaspilerArgumentException(
+                MessageFormat.format("Argument type mismatches in {0}. Object is expected.", functionName));
+    }
+
     protected String validateString(
             String functionName, V8Value[] v8Values, int index)
             throws JaspilerArgumentException {
         validateLength(functionName, v8Values, index);
-        V8Value v8Value = v8Values[0];
+        V8Value v8Value = v8Values[index];
         if (v8Value instanceof V8ValueString v8ValueString) {
             return v8ValueString.getValue();
         }
