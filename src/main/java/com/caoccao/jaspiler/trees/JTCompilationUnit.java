@@ -54,6 +54,7 @@ public final class JTCompilationUnit
     private static final String PROPERTY_IMPORTS = "imports";
     private static final String PROPERTY_MODULE = "module";
     private static final String PROPERTY_PACKAGE = "package";
+    private static final String PROPERTY_SOURCE_FILE = "sourceFile";
     private static final String PROPERTY_TYPE_DECLS = "typeDecls";
     private final DocCommentTree docCommentTree;
     private final DocSourcePositions docSourcePositions;
@@ -231,10 +232,11 @@ public final class JTCompilationUnit
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_IMPORTS, propertyName -> v8Runtime.toV8Value(getImports()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_MODULE, propertyName -> v8Runtime.toV8Value(getModule()));
             V8Register.putStringGetter(stringGetterMap, PROPERTY_PACKAGE, propertyName -> v8Runtime.toV8Value(getPackage()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_IMPORTS, propertyName -> v8Runtime.toV8Value(getImports()));
             V8Register.putStringGetter(stringGetterMap, PROPERTY_TYPE_DECLS, propertyName -> v8Runtime.toV8Value(getTypeDecls()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_MODULE, propertyName -> v8Runtime.toV8Value(getModule()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_SOURCE_FILE, propertyName -> v8Runtime.createV8ValueString(getSourceFile().getName()));
         }
         return stringGetterMap;
     }
@@ -248,10 +250,18 @@ public final class JTCompilationUnit
                         if (v8Runtime.toObject(propertyValue) instanceof List<?> propertyImports) {
                             imports.clear();
                             propertyImports.stream()
-                                    .filter(i -> i instanceof JTImport)
-                                    .map(i -> (JTImport) i)
+                                    .filter(tree -> tree instanceof JTImport)
+                                    .map(tree -> (JTImport) tree)
                                     .forEach(imports::add);
                             setActionChange();
+                            return true;
+                        }
+                        return false;
+                    });
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_MODULE,
+                    (propertyName, propertyValue) -> {
+                        if (v8Runtime.toObject(propertyValue) instanceof JTModuleDecl propertyModule) {
+                            setModule(propertyModule);
                             return true;
                         }
                         return false;

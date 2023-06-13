@@ -14,6 +14,9 @@ interface JTTree<Tree extends JTTree<Tree>> {
   toString(): string;
 }
 
+interface JTDirective<Tree extends JTDirective<Tree>> extends JTTree<JTDirective> {
+}
+
 interface JTCaseLabel<Tree extends JTCaseLabel<Tree>> extends JTTree<JTCaseLabel> {
 }
 
@@ -31,6 +34,9 @@ interface JTAnnotation extends JTExpression<JTAnnotation> {
 }
 
 interface JTModuleDecl extends JTTree<JTModuleDecl> {
+  annotations: JTAnnotation[];
+  name: JTExpression<?>;
+  directives: JTDirective;
 }
 
 interface JTPackageDecl extends JTTree<JTPackageDecl> {
@@ -48,6 +54,7 @@ interface JTCompilationUnit extends JTTree<JTCompilationUnit> {
   imports: JTImport[];
   typeDecls: JTTree<?>[];
   module: JTModuleDecl;
+  sourceFile: string;
 }
 
 interface TransformOptionsPluginVisitor {

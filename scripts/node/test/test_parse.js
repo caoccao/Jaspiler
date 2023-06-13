@@ -35,6 +35,7 @@ function testBasicTransform() {
   assert.isArray(typeDecls);
   assert.equal(1, typeDecls.length);
   assert.include(typeDecls[0].toString(), expectedLine, 'The typeDecls[0].toString() should work.');
+  assert.equal(pathMockPublicAnnotation, ast.sourceFile, 'The source file should match.');
 }
 
 // Package
@@ -81,6 +82,7 @@ function testImports() {
     plugins: [{
       visitor: {
         CompilationUnit(node) {
+          assert.equal(pathMockPublicAnnotation, node.sourceFile, 'The source file should match.');
           const imports = node.imports;
           assert.equal(2, imports.length);
           imports.push(imports.shift());
