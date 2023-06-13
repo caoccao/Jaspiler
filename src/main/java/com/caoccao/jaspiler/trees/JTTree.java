@@ -42,7 +42,12 @@ public abstract class JTTree<
         NewTree extends JTTree<OriginalTree, NewTree>>
         extends BaseLoggingObject
         implements IJTTree<OriginalTree, NewTree> {
-    protected static final String FUNCTION_SET_IGNORE = "setIgnore";
+    protected static final String FUNCTION_IS_ACTION_CHANGE = "isActionChange";
+    protected static final String FUNCTION_IS_ACTION_IGNORE = "isActionIgnore";
+    protected static final String FUNCTION_IS_ACTION_NO_CHANGE = "isActionNoChange";
+    protected static final String FUNCTION_SET_ACTION_CHANGE = "setActionChange";
+    protected static final String FUNCTION_SET_ACTION_IGNORE = "setActionIgnore";
+    protected static final String FUNCTION_SET_ACTION_NO_CHANGE = "setActionNoChange";
     protected static final String FUNCTION_TO_STRING = "toString";
     protected static final long INVALID_POSITION = -1L;
     protected JaspilerContract.Action action;
@@ -141,11 +146,26 @@ public abstract class JTTree<
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             stringGetterMap = new HashMap<>();
-            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_SET_IGNORE, property -> {
+            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_IS_ACTION_CHANGE, property ->
+                    v8Runtime.createV8ValueBoolean(isActionChange()));
+            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_IS_ACTION_IGNORE, property ->
+                    v8Runtime.createV8ValueBoolean(isActionIgnore()));
+            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_IS_ACTION_NO_CHANGE, property ->
+                    v8Runtime.createV8ValueBoolean(isActionNoChange()));
+            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_SET_ACTION_CHANGE, property -> {
+                setActionChange();
+                return v8Runtime.createV8ValueBoolean(true);
+            });
+            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_SET_ACTION_IGNORE, property -> {
                 setActionIgnore();
                 return v8Runtime.createV8ValueBoolean(true);
             });
-            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_TO_STRING, property -> v8Runtime.createV8ValueString(toString()));
+            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_SET_ACTION_NO_CHANGE, property -> {
+                setActionNoChange();
+                return v8Runtime.createV8ValueBoolean(true);
+            });
+            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_TO_STRING, property ->
+                    v8Runtime.createV8ValueString(toString()));
         }
         return stringGetterMap;
     }
@@ -178,21 +198,6 @@ public abstract class JTTree<
     public NewTree setAction(JaspilerContract.Action action) {
         this.action = action;
         return (NewTree) this;
-    }
-
-    @Override
-    public NewTree setActionChange() {
-        return setAction(JaspilerContract.Action.Change);
-    }
-
-    @Override
-    public NewTree setActionIgnore() {
-        return setAction(JaspilerContract.Action.Ignore);
-    }
-
-    @Override
-    public NewTree setActionNoChange() {
-        return setAction(JaspilerContract.Action.NoChange);
     }
 
     NewTree setParentTree(JTTree<?, ?> parentTree) {

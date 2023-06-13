@@ -1,3 +1,5 @@
+/// <reference types="../jaspiler/index.d.ts"/>
+
 const assert = require('chai').assert;
 const path = require('path');
 const process = require('process');
@@ -40,7 +42,13 @@ function testIgnorePackage() {
     plugins: [{
       visitor: {
         Package(node) {
-          assert.isTrue(node.setIgnore());
+          assert.isTrue(node.isActionNoChange());
+          assert.isFalse(node.isActionChange());
+          assert.isFalse(node.isActionIgnore());
+          assert.isTrue(node.setActionIgnore());
+          assert.isFalse(node.isActionNoChange());
+          assert.isFalse(node.isActionChange());
+          assert.isTrue(node.isActionIgnore());
         },
       },
     }],
@@ -53,7 +61,9 @@ function testReplacePackageName() {
     plugins: [{
       visitor: {
         Package(node) {
+          assert.isTrue(node.isActionNoChange());
           node.packageName = jaspiler.createFieldAccess('abc', 'def', 'ghi');
+          assert.isTrue(node.isActionChange());
         },
       },
     }],

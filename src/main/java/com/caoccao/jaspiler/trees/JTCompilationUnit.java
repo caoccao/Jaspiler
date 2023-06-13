@@ -21,6 +21,7 @@ import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.options.JaspilerTransformOptions;
 import com.caoccao.jaspiler.utils.ForEachUtils;
 import com.caoccao.jaspiler.utils.StringBuilderPlus;
+import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
 import com.sun.source.doctree.DocCommentTree;
@@ -229,18 +230,10 @@ public final class JTCompilationUnit
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
-            stringGetterMap.put(
-                    PROPERTY_IMPORTS,
-                    propertyName -> v8Runtime.toV8Value(getImports()));
-            stringGetterMap.put(
-                    PROPERTY_MODULE,
-                    propertyName -> v8Runtime.toV8Value(getModule()));
-            stringGetterMap.put(
-                    PROPERTY_PACKAGE,
-                    propertyName -> v8Runtime.toV8Value(getPackage()));
-            stringGetterMap.put(
-                    PROPERTY_TYPE_DECLS,
-                    propertyName -> v8Runtime.toV8Value(getTypeDecls()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_IMPORTS, propertyName -> v8Runtime.toV8Value(getImports()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_MODULE, propertyName -> v8Runtime.toV8Value(getModule()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_PACKAGE, propertyName -> v8Runtime.toV8Value(getPackage()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_TYPE_DECLS, propertyName -> v8Runtime.toV8Value(getTypeDecls()));
         }
         return stringGetterMap;
     }

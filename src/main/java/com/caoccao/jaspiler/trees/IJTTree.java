@@ -43,11 +43,22 @@ public interface IJTTree<
         return getAction().isIgnore();
     }
 
+    default boolean isActionNoChange() {
+        return !isActionIgnore() && !isActionChange();
+    }
+
     NewTree setAction(JaspilerContract.Action action);
 
-    NewTree setActionChange();
 
-    NewTree setActionIgnore();
+    default NewTree setActionChange() {
+        return setAction(JaspilerContract.Action.Change);
+    }
 
-    NewTree setActionNoChange();
+    default NewTree setActionIgnore() {
+        return setAction(JaspilerContract.Action.Ignore);
+    }
+
+    default NewTree setActionNoChange() {
+        return setAction(JaspilerContract.Action.NoChange);
+    }
 }

@@ -19,6 +19,7 @@ package com.caoccao.jaspiler.trees;
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.utils.ForEachUtils;
 import com.caoccao.jaspiler.utils.StringBuilderPlus;
+import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -91,8 +92,8 @@ public final class JTPackageDecl
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
-            stringGetterMap.put(PROPERTY_ANNOTATIONS, propertyName -> v8Runtime.toV8Value(getAnnotations()));
-            stringGetterMap.put(PROPERTY_PACKAGE_NAME, propertyName -> v8Runtime.toV8Value(getPackageName()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_ANNOTATIONS, propertyName -> v8Runtime.toV8Value(getAnnotations()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_PACKAGE_NAME, propertyName -> v8Runtime.toV8Value(getPackageName()));
         }
         return stringGetterMap;
     }
@@ -101,16 +102,14 @@ public final class JTPackageDecl
     public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
-            stringSetterMap.put(
-                    PROPERTY_PACKAGE_NAME,
-                    (propertyName, propertyValue) -> {
-                        var value = v8Runtime.toObject(propertyValue);
-                        if (value instanceof JTExpression<?, ?> typedValue) {
-                            packageName = typedValue;
-                            return true;
-                        }
-                        return false;
-                    });
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_PACKAGE_NAME, (propertyName, propertyValue) -> {
+                var value = v8Runtime.toObject(propertyValue);
+                if (value instanceof JTExpression<?, ?> typedValue) {
+                    packageName = typedValue;
+                    return true;
+                }
+                return false;
+            });
         }
         return stringSetterMap;
     }

@@ -17,6 +17,7 @@
 package com.caoccao.jaspiler.utils;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.interop.V8Runtime;
 import com.caoccao.javet.interop.callback.IJavetDirectCallable;
@@ -32,6 +33,13 @@ public final class V8Register {
     }
 
     public static void putStringGetter(
+            Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> stringGetterMap,
+            String propertyName,
+            IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException> getter) {
+        stringGetterMap.put(propertyName, getter);
+    }
+
+    public static void putStringGetter(
             V8Runtime v8Runtime,
             Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> stringGetterMap,
             String propertyName,
@@ -43,6 +51,13 @@ public final class V8Register {
                                 innerPropertyName,
                                 JavetCallbackType.DirectCallNoThisAndResult,
                                 getter)));
+    }
+
+    public static void putStringSetter(
+            Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> stringSetterMap,
+            String propertyName,
+            IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException> setter) {
+        stringSetterMap.put(propertyName, setter);
     }
 
     public static void putSymbolGetter(
