@@ -16,6 +16,8 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.utils.ForEachUtils;
+import com.caoccao.jaspiler.utils.StringBuilderPlus;
 import com.sun.source.tree.BlockTree;
 import com.sun.source.tree.TreeVisitor;
 
@@ -82,5 +84,25 @@ public final class JTBlock
         }
         this.staticBlock = staticBlock;
         return setActionChange();
+    }
+
+    @Override
+    public String toString() {
+        if (isActionChange()) {
+            final var sbp = new StringBuilderPlus();
+            int indent = getIndent();
+            int parentIndent = indent - getCompilationUnit().getOptions().getIndentSize();
+            if (staticBlock) {
+                sbp.appendSpace(indent).append(IJTConstants.STATIC).appendSpace();
+            }
+            sbp.appendLeftCurlyBracket().appendLineSeparator();
+            ForEachUtils.forEach(
+                    statements.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
+                    tree -> sbp.appendSpace(indent).append(tree),
+                    tree -> sbp.appendLineSeparator());
+            sbp.appendLineSeparator().appendSpace(parentIndent).appendRightCurlyBracket();
+            return sbp.toString();
+        }
+        return super.toString();
     }
 }

@@ -16,6 +16,7 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.utils.StringBuilderPlus;
 import com.sun.source.tree.ReturnTree;
 import com.sun.source.tree.TreeVisitor;
 
@@ -74,5 +75,17 @@ public final class JTReturn
         }
         this.expression = Objects.requireNonNull(expression).setParentTree(this);
         return setActionChange();
+    }
+
+    @Override
+    public String toString() {
+        if (isActionChange()) {
+            final var sbp = new StringBuilderPlus();
+            sbp.append(IJTConstants.RETURN);
+            Optional.ofNullable(expression).ifPresent(tree -> sbp.appendSpace().append(tree));
+            sbp.appendSemiColon();
+            return sbp.toString();
+        }
+        return super.toString();
     }
 }

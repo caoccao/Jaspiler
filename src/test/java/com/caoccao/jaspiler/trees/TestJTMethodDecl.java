@@ -37,6 +37,10 @@ public class TestJTMethodDecl extends BaseTestSuite {
                 var jtMethodDecl = (JTMethodDecl) node;
                 if ("Test".equals(jtMethodDecl.getName().getValue())) {
                     jtMethodDecl.setName(new JTName(newMethodNames[0]));
+                    var jtBody = jtMethodDecl.getBody();
+                    jtBody.getStatements().clear();
+                    jtBody.getStatements().add(new JTReturn().setExpression(JTTreeFactory.createFieldAccess("null")));
+                    jtBody.setActionChange();
                 } else if ("names".equals(jtMethodDecl.getName().getValue())) {
                     jtMethodDecl.setName(new JTName(newMethodNames[1]));
                 } else if ("value".equals(jtMethodDecl.getName().getValue())) {
@@ -49,7 +53,9 @@ public class TestJTMethodDecl extends BaseTestSuite {
         List<String> texts = List.of(
                 "public final <T> void " +
                         newMethodNames[0] + "(T x, @Deprecated int y) " +
-                        "throws IOException, NoClassDefFoundError {",
+                        "throws IOException, NoClassDefFoundError {\n" +
+                        "        return null;\n" +
+                        "    }",
                 "String[] mockNames() default {\"A\", \"B\"};",
                 "String mockValue() default \"value\";");
         texts.forEach(text -> assertTrue(code.contains(text)));

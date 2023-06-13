@@ -37,6 +37,7 @@ public interface IJTConstants {
     String PACKAGE = "package";
     String PERMITS = "permits";
     String RECORD = "record";
+    String RETURN = "return";
     String RIGHT_ARROW = ">";
     String RIGHT_CURLY_BRACKET = "}";
     String RIGHT_PARENTHESIS = ")";

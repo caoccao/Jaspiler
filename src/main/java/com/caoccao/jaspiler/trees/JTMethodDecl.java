@@ -203,7 +203,7 @@ public final class JTMethodDecl
     public String toString() {
         if (isActionChange()) {
             int indent = getIndent();
-            int childIndent = getIndent(1);
+            int childIndent = indent + getCompilationUnit().getOptions().getIndentSize();
             final var sbp = new StringBuilderPlus();
             Optional.ofNullable(modifiers).ifPresent(tree -> sbp.appendSpace(indent).append(tree));
             ForEachUtils.forEach(
