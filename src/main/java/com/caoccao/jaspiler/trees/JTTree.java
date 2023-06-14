@@ -42,7 +42,6 @@ public abstract class JTTree<
         NewTree extends JTTree<OriginalTree, NewTree>>
         extends BaseLoggingObject
         implements IJTTree<OriginalTree, NewTree> {
-    protected static final String FUNCTION_GET_PARENT_TREE = "getParentTree";
     protected static final String FUNCTION_IS_ACTION_CHANGE = "isActionChange";
     protected static final String FUNCTION_IS_ACTION_IGNORE = "isActionIgnore";
     protected static final String FUNCTION_IS_ACTION_NO_CHANGE = "isActionNoChange";
@@ -50,9 +49,11 @@ public abstract class JTTree<
     protected static final String FUNCTION_SET_ACTION_IGNORE = "setActionIgnore";
     protected static final String FUNCTION_SET_ACTION_NO_CHANGE = "setActionNoChange";
     protected static final String FUNCTION_TO_STRING = "toString";
+    protected static final long INVALID_POSITION = -1L;
     protected static final String PROPERTY_CLASS_NAME = "className";
     protected static final String PROPERTY_CLASS_SIMPLE_NAME = "classSimpleName";
-    protected static final long INVALID_POSITION = -1L;
+    protected static final String PROPERTY_KIND = "kind";
+    protected static final String PROPERTY_PARENT_TREE = "parentTree";
     protected JaspilerContract.Action action;
     protected JTPosition originalPosition;
     protected OriginalTree originalTree;
@@ -149,8 +150,6 @@ public abstract class JTTree<
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             stringGetterMap = new HashMap<>();
-            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_GET_PARENT_TREE,
-                    property -> v8Runtime.toV8Value(getParentTree()));
             V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_IS_ACTION_CHANGE,
                     property -> v8Runtime.createV8ValueBoolean(isActionChange()));
             V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_IS_ACTION_IGNORE,
@@ -178,6 +177,10 @@ public abstract class JTTree<
                     property -> v8Runtime.createV8ValueString(getClass().getName()));
             V8Register.putStringGetter(stringGetterMap, PROPERTY_CLASS_SIMPLE_NAME,
                     property -> v8Runtime.createV8ValueString(getClass().getSimpleName()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_KIND,
+                    property -> v8Runtime.createV8ValueString(getKind().name()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_PARENT_TREE,
+                    property -> v8Runtime.toV8Value(getParentTree()));
         }
         return stringGetterMap;
     }

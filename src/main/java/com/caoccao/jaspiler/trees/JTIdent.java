@@ -16,14 +16,21 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.TreeVisitor;
 
+import java.util.Map;
 import java.util.Objects;
 
 public final class JTIdent
         extends JTExpression<IdentifierTree, JTIdent>
         implements IdentifierTree {
+    private static final String PROPERTY_NAME = "name";
     private JTName name;
 
     public JTIdent() {
@@ -61,6 +68,31 @@ public final class JTIdent
     @Override
     public boolean isActionChange() {
         return getAction().isChange();
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_NAME, propertyName -> v8Runtime.toV8Value(getName()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_NAME,
+                    (propertyName, propertyValue) -> {
+                        if (v8Runtime.toObject(propertyValue) instanceof JTName tree) {
+                            setName(tree);
+                            return true;
+                        }
+                        return false;
+                    });
+        }
+        return stringSetterMap;
     }
 
     public JTIdent setName(JTName name) {

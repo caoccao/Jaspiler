@@ -16,15 +16,17 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.utils.ForEachUtils;
 import com.caoccao.jaspiler.utils.StringBuilderPlus;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.TreeVisitor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * The type Jt annotation tree.
@@ -33,6 +35,8 @@ import java.util.Optional;
 public final class JTAnnotation
         extends JTExpression<AnnotationTree, JTAnnotation>
         implements AnnotationTree {
+    private static final String PROPERTY_ARGUMENTS = "arguments";
+    private static final String PROPERTY_ANNOTATION_TYPE = "annotationType";
     private final List<JTExpression<?, ?>> arguments;
     private JTTree<?, ?> annotationType;
 
@@ -83,6 +87,45 @@ public final class JTAnnotation
     @Override
     public Kind getKind() {
         return Kind.ANNOTATION;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_ANNOTATION_TYPE, propertyName -> v8Runtime.toV8Value(getAnnotationType()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_ARGUMENTS, propertyName -> v8Runtime.toV8Value(getArguments()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_ANNOTATION_TYPE,
+                    (propertyName, propertyValue) -> {
+                        if (v8Runtime.toObject(propertyValue) instanceof JTTree<?, ?> tree) {
+                            setAnnotationType(tree);
+                            return true;
+                        }
+                        return false;
+                    });
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_ARGUMENTS,
+                    (propertyName, propertyValue) -> {
+                        if (v8Runtime.toObject(propertyValue) instanceof List<?> trees) {
+                            arguments.clear();
+                            trees.stream()
+                                    .filter(tree -> tree instanceof JTExpression<?, ?>)
+                                    .map(tree -> ((JTExpression<?, ?>) tree).setParentTree(this))
+                                    .forEach(arguments::add);
+                            setActionChange();
+                            return true;
+                        }
+                        return false;
+                    });
+        }
+        return stringSetterMap;
     }
 
     public JTAnnotation setAnnotationType(JTTree<?, ?> annotationType) {

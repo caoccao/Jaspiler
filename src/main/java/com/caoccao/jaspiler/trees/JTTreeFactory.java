@@ -217,6 +217,10 @@ public final class JTTreeFactory {
         return jtFieldAccess;
     }
 
+    public static JTIdent createIdent(String name) {
+        return new JTIdent().setName(new JTName(name));
+    }
+
     public static JTName createName(Name name) {
         return Optional.ofNullable(name)
                 .map(Object::toString)

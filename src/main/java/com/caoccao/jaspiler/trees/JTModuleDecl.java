@@ -127,11 +127,11 @@ public final class JTModuleDecl
             super.proxyGetStringSetterMap();
             V8Register.putStringSetter(stringSetterMap, PROPERTY_ANNOTATIONS,
                     (propertyName, propertyValue) -> {
-                        if (v8Runtime.toObject(propertyValue) instanceof List<?> propertyAnnotations) {
+                        if (v8Runtime.toObject(propertyValue) instanceof List<?> trees) {
                             annotations.clear();
-                            propertyAnnotations.stream()
+                            trees.stream()
                                     .filter(tree -> tree instanceof JTAnnotation)
-                                    .map(tree -> (JTAnnotation) tree)
+                                    .map(tree -> ((JTAnnotation) tree).setParentTree(this))
                                     .forEach(annotations::add);
                             setActionChange();
                             return true;
@@ -140,19 +140,19 @@ public final class JTModuleDecl
                     });
             V8Register.putStringSetter(stringSetterMap, PROPERTY_NAME,
                     (propertyName, propertyValue) -> {
-                        if (v8Runtime.toObject(propertyValue) instanceof JTExpression<?, ?> expression) {
-                            setName(expression);
+                        if (v8Runtime.toObject(propertyValue) instanceof JTExpression<?, ?> tree) {
+                            setName(tree);
                             return true;
                         }
                         return false;
                     });
             V8Register.putStringSetter(stringSetterMap, PROPERTY_DIRECTIVES,
                     (propertyName, propertyValue) -> {
-                        if (v8Runtime.toObject(propertyValue) instanceof List<?> propertyDirectives) {
+                        if (v8Runtime.toObject(propertyValue) instanceof List<?> trees) {
                             directives.clear();
-                            propertyDirectives.stream()
+                            trees.stream()
                                     .filter(tree -> tree instanceof JTDirective<?, ?>)
-                                    .map(tree -> (JTDirective<?, ?>) tree)
+                                    .map(tree -> ((JTDirective<?, ?>) tree).setParentTree(this))
                                     .forEach(directives::add);
                             setActionChange();
                             return true;

@@ -28,7 +28,9 @@ import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public final class V8JaspilerOptions implements IJavetClosable {
     public static final String PROPERTY_PLUGINS = "plugins";
@@ -110,39 +112,60 @@ public final class V8JaspilerOptions implements IJavetClosable {
     }
 
     public static final class Visitor implements IJavetClosable {
-        private static final String PROPERTY_COMPILATION_UNIT = "CompilationUnit";
-        private static final String PROPERTY_PACKAGE = "Package";
+        private final List<String> properties;
+        private final List<Supplier<V8ValueFunction>> propertyGetters;
+        private final List<Consumer<V8ValueFunction>> propertySetters;
+        private V8ValueFunction visitClass;
         private V8ValueFunction visitCompilationUnit;
         private V8ValueFunction visitPackage;
 
         public Visitor() {
+            properties = List.of(
+                    "Class",
+                    "CompilationUnit",
+                    "Package");
+            propertyGetters = List.of(
+                    this::getVisitClass,
+                    this::getVisitCompilationUnit,
+                    this::getVisitPackage);
+            propertySetters = List.of(
+                    this::setVisitClass,
+                    this::setVisitCompilationUnit,
+                    this::setVisitPackage);
             reset();
         }
 
         @Override
         public void close() {
-            JavetResourceUtils.safeClose(
-                    visitCompilationUnit,
-                    visitPackage);
+            JavetResourceUtils.safeClose(propertyGetters.stream().map(Supplier::get).toArray());
             reset();
         }
 
         public Visitor deserialize(V8ValueObject v8ValueObject) throws JavetException {
-            deserializeFunction(v8ValueObject, PROPERTY_COMPILATION_UNIT, this::setVisitCompilationUnit);
-            deserializeFunction(v8ValueObject, PROPERTY_PACKAGE, this::setVisitPackage);
+            final int length = properties.size();
+            V8Value[] v8ValueKeys = new V8Value[length];
+            V8Value[] v8ValueValues = new V8Value[length];
+            try {
+                var v8Runtime = v8ValueObject.getV8Runtime();
+                for (int i = 0; i < length; i++) {
+                    v8ValueKeys[i] = v8Runtime.createV8ValueString(properties.get(i));
+                }
+                v8ValueObject.batchGet(v8ValueKeys, v8ValueValues, length);
+                for (int i = 0; i < length; i++) {
+                    if (v8ValueValues[i] instanceof V8ValueFunction v8ValueFunction) {
+                        propertySetters.get(i).accept(v8ValueFunction);
+                        v8ValueValues[i] = null;
+                    }
+                }
+            } finally {
+                JavetResourceUtils.safeClose(v8ValueKeys);
+                JavetResourceUtils.safeClose(v8ValueValues);
+            }
             return this;
         }
 
-        private void deserializeFunction(
-                V8ValueObject v8ValueObject,
-                String propertyName,
-                Consumer<V8ValueFunction> setter) throws JavetException {
-            V8Value v8Value = v8ValueObject.get(propertyName);
-            if (v8Value instanceof V8ValueFunction v8ValueFunction) {
-                setter.accept(v8ValueFunction);
-            } else {
-                JavetResourceUtils.safeClose(v8Value);
-            }
+        public V8ValueFunction getVisitClass() {
+            return visitClass;
         }
 
         public V8ValueFunction getVisitCompilationUnit() {
@@ -155,7 +178,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         @Override
         public boolean isClosed() {
-            return ObjectUtils.allNull(visitCompilationUnit, visitPackage);
+            return propertyGetters.stream().map(Supplier::get).allMatch(Objects::isNull);
         }
 
         public boolean isValid() {
@@ -163,8 +186,11 @@ public final class V8JaspilerOptions implements IJavetClosable {
         }
 
         private void reset() {
-            setVisitCompilationUnit(null);
-            setVisitPackage(null);
+            propertySetters.forEach(setter -> setter.accept(null));
+        }
+
+        public void setVisitClass(V8ValueFunction visitClass) {
+            this.visitClass = visitClass;
         }
 
         public void setVisitCompilationUnit(V8ValueFunction visitCompilationUnit) {

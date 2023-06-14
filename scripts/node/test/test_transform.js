@@ -3,8 +3,12 @@
 const assert = require('chai').assert;
 const path = require('path');
 const process = require('process');
+const JTKind = require('./jaspiler/jt_kind');
 
 const workingDirectory = process.cwd();
+const pathMockAllInOnePublicClass = path.join(
+  workingDirectory,
+  '../../../src/test/java/com/caoccao/jaspiler/mock/MockAllInOnePublicClass.java');
 const pathMockPublicAnnotation = path.join(
   workingDirectory,
   '../../../src/test/java/com/caoccao/jaspiler/mock/MockPublicAnnotation.java');
@@ -20,6 +24,7 @@ function testBasicTransform() {
   assert.include('' + result.ast, expectedLine, 'The ast[Symbol.toPrimitive]() should work.');
   // Assert ast
   const ast = result.ast;
+  assert.equal(JTKind.COMPILATION_UNIT, ast.kind);
   const astImports = ast.imports;
   assert.isArray(astImports);
   assert.equal(2, astImports.length);
@@ -65,10 +70,11 @@ function testReplacePackage() {
     plugins: [{
       visitor: {
         Package(node) {
+          assert.equal(JTKind.PACKAGE, node.kind);
           assert.equal('com.caoccao.jaspiler.trees.JTPackageDecl', node.className);
           assert.equal('JTPackageDecl', node.classSimpleName);
           assert.equal('package com.caoccao.jaspiler.mock;', node.toString());
-          const compilationUnit = node.getParentTree();
+          const compilationUnit = node.parentTree;
           assert.equal('com.caoccao.jaspiler.trees.JTCompilationUnit', compilationUnit.className);
           assert.equal('JTCompilationUnit', compilationUnit.classSimpleName);
           assert.isNotNull(compilationUnit);
@@ -106,6 +112,7 @@ function testImports() {
     plugins: [{
       visitor: {
         CompilationUnit(node) {
+          assert.equal(JTKind.COMPILATION_UNIT, node.kind);
           assert.equal(pathMockPublicAnnotation, node.sourceFile, 'The source file should match.');
           const imports = node.imports;
           assert.equal(2, imports.length);
@@ -126,6 +133,63 @@ function testImports() {
     + 'import static abc.def.ghi;\n');
 }
 
+// Class
+
+function testClass() {
+  let isMockAnnotationFound = false;
+  const result = jaspiler.transformSync(pathMockAllInOnePublicClass, {
+    plugins: [{
+      visitor: {
+        Class(node) {
+          assert.equal('com.caoccao.jaspiler.trees.JTClassDecl', node.className);
+          const modifiers = node.modifiers;
+          assert.equal('com.caoccao.jaspiler.trees.JTModifiers', modifiers.className);
+          if ('MockAnnotation' == node.simpleName.value) {
+            assert.equal(JTKind.ANNOTATION_TYPE, node.kind);
+            isMockAnnotationFound = true;
+            const annotations = modifiers.annotations;
+            assert.equal(4, annotations.length);
+            annotations.push(annotations.shift());
+            assert.equal('@Inherited', annotations[0].toString());
+            assert.equal('com.caoccao.jaspiler.trees.JTIdent', annotations[0].annotationType.className);
+            assert.equal('Inherited', annotations[0].annotationType.name.value);
+            assert.equal(0, annotations[0].arguments.length);
+            assert.equal('Retention', annotations[1].annotationType.name.value);
+            assert.equal(1, annotations[1].arguments.length);
+            annotations[0].annotationType = jaspiler.createIdent('NotInherited');
+            const args = annotations[1].arguments;
+            args.push(jaspiler.createFieldAccess('aaa', 'bbb'));
+            annotations[1].arguments = args;
+            modifiers.annotations = annotations;
+            assert.equal(0, node.typeParameters.length);
+            assert.isNull(node.extendsClause);
+            assert.equal(0, node.implementsClauses.length);
+            assert.equal(0, node.permitsClauses.length);
+            assert.equal(2, node.members.length);
+            assert.equal('String[] names() default {"A", "B"};', node.members[0].toString());
+          } else if ('MockAllInOnePublicClass' == node.simpleName.value) {
+            assert.equal(JTKind.CLASS, node.kind);
+            assert.isNotNull(node.extendsClause);
+            assert.equal('Object', node.extendsClause.toString());
+            assert.equal(2, node.implementsClauses.length);
+            assert.equal('Serializable', node.implementsClauses[0].toString());
+            assert.equal(1, node.permitsClauses.length);
+            assert.equal('MockChild', node.permitsClauses[0].toString());
+            assert.equal(6, node.members.length);
+            assert.equal('private String a;', node.members[1].toString());
+          }
+        },
+      },
+    }],
+  });
+  console.info(result.code);
+  assert.isTrue(isMockAnnotationFound, 'Class MockAnnotation should be found.');
+  assert.include(result.code, '@NotInherited\n'
+    + '@Retention(RetentionPolicy.RUNTIME, aaa.bbb)\n'
+    + '@Target(ElementType.ANNOTATION_TYPE)\n'
+    + '@Documented\n');
+}
+
 testBasicTransform();
 // Package
 testIgnorePackage();
@@ -133,3 +197,5 @@ testReplacePackage();
 testReplacePackageName();
 // Imports
 testImports();
+// Class
+testClass();

@@ -16,16 +16,24 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.TreeVisitor;
 import com.sun.source.tree.TypeParameterTree;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public final class JTTypeParameter
         extends JTTree<TypeParameterTree, JTTypeParameter>
         implements TypeParameterTree, IJTAnnotatable {
+    private static final String PROPERTY_BOUNDS = "bounds";
+    private static final String PROPERTY_NAME = "name";
     private final List<JTAnnotation> annotations;
     private final List<JTExpression<?, ?>> bounds;
     private JTName name;
@@ -85,6 +93,59 @@ public final class JTTypeParameter
     @Override
     public JTName getName() {
         return name;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_ANNOTATIONS, propertyName -> v8Runtime.toV8Value(getAnnotations()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_BOUNDS, propertyName -> v8Runtime.toV8Value(getBounds()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_NAME, propertyName -> v8Runtime.toV8Value(getName()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_ANNOTATIONS,
+                    (propertyName, propertyValue) -> {
+                        if (v8Runtime.toObject(propertyValue) instanceof List<?> trees) {
+                            annotations.clear();
+                            trees.stream()
+                                    .filter(tree -> tree instanceof JTAnnotation)
+                                    .map(tree -> ((JTAnnotation) tree).setParentTree(this))
+                                    .forEach(annotations::add);
+                            setActionChange();
+                            return true;
+                        }
+                        return false;
+                    });
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_BOUNDS,
+                    (propertyName, propertyValue) -> {
+                        if (v8Runtime.toObject(propertyValue) instanceof List<?> trees) {
+                            bounds.clear();
+                            trees.stream()
+                                    .filter(tree -> tree instanceof JTExpression<?, ?>)
+                                    .map(tree -> ((JTExpression<?, ?>) tree).setParentTree(this))
+                                    .forEach(bounds::add);
+                            setActionChange();
+                            return true;
+                        }
+                        return false;
+                    });
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_NAME,
+                    (propertyName, propertyValue) -> {
+                        if (v8Runtime.toObject(propertyValue) instanceof JTName tree) {
+                            setName(tree);
+                            return true;
+                        }
+                        return false;
+                    });
+        }
+        return stringSetterMap;
     }
 
     public JTTypeParameter setName(JTName name) {

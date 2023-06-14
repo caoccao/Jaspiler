@@ -247,11 +247,11 @@ public final class JTCompilationUnit
             super.proxyGetStringSetterMap();
             V8Register.putStringSetter(stringSetterMap, PROPERTY_IMPORTS,
                     (propertyName, propertyValue) -> {
-                        if (v8Runtime.toObject(propertyValue) instanceof List<?> propertyImports) {
+                        if (v8Runtime.toObject(propertyValue) instanceof List<?> trees) {
                             imports.clear();
-                            propertyImports.stream()
+                            trees.stream()
                                     .filter(tree -> tree instanceof JTImport)
-                                    .map(tree -> (JTImport) tree)
+                                    .map(tree -> ((JTImport) tree).setParentTree(this))
                                     .forEach(imports::add);
                             setActionChange();
                             return true;
@@ -260,27 +260,27 @@ public final class JTCompilationUnit
                     });
             V8Register.putStringSetter(stringSetterMap, PROPERTY_MODULE,
                     (propertyName, propertyValue) -> {
-                        if (v8Runtime.toObject(propertyValue) instanceof JTModuleDecl propertyModule) {
-                            setModule(propertyModule);
+                        if (v8Runtime.toObject(propertyValue) instanceof JTModuleDecl tree) {
+                            setModule(tree);
                             return true;
                         }
                         return false;
                     });
             V8Register.putStringSetter(stringSetterMap, PROPERTY_PACKAGE,
                     (propertyName, propertyValue) -> {
-                        if (v8Runtime.toObject(propertyValue) instanceof JTPackageDecl propertyPackage) {
-                            setPackageTree(propertyPackage);
+                        if (v8Runtime.toObject(propertyValue) instanceof JTPackageDecl tree) {
+                            setPackageTree(tree);
                             return true;
                         }
                         return false;
                     });
             V8Register.putStringSetter(stringSetterMap, PROPERTY_TYPE_DECLS,
                     (propertyName, propertyValue) -> {
-                        if (v8Runtime.toObject(propertyValue) instanceof List<?> propertyTypes) {
+                        if (v8Runtime.toObject(propertyValue) instanceof List<?> trees) {
                             typeDecls.clear();
-                            propertyTypes.stream()
+                            trees.stream()
                                     .filter(tree -> tree instanceof JTTree<?, ?>)
-                                    .map(tree -> (JTTree<?, ?>) tree)
+                                    .map(tree -> ((JTTree<?, ?>) tree).setParentTree(this))
                                     .forEach(typeDecls::add);
                             setActionChange();
                             return true;

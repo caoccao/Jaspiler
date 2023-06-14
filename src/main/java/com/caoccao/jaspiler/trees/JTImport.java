@@ -102,16 +102,16 @@ public final class JTImport
             super.proxyGetStringSetterMap();
             V8Register.putStringSetter(stringSetterMap, PROPERTY_QUALIFIED_IDENTIFIER,
                     (propertyName, propertyValue) -> {
-                        if (v8Runtime.toObject(propertyValue) instanceof JTTree<?, ?> propertyQualifiedIdentifier) {
-                            setQualifiedIdentifier(propertyQualifiedIdentifier);
+                        if (v8Runtime.toObject(propertyValue) instanceof JTTree<?, ?> tree) {
+                            setQualifiedIdentifier(tree);
                             return true;
                         }
                         return false;
                     });
             V8Register.putStringSetter(stringSetterMap, PROPERTY_STATIC_IMPORT,
                     (propertyName, propertyValue) -> {
-                        if (propertyValue instanceof V8ValueBoolean v8ValueBooleanStaticImport) {
-                            setStaticImport(v8ValueBooleanStaticImport.getValue());
+                        if (propertyValue instanceof V8ValueBoolean v8ValueBoolean) {
+                            setStaticImport(v8ValueBoolean.getValue());
                             return true;
                         }
                         return false;
