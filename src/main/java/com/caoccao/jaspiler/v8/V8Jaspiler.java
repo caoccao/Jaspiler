@@ -122,16 +122,20 @@ public class V8Jaspiler
     }
 
     public V8Value transformSync(V8Value... v8Values) throws JavetException, JaspilerCheckedException {
-        File file = validateFile(validateString(FUNCTION_TRANSFORM_SYNC, v8Values, 0));
         try (var v8JaspilerOptions = new V8JaspilerOptions();
              var jaspilerTransformScanner = new V8JaspilerTransformScanner(v8JaspilerOptions);
-             var jaspilerDocScanner = new V8JaspilerDocScanner();
-             var stringWriter = new StringWriter()) {
+             var jaspilerDocScanner = new V8JaspilerDocScanner()) {
             if (v8Values.length > 1) {
                 v8JaspilerOptions.deserialize(validateObject(FUNCTION_TRANSFORM_SYNC, v8Values, 1));
             }
             jaspilerCompiler.clearJavaFileObject();
-            jaspilerCompiler.addJavaFileObjects(file);
+            if (v8JaspilerOptions.getSourceType() == V8JaspilerOptions.SourceType.File) {
+                File file = validateFile(validateString(FUNCTION_TRANSFORM_SYNC, v8Values, 0));
+                jaspilerCompiler.addJavaFileObjects(file);
+            } else {
+                String codeString = validateString(FUNCTION_TRANSFORM_SYNC, v8Values, 0);
+                jaspilerCompiler.addJavaFileStringObject(v8JaspilerOptions.getFileName(), codeString);
+            }
             jaspilerCompiler.transform(
                     jaspilerTransformScanner,
                     jaspilerDocScanner,
@@ -143,14 +147,15 @@ public class V8Jaspiler
             var compilationUnitTree = jaspilerCompiler.getTransformContexts().get(0).getCompilationUnitTree();
             try (V8Scope v8Scope = v8Runtime.getV8Scope()) {
                 var v8ValueObjectResult = v8Scope.createV8ValueObject();
-                if (compilationUnitTree.save(stringWriter)) {
-                    v8ValueObjectResult.set(
-                            PROPERTIES_AST, compilationUnitTree,
-                            PROPERTIES_CODE, stringWriter.toString());
-                } else {
-                    v8ValueObjectResult.set(
-                            PROPERTIES_AST, null,
-                            PROPERTIES_CODE, null);
+                if (v8JaspilerOptions.isAst()) {
+                    v8ValueObjectResult.set(PROPERTIES_AST, compilationUnitTree);
+                }
+                if (v8JaspilerOptions.isCode()) {
+                    try (var stringWriter = new StringWriter()) {
+                        if (compilationUnitTree.save(stringWriter)) {
+                            v8ValueObjectResult.set(PROPERTIES_CODE, stringWriter.toString());
+                        }
+                    }
                 }
                 v8Scope.setEscapable();
                 return v8ValueObjectResult;

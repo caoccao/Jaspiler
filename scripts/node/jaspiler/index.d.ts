@@ -208,7 +208,36 @@ interface JTTypeParameter extends JTTree<JTTypeParameter> {
 }
 
 interface TransformOptions {
-  plugins: TransformOptionsPlugin[];
+  /**
+   * Include the AST in the returned object
+   *
+   * Default: `false`
+   */
+  ast?: boolean | null | undefined;
+  /**
+   * Enable code generation
+   *
+   * Default: `true`
+   */
+  code?: boolean | null | undefined;
+  /**
+   * Specify the file name in source type 'string' mode
+   *
+   * Default: `undefined`
+   */
+  fileName?: string | null | undefined;
+  /**
+   * List of plugins to load and use
+   *
+   * Default: `[]`
+   */
+  plugins?: TransformOptionsPlugin[] | null | undefined;
+  /**
+   * Type of the source
+   *
+   * Default: `file`
+   */
+  sourceType?: 'string' | 'file';
 }
 
 interface TransformOptionsPlugin {
@@ -222,8 +251,8 @@ interface TransformOptionsPluginVisitor {
 }
 
 interface TransformResult {
-  ast: JTCompilationUnit;
-  code: string;
+  ast?: JTCompilationUnit | undefined;
+  code?: string | undefined;
 }
 
 declare namespace jaspiler {
@@ -235,5 +264,5 @@ declare namespace jaspiler {
   function newImport(): JTImport;
   function newPackageDecl(): JTPackageDecl;
 
-  function transformSync(path: string, options: TransformOptions): TransformResult;
+  function transformSync(source: string, options?: TransformOptions): TransformResult;
 }

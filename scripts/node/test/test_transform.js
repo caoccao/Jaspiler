@@ -13,9 +13,9 @@ const pathMockPublicAnnotation = path.join(
   workingDirectory,
   '../../../src/test/java/com/caoccao/jaspiler/mock/MockPublicAnnotation.java');
 
-function testBasicTransform() {
-  const result = jaspiler.transformSync(pathMockPublicAnnotation);
-  // Assert result, result.ast, result.code
+function testAstForFile() {
+  const result = jaspiler.transformSync(pathMockPublicAnnotation, { ast: true });
+  // Assert { ast, code }
   assert.isObject(result);
   assert.isObject(result.ast);
   const expectedLine = 'public @interface MockPublicAnnotation {';
@@ -41,6 +41,22 @@ function testBasicTransform() {
   assert.equal(1, typeDecls.length);
   assert.include(typeDecls[0].toString(), expectedLine, 'The typeDecls[0].toString() should work.');
   assert.equal(pathMockPublicAnnotation, ast.sourceFile, 'The source file should match.');
+}
+
+function testAstForString() {
+  const result = jaspiler.transformSync(
+    `package a.b.c;
+    public class A {
+    }
+    `,
+    { ast: true, sourceType: 'string' });
+  // Assert { ast, code }
+  assert.isObject(result);
+  assert.isObject(result.ast);
+  assert.include(result.code, 'public class A');
+  // Assert ast
+  const ast = result.ast;
+  assert.equal(JTKind.COMPILATION_UNIT, ast.kind);
 }
 
 // Package
@@ -182,7 +198,6 @@ function testClass() {
       },
     }],
   });
-  console.info(result.code);
   assert.isTrue(isMockAnnotationFound, 'Class MockAnnotation should be found.');
   assert.include(result.code, '@NotInherited\n'
     + '@Retention(RetentionPolicy.RUNTIME, aaa.bbb)\n'
@@ -190,7 +205,8 @@ function testClass() {
     + '@Documented\n');
 }
 
-testBasicTransform();
+testAstForFile();
+testAstForString();
 // Package
 testIgnorePackage();
 testReplacePackage();

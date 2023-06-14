@@ -20,11 +20,14 @@ import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interfaces.IJavetClosable;
 import com.caoccao.javet.utils.JavetResourceUtils;
 import com.caoccao.javet.values.V8Value;
+import com.caoccao.javet.values.primitive.V8ValueBoolean;
+import com.caoccao.javet.values.primitive.V8ValueString;
 import com.caoccao.javet.values.reference.V8ValueArray;
 import com.caoccao.javet.values.reference.V8ValueFunction;
 import com.caoccao.javet.values.reference.V8ValueObject;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,12 +36,24 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public final class V8JaspilerOptions implements IJavetClosable {
-    public static final String PROPERTY_PLUGINS = "plugins";
-
+    private static final String DEFAULT_FILE_NAME = "Dummy";
+    private static final String PROPERTY_AST = "ast";
+    private static final String PROPERTY_CODE = "code";
+    private static final String PROPERTY_FILE_NAME = "fileName";
+    private static final String PROPERTY_PLUGINS = "plugins";
+    private static final String PROPERTY_SOURCE_TYPE = "sourceType";
     private final List<Plugin> plugins;
+    private boolean ast;
+    private boolean code;
+    private String fileName;
+    private SourceType sourceType;
 
     public V8JaspilerOptions() {
+        ast = false;
+        code = true;
+        fileName = null;
         plugins = new ArrayList<>();
+        sourceType = SourceType.File;
     }
 
     @Override
@@ -48,6 +63,30 @@ public final class V8JaspilerOptions implements IJavetClosable {
     }
 
     public V8JaspilerOptions deserialize(V8ValueObject v8ValueObject) throws JavetException {
+        deserializeAst(v8ValueObject);
+        deserializeCode(v8ValueObject);
+        deserializeSourceTypeAndFileName(v8ValueObject);
+        deserializePlugins(v8ValueObject);
+        return this;
+    }
+
+    private void deserializeAst(V8ValueObject v8ValueObject) throws JavetException {
+        try (V8Value v8Value = v8ValueObject.get(PROPERTY_AST)) {
+            if (v8Value instanceof V8ValueBoolean v8ValueBoolean) {
+                ast = v8ValueBoolean.getValue();
+            }
+        }
+    }
+
+    private void deserializeCode(V8ValueObject v8ValueObject) throws JavetException {
+        try (V8Value v8Value = v8ValueObject.get(PROPERTY_CODE)) {
+            if (v8Value instanceof V8ValueBoolean v8ValueBoolean) {
+                code = v8ValueBoolean.getValue();
+            }
+        }
+    }
+
+    private void deserializePlugins(V8ValueObject v8ValueObject) throws JavetException {
         try (V8Value v8Value = v8ValueObject.get(PROPERTY_PLUGINS)) {
             if (v8Value instanceof V8ValueArray v8ValueArray) {
                 v8ValueArray.forEach(v8ValueRule -> {
@@ -57,16 +96,73 @@ public final class V8JaspilerOptions implements IJavetClosable {
                 });
             }
         }
-        return this;
+    }
+
+    private void deserializeSourceTypeAndFileName(V8ValueObject v8ValueObject) throws JavetException {
+        try (V8Value v8Value = v8ValueObject.get(PROPERTY_SOURCE_TYPE)) {
+            if (v8Value instanceof V8ValueString v8ValueString) {
+                if (StringUtils.equalsIgnoreCase(SourceType.String.name(), v8ValueString.getValue())) {
+                    sourceType = SourceType.String;
+                } else {
+                    sourceType = SourceType.File;
+                }
+            }
+        }
+        if (sourceType == SourceType.String) {
+            try (V8Value v8Value = v8ValueObject.get(PROPERTY_FILE_NAME)) {
+                if (v8Value instanceof V8ValueString v8ValueString) {
+                    fileName = v8ValueString.getValue();
+                } else {
+                    fileName = DEFAULT_FILE_NAME;
+                }
+            }
+        }
+    }
+
+    public String getFileName() {
+        return fileName;
     }
 
     public List<Plugin> getPlugins() {
         return plugins;
     }
 
+    public SourceType getSourceType() {
+        return sourceType;
+    }
+
+    public boolean isAst() {
+        return ast;
+    }
+
     @Override
     public boolean isClosed() {
         return CollectionUtils.isEmpty(plugins);
+    }
+
+    public boolean isCode() {
+        return code;
+    }
+
+    public void setAst(boolean ast) {
+        this.ast = ast;
+    }
+
+    public void setCode(boolean code) {
+        this.code = code;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public void setSourceType(SourceType sourceType) {
+        this.sourceType = sourceType;
+    }
+
+    public enum SourceType {
+        File,
+        String,
     }
 
     public static final class Plugin implements IJavetClosable {
