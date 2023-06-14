@@ -232,11 +232,11 @@ public final class JTCompilationUnit
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_PACKAGE, propertyName -> v8Runtime.toV8Value(getPackage()));
             V8Register.putStringGetter(stringGetterMap, PROPERTY_IMPORTS, propertyName -> v8Runtime.toV8Value(getImports()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_TYPE_DECLS, propertyName -> v8Runtime.toV8Value(getTypeDecls()));
             V8Register.putStringGetter(stringGetterMap, PROPERTY_MODULE, propertyName -> v8Runtime.toV8Value(getModule()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_PACKAGE, propertyName -> v8Runtime.toV8Value(getPackage()));
             V8Register.putStringGetter(stringGetterMap, PROPERTY_SOURCE_FILE, propertyName -> v8Runtime.createV8ValueString(getSourceFile().getName()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_TYPE_DECLS, propertyName -> v8Runtime.toV8Value(getTypeDecls()));
         }
         return stringGetterMap;
     }
@@ -262,6 +262,27 @@ public final class JTCompilationUnit
                     (propertyName, propertyValue) -> {
                         if (v8Runtime.toObject(propertyValue) instanceof JTModuleDecl propertyModule) {
                             setModule(propertyModule);
+                            return true;
+                        }
+                        return false;
+                    });
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_PACKAGE,
+                    (propertyName, propertyValue) -> {
+                        if (v8Runtime.toObject(propertyValue) instanceof JTPackageDecl propertyPackage) {
+                            setPackageTree(propertyPackage);
+                            return true;
+                        }
+                        return false;
+                    });
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_TYPE_DECLS,
+                    (propertyName, propertyValue) -> {
+                        if (v8Runtime.toObject(propertyValue) instanceof List<?> propertyTypes) {
+                            typeDecls.clear();
+                            propertyTypes.stream()
+                                    .filter(tree -> tree instanceof JTTree<?, ?>)
+                                    .map(tree -> (JTTree<?, ?>) tree)
+                                    .forEach(typeDecls::add);
+                            setActionChange();
                             return true;
                         }
                         return false;
@@ -363,12 +384,7 @@ public final class JTCompilationUnit
                     && getOriginalPosition().startPosition() > 0) {
                 sbp.append(getOriginalCode(), 0, (int) getOriginalPosition().startPosition());
             }
-            Optional.ofNullable(packageTree).ifPresent(tree -> {
-                sbp.append(tree);
-                if (tree.isActionNoChange()) {
-                    sbp.appendLineSeparator();
-                }
-            });
+            Optional.ofNullable(packageTree).ifPresent(tree -> sbp.append(tree).appendLineSeparator());
             ForEachUtils.forEach(
                     imports.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
                     sbp::append,

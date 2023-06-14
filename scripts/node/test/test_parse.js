@@ -60,6 +60,30 @@ function testIgnorePackage() {
   assert.notInclude(result.code, 'package com.caoccao.jaspiler.mock;');
 }
 
+function testReplacePackage() {
+  const result = jaspiler.transformSync(pathMockPublicAnnotation, {
+    plugins: [{
+      visitor: {
+        Package(node) {
+          assert.equal('com.caoccao.jaspiler.trees.JTPackageDecl', node.className);
+          assert.equal('JTPackageDecl', node.classSimpleName);
+          assert.equal('package com.caoccao.jaspiler.mock;', node.toString());
+          const compilationUnit = node.getParentTree();
+          assert.equal('com.caoccao.jaspiler.trees.JTCompilationUnit', compilationUnit.className);
+          assert.equal('JTCompilationUnit', compilationUnit.classSimpleName);
+          assert.isNotNull(compilationUnit);
+          const packageDecl = jaspiler.newPackageDecl();
+          assert.equal('com.caoccao.jaspiler.trees.JTPackageDecl', packageDecl.className);
+          assert.equal('JTPackageDecl', packageDecl.classSimpleName);
+          packageDecl.packageName = jaspiler.createFieldAccess('abc', 'def', 'ghi');
+          compilationUnit.package = packageDecl;
+        },
+      },
+    }],
+  });
+  assert.include(result.code, 'package abc.def.ghi;');
+}
+
 function testReplacePackageName() {
   const result = jaspiler.transformSync(pathMockPublicAnnotation, {
     plugins: [{
@@ -105,6 +129,7 @@ function testImports() {
 testBasicTransform();
 // Package
 testIgnorePackage();
+testReplacePackage();
 testReplacePackageName();
 // Imports
 testImports();

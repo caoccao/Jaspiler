@@ -1,23 +1,22 @@
 /// <reference no-default-lib="true"/>
 
-interface JTName {
-  value: string;
-}
-
-interface JTTree<Tree extends JTTree<Tree>> {
-  isActionChange(): boolean;
-  isActionIgnore(): boolean;
-  isActionNoChange(): boolean;
-  setActionChange(): boolean;
-  setActionIgnore(): boolean;
-  setActionNoChange(): boolean;
-  toString(): string;
-}
-
-interface JTDirective<Tree extends JTDirective<Tree>> extends JTTree<JTDirective> {
+interface JTAnnotation extends JTExpression<JTAnnotation> {
+  arguments: JTExpression<?>[];
+  annotationType: JTTree<?>;
 }
 
 interface JTCaseLabel<Tree extends JTCaseLabel<Tree>> extends JTTree<JTCaseLabel> {
+}
+
+interface JTCompilationUnit extends JTTree<JTCompilationUnit> {
+  package: JTPackageDecl;
+  imports: JTImport[];
+  typeDecls: JTTree<?>[];
+  module: JTModuleDecl;
+  readonly sourceFile: string;
+}
+
+interface JTDirective<Tree extends JTDirective<Tree>> extends JTTree<JTDirective> {
 }
 
 interface JTExpression<Tree extends JTExpression<Tree>> extends JTCaseLabel<JTExpression> {
@@ -28,9 +27,9 @@ interface JTFieldAccess extends JTExpression<JTFieldAccess> {
   identifier: JTName;
 }
 
-interface JTAnnotation extends JTExpression<JTAnnotation> {
-  arguments: JTExpression<?>[];
-  annotationType: JTTree<?>;
+interface JTImport extends JTTree<JTImport> {
+  qualifiedIdentifier: JTTree<?>;
+  staticImport: boolean;
 }
 
 interface JTModuleDecl extends JTTree<JTModuleDecl> {
@@ -39,35 +38,39 @@ interface JTModuleDecl extends JTTree<JTModuleDecl> {
   directives: JTDirective;
 }
 
+interface JTName {
+  value: string;
+}
+
 interface JTPackageDecl extends JTTree<JTPackageDecl> {
   annotations: JTAnnotation[];
   packageName: JTExpression<?>;
 }
 
-interface JTImport extends JTTree<JTImport> {
-  qualifiedIdentifier: JTTree<?>;
-  staticImport: boolean;
+interface JTTree<Tree extends JTTree<Tree>> {
+  readonly className: string;
+  readonly classSimpleName: string;
+  getParentTree(): JTTree<?>;
+  isActionChange(): boolean;
+  isActionIgnore(): boolean;
+  isActionNoChange(): boolean;
+  setActionChange(): boolean;
+  setActionIgnore(): boolean;
+  setActionNoChange(): boolean;
+  toString(): string;
 }
 
-interface JTCompilationUnit extends JTTree<JTCompilationUnit> {
-  package: JTPackageDecl;
-  imports: JTImport[];
-  typeDecls: JTTree<?>[];
-  module: JTModuleDecl;
-  sourceFile: string;
-}
-
-interface TransformOptionsPluginVisitor {
-  CompilationUnit(node: JTCompilationUnit): void;
-  Package(node: JTPackageDecl): void;
+interface TransformOptions {
+  plugins: TransformOptionsPlugin[];
 }
 
 interface TransformOptionsPlugin {
   visitor: TransformOptionsPluginVisitor;
 }
 
-interface TransformOptions {
-  plugins: TransformOptionsPlugin[];
+interface TransformOptionsPluginVisitor {
+  CompilationUnit(node: JTCompilationUnit): void;
+  Package(node: JTPackageDecl): void;
 }
 
 interface TransformResult {
@@ -80,6 +83,7 @@ declare namespace jaspiler {
   function createName(value: string): JTName;
 
   function newImport(): JTImport;
+  function newPackageDecl(): JTPackageDecl;
 
   function transformSync(path: string, options: TransformOptions): TransformResult;
 }

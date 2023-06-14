@@ -133,8 +133,7 @@ public final class JTPackageDecl
                     null,
                     trees -> sbp.appendLineSeparator());
             Optional.ofNullable(packageName)
-                    .ifPresent(tree -> sbp.append(IJTConstants.PACKAGE).appendSpace().append(tree)
-                            .appendSemiColon().appendLineSeparator());
+                    .ifPresent(tree -> sbp.append(IJTConstants.PACKAGE).appendSpace().append(tree).appendSemiColon());
             return sbp.toString();
         }
         return super.toString();

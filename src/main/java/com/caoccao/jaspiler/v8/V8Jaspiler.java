@@ -23,6 +23,7 @@ import com.caoccao.jaspiler.exceptions.JaspilerParseException;
 import com.caoccao.jaspiler.options.JaspilerTransformOptions;
 import com.caoccao.jaspiler.trees.JTImport;
 import com.caoccao.jaspiler.trees.JTName;
+import com.caoccao.jaspiler.trees.JTPackageDecl;
 import com.caoccao.jaspiler.trees.JTTreeFactory;
 import com.caoccao.jaspiler.utils.BaseLoggingObject;
 import com.caoccao.jaspiler.utils.V8Register;
@@ -52,6 +53,7 @@ public class V8Jaspiler
     protected static final String FUNCTION_CREATE_FIELD_ACCESS = "createFieldAccess";
     protected static final String FUNCTION_CREATE_NAME = "createName";
     protected static final String FUNCTION_NEW_IMPORT = "newImport";
+    protected static final String FUNCTION_NEW_PACKAGE_DECL = "newPackageDecl";
     protected static final String FUNCTION_TRANSFORM_SYNC = "transformSync";
     protected static final String PROPERTIES_AST = "ast";
     protected static final String PROPERTIES_CODE = "code";
@@ -112,6 +114,8 @@ public class V8Jaspiler
             V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_CREATE_NAME, this::createName);
             V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_NEW_IMPORT,
                     v8Values -> v8Runtime.toV8Value(new JTImport()));
+            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_NEW_PACKAGE_DECL,
+                    v8Values -> v8Runtime.toV8Value(new JTPackageDecl()));
             V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_TRANSFORM_SYNC, this::transformSync);
         }
         return stringGetterMap;
