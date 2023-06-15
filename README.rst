@@ -1,6 +1,11 @@
 Jaspiler
 ========
 
+|Build Jaspiler|
+
+.. |Build Jaspiler| image:: https://github.com/caoccao/Jaspiler/actions/workflows/build_jaspiler_artifact.yml/badge.svg
+    :target: https://github.com/caoccao/Jaspiler/actions/workflows/build_jaspiler_artifact.yml
+
 `Jaspiler <https://github.com/caoccao/Jaspiler/>`_ is a Java to Java transpiler. It transpiles the given Java code to the corresponding Java code with some customizations. It is expected to be a Babel for Java. If you like this project, please star it.
 
 Major Features
