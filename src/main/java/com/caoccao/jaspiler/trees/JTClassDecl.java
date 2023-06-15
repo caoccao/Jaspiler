@@ -21,7 +21,6 @@ import com.caoccao.jaspiler.exceptions.JaspilerNotSupportedException;
 import com.caoccao.jaspiler.utils.ForEachUtils;
 import com.caoccao.jaspiler.utils.StringBuilderPlus;
 import com.caoccao.jaspiler.utils.V8Register;
-import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -165,29 +164,21 @@ public final class JTClassDecl
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
             V8Register.putStringSetter(stringSetterMap, PROPERTY_EXTENDS_CLAUSE,
-                    (propertyName, propertyValue) -> setExtendsClause(propertyValue));
+                    (propertyName, propertyValue) -> replaceExpression(this::setExtendsClause, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_IMPLEMENTS_CLAUSES,
                     (propertyName, propertyValue) -> replaceExpressions(implementsClauses, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_MEMBERS,
                     (propertyName, propertyValue) -> replaceTrees(members, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_MODIFIERS,
-                    (propertyName, propertyValue) -> setModifiers(propertyValue));
+                    (propertyName, propertyValue) -> replaceModifiers(this::setModifiers, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_PERMITS_CLAUSES,
                     (propertyName, propertyValue) -> replaceExpressions(permitsClauses, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_SIMPLE_NAME,
-                    (propertyName, propertyValue) -> setSimpleName(propertyValue));
+                    (propertyName, propertyValue) -> replaceName(this::setSimpleName, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_TYPE_PARAMETERS,
                     (propertyName, propertyValue) -> replaceTypeParameters(typeParameters, propertyValue));
         }
         return stringSetterMap;
-    }
-
-    private boolean setExtendsClause(V8Value v8Value) throws JavetException {
-        if (v8Runtime.toObject(v8Value) instanceof JTExpression<?, ?> tree) {
-            setExtendsClause(tree);
-            return true;
-        }
-        return false;
     }
 
     public JTClassDecl setExtendsClause(JTExpression<?, ?> extendsClause) {
@@ -209,28 +200,12 @@ public final class JTClassDecl
         return setActionChange();
     }
 
-    private boolean setModifiers(V8Value v8Value) throws JavetException {
-        if (v8Runtime.toObject(v8Value) instanceof JTModifiers tree) {
-            setModifiers(tree);
-            return true;
-        }
-        return false;
-    }
-
     public JTClassDecl setModifiers(JTModifiers modifiers) {
         if (this.modifiers == modifiers) {
             return this;
         }
         this.modifiers = Objects.requireNonNull(modifiers).setParentTree(this);
         return setActionChange();
-    }
-
-    private boolean setSimpleName(V8Value v8Value) throws JavetException {
-        if (v8Runtime.toObject(v8Value) instanceof JTName tree) {
-            setSimpleName(tree);
-            return true;
-        }
-        return false;
     }
 
     public JTClassDecl setSimpleName(JTName simpleName) {
@@ -278,12 +253,7 @@ public final class JTClassDecl
             sbp.appendSpaceIfNeeded().appendLeftCurlyBracket().appendLineSeparator();
             ForEachUtils.forEach(
                     members.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
-                    tree -> {
-                        if (!tree.isActionChange()) {
-                            sbp.appendSpace(childIndent);
-                        }
-                        sbp.append(tree).appendLineSeparator();
-                    },
+                    tree -> sbp.appendSpace(childIndent).append(tree).appendLineSeparator(),
                     tree -> sbp.appendLineSeparator());
             sbp.appendSpace(indent).appendRightCurlyBracket().appendLineSeparator();
             return sbp.toString();

@@ -202,10 +202,8 @@ public final class JTMethodDecl
     @Override
     public String toString() {
         if (isActionChange()) {
-            int indent = getIndent();
-            int childIndent = indent + getCompilationUnit().getOptions().getIndentSize();
             final var sbp = new StringBuilderPlus();
-            Optional.ofNullable(modifiers).ifPresent(tree -> sbp.appendSpace(indent).append(tree));
+            Optional.ofNullable(modifiers).ifPresent(sbp::append);
             ForEachUtils.forEach(
                     typeParameters.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
                     sbp::append,

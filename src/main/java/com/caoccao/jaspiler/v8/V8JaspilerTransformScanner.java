@@ -20,10 +20,7 @@ import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.visiters.BaseJaspilerTransformScanner;
 import com.caoccao.javet.values.reference.V8ValueFunction;
-import com.sun.source.tree.ClassTree;
-import com.sun.source.tree.CompilationUnitTree;
-import com.sun.source.tree.PackageTree;
-import com.sun.source.tree.Tree;
+import com.sun.source.tree.*;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
@@ -86,8 +83,28 @@ public class V8JaspilerTransformScanner
     }
 
     @Override
+    public V8JaspilerTransformScanner visitIdentifier(
+            IdentifierTree node,
+            JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitIdentifier());
+        return super.visitIdentifier(node, jaspilerTransformContext);
+    }
+
+    @Override
+    public V8JaspilerTransformScanner visitImport(ImportTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitImport());
+        return super.visitImport(node, jaspilerTransformContext);
+    }
+
+    @Override
     public V8JaspilerTransformScanner visitPackage(PackageTree node, JaspilerTransformContext jaspilerTransformContext) {
         forEachPlugin(node, plugin -> plugin.getVisitor().getVisitPackage());
         return super.visitPackage(node, jaspilerTransformContext);
+    }
+
+    @Override
+    public V8JaspilerTransformScanner visitVariable(VariableTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitVariable());
+        return super.visitVariable(node, jaspilerTransformContext);
     }
 }

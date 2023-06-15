@@ -114,10 +114,7 @@ public final class JTModifiers
             final var sbp = new StringBuilderPlus();
             ForEachUtils.forEach(
                     annotations.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
-                    sbp::append,
-                    tree -> sbp.appendLineSeparator().appendSpace(indentAnnotation),
-                    null,
-                    trees -> sbp.appendLineSeparator());
+                    tree -> sbp.appendSpace(indentAnnotation).append(tree).appendLineSeparator());
             List<Modifier> modifiers = new ArrayList<>();
             SCOPE_MODIFIERS.stream().filter(flags::contains).findFirst().ifPresent(modifiers::add);
             ABSTRACT_OR_DEFAULT_OR_STATIC_MODIFIERS.stream().filter(flags::contains).findFirst().ifPresent(modifiers::add);

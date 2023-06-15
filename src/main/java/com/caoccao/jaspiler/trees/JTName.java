@@ -82,8 +82,8 @@ public final class JTName implements Name, IJavetDirectProxyHandler<JaspilerChec
             stringGetterMap = new HashMap<>();
             V8Register.putStringGetter(stringGetterMap, PROPERTY_VALUE,
                     property -> v8Runtime.createV8ValueString(getValue()));
-            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_TO_STRING, property ->
-                    v8Runtime.createV8ValueString(toString()));
+            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_TO_STRING,
+                    property -> v8Runtime.createV8ValueString(toString()));
         }
         return stringGetterMap;
     }

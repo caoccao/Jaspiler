@@ -232,6 +232,14 @@ interface JTTypeParameter extends JTTree<JTTypeParameter> {
   name: JTName;
 }
 
+interface JTVariableDecl extends JTStatement<JTVariableDecl> {
+  initializer: JTExpression<?>;
+  modifiers: JTModifier;
+  name: JTName;
+  nameExpression: JTExpression<?>;
+  type: JTExpression<?>;
+}
+
 interface TransformOptions {
   /**
    * Include the AST in the returned object
@@ -272,7 +280,10 @@ interface TransformOptionsPlugin {
 interface TransformOptionsPluginVisitor {
   Class(node: JTClassDecl): void;
   CompilationUnit(node: JTCompilationUnit): void;
+  Identifier(node: JTIdent): void;
+  Import(node: JTImport): void;
   Package(node: JTPackageDecl): void;
+  Variable(node: JTVariableDecl): void;
 }
 
 interface TransformResult {
@@ -286,9 +297,11 @@ declare namespace jaspiler {
   function createName(name: string): JTName;
 
   function newAnnotation(): JTAnnotation;
+  function newClassDecl(): JTClassDecl;
   function newIdent(): JTIdent;
   function newImport(): JTImport;
   function newPackageDecl(): JTPackageDecl;
+  function newVariableDecl(): JTVariableDecl;
 
   function transformSync(source: string, options?: TransformOptions): TransformResult;
 }

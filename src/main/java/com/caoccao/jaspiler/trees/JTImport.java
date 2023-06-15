@@ -104,19 +104,11 @@ public final class JTImport
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
             V8Register.putStringSetter(stringSetterMap, PROPERTY_QUALIFIED_IDENTIFIER,
-                    (propertyName, propertyValue) -> setQualifiedIdentifier(propertyValue));
+                    (propertyName, propertyValue) -> replaceTree(this::setQualifiedIdentifier, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_STATIC_IMPORT,
                     (propertyName, propertyValue) -> setStaticImport(propertyValue));
         }
         return stringSetterMap;
-    }
-
-    private boolean setQualifiedIdentifier(V8Value v8Value) throws JavetException {
-        if (v8Runtime.toObject(v8Value) instanceof JTTree<?, ?> tree) {
-            setQualifiedIdentifier(tree);
-            return true;
-        }
-        return false;
     }
 
     public JTImport setQualifiedIdentifier(JTTree<?, ?> qualifiedIdentifier) {
@@ -151,7 +143,7 @@ public final class JTImport
             if (staticImport) {
                 sbp.append(IJTConstants.STATIC).appendSpace();
             }
-            sbp.append(qualifiedIdentifier).append(IJTConstants.SEMI_COLON).appendLineSeparator();
+            sbp.append(qualifiedIdentifier).append(IJTConstants.SEMI_COLON);
             return sbp.toString();
         }
         return super.toString();

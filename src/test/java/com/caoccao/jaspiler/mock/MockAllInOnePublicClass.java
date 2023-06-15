@@ -61,6 +61,8 @@ public abstract sealed class MockAllInOnePublicClass
      */
     @SuppressWarnings("unchecked")
     public final <T> void Test(T x, @Deprecated int y) throws IOException, NoClassDefFoundError {
+        int c = 5;
+        String d;
         a = "abc";
         b = new Random().nextInt();
         list = new ArrayList<>();

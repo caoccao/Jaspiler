@@ -16,17 +16,29 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.utils.StringBuilderPlus;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.exceptions.JavetException;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.TreeVisitor;
 import com.sun.source.tree.VariableTree;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 public final class JTVariableDecl
         extends JTStatement<VariableTree, JTVariableDecl>
         implements VariableTree {
+    private static final String PROPERTY_INITIALIZER = "initializer";
+    private static final String PROPERTY_MODIFIERS = "modifiers";
+    private static final String PROPERTY_NAME = "name";
+    private static final String PROPERTY_NAME_EXPRESSION = "nameExpression";
+    private static final String PROPERTY_TYPE = "type";
     private JTExpression<?, ?> initializer;
     private JTModifiers modifiers;
     private JTName name;
@@ -107,6 +119,45 @@ public final class JTVariableDecl
         return type;
     }
 
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_INITIALIZER, propertyName -> v8Runtime.toV8Value(getInitializer()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_MODIFIERS, propertyName -> v8Runtime.toV8Value(getModifiers()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_NAME, propertyName -> v8Runtime.toV8Value(getName()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_NAME_EXPRESSION, propertyName -> v8Runtime.toV8Value(getNameExpression()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_TYPE, propertyName -> v8Runtime.toV8Value(getType()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_MODIFIERS,
+                    (propertyName, propertyValue) -> replaceModifiers(this::setModifiers, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_INITIALIZER,
+                    (propertyName, propertyValue) -> replaceExpression(this::setInitializer, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_NAME,
+                    (propertyName, propertyValue) -> replaceName(this::setName, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_NAME_EXPRESSION,
+                    (propertyName, propertyValue) -> replaceExpression(this::setNameExpression, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_TYPE,
+                    (propertyName, propertyValue) -> replaceExpression(this::setType, propertyValue));
+        }
+        return stringSetterMap;
+    }
+
+    private boolean setInitialValue(V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof JTExpression<?, ?> tree) {
+            setNameExpression(tree);
+            return true;
+        }
+        return false;
+    }
+
     public JTVariableDecl setInitializer(JTExpression<?, ?> initializer) {
         if (this.initializer == initializer) {
             return this;
@@ -150,15 +201,16 @@ public final class JTVariableDecl
     @Override
     public String toString() {
         if (isActionChange()) {
-            int indent = getIndent();
             final var sbp = new StringBuilderPlus();
-            Optional.ofNullable(modifiers).ifPresent(tree -> sbp.appendSpace(indent).append(tree));
+            Optional.ofNullable(modifiers).ifPresent(sbp::append);
             Optional.ofNullable(type).ifPresent(tree -> sbp.appendSpaceIfNeeded().append(tree));
             Optional.ofNullable(nameExpression).ifPresent(tree -> sbp.appendSpaceIfNeeded().append(tree));
-            Optional.ofNullable(name).ifPresent(tree -> sbp.appendSpaceIfNeeded().append(tree)
-                    .appendSpace().appendEqual());
-            Optional.ofNullable(initializer).ifPresent(tree -> sbp.appendSpaceIfNeeded().append(tree));
-            sbp.appendSemiColon();
+            Optional.ofNullable(name).ifPresent(tree -> sbp.appendSpaceIfNeeded().append(tree));
+            Optional.ofNullable(initializer).ifPresent(
+                    tree -> sbp.appendSpaceIfNeeded().appendEqual().appendSpace().append(tree));
+            if (getParentTree() instanceof JTClassDecl || getParentTree() instanceof JTBlock) {
+                sbp.appendSemiColon();
+            }
             return sbp.toString();
         }
         return super.toString();

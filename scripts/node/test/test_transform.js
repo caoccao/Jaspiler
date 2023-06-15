@@ -224,6 +224,78 @@ function testClass() {
   assert.include(result.code, 'final class NewMockChild extends MockAllInOnePublicClass {');
 }
 
+// Identifier
+
+function testIdentifier() {
+  const values = [];
+  const result = jaspiler.transformSync(pathMockPublicAnnotation, {
+    plugins: [{
+      visitor: {
+        Identifier(node) {
+          const value = node.name.value;
+          values.push(value);
+          if (value == 'Inherited') {
+            node.name = jaspiler.createName('NotInherited');
+          }
+        },
+      },
+    }],
+  });
+  assert.equal('com,java,java,Documented,Inherited,String,String', values.join(','));
+  assert.include(result.code, '@NotInherited');
+}
+
+// Import
+
+function testImport() {
+  const values = [];
+  const result = jaspiler.transformSync(pathMockPublicAnnotation, {
+    plugins: [{
+      visitor: {
+        Import(node) {
+          assert.isFalse(node.staticImport);
+          values.push(node.qualifiedIdentifier.toString());
+          node.staticImport = true;
+        },
+      },
+    }],
+  });
+  assert.equal(2, values.length);
+  assert.equal('java.lang.annotation.Documented', values[0]);
+  assert.equal('java.lang.annotation.Inherited', values[1]);
+  assert.include(
+    result.code,
+    'import static java.lang.annotation.Documented;\n'
+    + 'import static java.lang.annotation.Inherited;\n');
+}
+
+// Variable
+function testVariable() {
+  const result = jaspiler.transformSync(pathMockAllInOnePublicClass, {
+    plugins: [{
+      visitor: {
+        Variable(node) {
+          const value = node.name.value;
+          if ('x' == value) {
+            node.name = jaspiler.createName('xx');
+          } else if ('y' == value) {
+            node.name = jaspiler.createName('yy');
+          } else if ('a' == value) {
+            node.name = jaspiler.createName('aa');
+          } else if ('c' == value) {
+            node.name = jaspiler.createName('cc');
+          }
+        },
+      },
+    }],
+  });
+  console.info(result.code);
+  assert.include(result.code, '\n    private String aa;\n');
+  assert.include(result.code, '\n    @SuppressWarnings("unchecked")\n');
+  assert.include(result.code, '\n    public final <T> void Test(T xx, @Deprecated int yy) throws IOException, NoClassDefFoundError {\n');
+  assert.include(result.code, '\n        int cc = 5;\n');
+}
+
 testAstForFile();
 testAstForString();
 // Package
@@ -234,3 +306,9 @@ testReplacePackageName();
 testImports();
 // Class
 testClass();
+// Identifier
+testIdentifier();
+// Import
+testImport();
+// Variable
+testVariable();

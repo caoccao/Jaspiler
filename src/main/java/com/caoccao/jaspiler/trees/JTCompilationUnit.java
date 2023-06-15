@@ -22,7 +22,6 @@ import com.caoccao.jaspiler.options.JaspilerTransformOptions;
 import com.caoccao.jaspiler.utils.ForEachUtils;
 import com.caoccao.jaspiler.utils.StringBuilderPlus;
 import com.caoccao.jaspiler.utils.V8Register;
-import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -254,9 +253,9 @@ public final class JTCompilationUnit
             V8Register.putStringSetter(stringSetterMap, PROPERTY_IMPORTS,
                     (propertyName, propertyValue) -> replaceImports(imports, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_MODULE,
-                    (propertyName, propertyValue) -> setModule(propertyValue));
+                    (propertyName, propertyValue) -> replaceModuleDecl(this::setModule, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_PACKAGE,
-                    (propertyName, propertyValue) -> setPackageTree(propertyValue));
+                    (propertyName, propertyValue) -> replacePackageDecl(this::setPackageTree, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_TYPE_DECLS,
                     (propertyName, propertyValue) -> replaceTrees(typeDecls, propertyValue));
         }
@@ -331,28 +330,12 @@ public final class JTCompilationUnit
         return super.save(writer);
     }
 
-    private boolean setModule(V8Value v8Value) throws JavetException {
-        if (v8Runtime.toObject(v8Value) instanceof JTModuleDecl tree) {
-            setModule(tree);
-            return true;
-        }
-        return false;
-    }
-
     public JTCompilationUnit setModule(JTModuleDecl moduleTree) {
         if (this.moduleTree == moduleTree) {
             return this;
         }
         this.moduleTree = Optional.ofNullable(moduleTree).map(o -> o.setParentTree(this)).orElse(null);
         return setActionChange();
-    }
-
-    private boolean setPackageTree(V8Value v8Value) throws JavetException {
-        if (v8Runtime.toObject(v8Value) instanceof JTPackageDecl tree) {
-            setPackageTree(tree);
-            return true;
-        }
-        return false;
     }
 
     public JTCompilationUnit setPackageTree(JTPackageDecl packageTree) {

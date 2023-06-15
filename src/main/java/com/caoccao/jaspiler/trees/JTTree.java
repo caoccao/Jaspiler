@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 @SuppressWarnings("unchecked")
 public abstract class JTTree<
@@ -230,6 +231,14 @@ public abstract class JTTree<
         return false;
     }
 
+    protected boolean replaceExpression(Function<JTExpression<?, ?>, NewTree> setter, V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof JTExpression<?, ?> tree) {
+            setter.apply(tree);
+            return true;
+        }
+        return false;
+    }
+
     protected boolean replaceExpressions(List<JTExpression<?, ?>> list, V8Value v8Value) throws JavetException {
         if (v8Runtime.toObject(v8Value) instanceof List<?> trees) {
             list.clear();
@@ -251,6 +260,46 @@ public abstract class JTTree<
                     .map(tree -> ((JTImport) tree).setParentTree(this))
                     .forEach(list::add);
             setActionChange();
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean replaceModifiers(Function<JTModifiers, NewTree> setter, V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof JTModifiers tree) {
+            setter.apply(tree);
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean replaceModuleDecl(Function<JTModuleDecl, NewTree> setter, V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof JTModuleDecl tree) {
+            setter.apply(tree);
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean replaceName(Function<JTName, NewTree> setter, V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof JTName tree) {
+            setter.apply(tree);
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean replacePackageDecl(Function<JTPackageDecl, NewTree> setter, V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof JTPackageDecl tree) {
+            setter.apply(tree);
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean replaceTree(Function<JTTree<?, ?>, NewTree> setter, V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof JTTree<?, ?> tree) {
+            setter.apply(tree);
             return true;
         }
         return false;

@@ -20,7 +20,6 @@ import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.utils.ForEachUtils;
 import com.caoccao.jaspiler.utils.StringBuilderPlus;
 import com.caoccao.jaspiler.utils.V8Register;
-import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -105,19 +104,11 @@ public final class JTAnnotation
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
             V8Register.putStringSetter(stringSetterMap, PROPERTY_ANNOTATION_TYPE,
-                    (propertyName, propertyValue) -> setAnnotationType(propertyValue));
+                    (propertyName, propertyValue) -> replaceTree(this::setAnnotationType, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_ARGUMENTS,
                     (propertyName, propertyValue) -> replaceExpressions(arguments, propertyValue));
         }
         return stringSetterMap;
-    }
-
-    private boolean setAnnotationType(V8Value v8Value) throws JavetException {
-        if (v8Runtime.toObject(v8Value) instanceof JTTree<?, ?> tree) {
-            setAnnotationType(tree);
-            return true;
-        }
-        return false;
     }
 
     public JTAnnotation setAnnotationType(JTTree<?, ?> annotationType) {

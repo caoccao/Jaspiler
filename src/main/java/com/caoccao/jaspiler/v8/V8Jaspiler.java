@@ -30,6 +30,7 @@ import com.caoccao.javet.interfaces.IJavetClosable;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.interop.V8Runtime;
 import com.caoccao.javet.interop.V8Scope;
+import com.caoccao.javet.interop.callback.IJavetDirectCallable;
 import com.caoccao.javet.interop.proxy.IJavetDirectProxyHandler;
 import com.caoccao.javet.values.V8Value;
 import com.caoccao.javet.values.primitive.V8ValueString;
@@ -59,17 +60,25 @@ public final class V8Jaspiler
     static {
         constructorMap = new HashMap<>();
         constructorMap.put("newAnnotation", JTAnnotation::new);
+        constructorMap.put("newClassDecl", JTClassDecl::new);
         constructorMap.put("newIdent", JTIdent::new);
         constructorMap.put("newImport", JTImport::new);
         constructorMap.put("newPackageDecl", JTPackageDecl::new);
+        constructorMap.put("newVariableDecl", JTVariableDecl::new);
     }
 
+    private final Map<String, IJavetDirectCallable.NoThisAndResult<?>> creatorMap;
     private final V8Runtime v8Runtime;
     private JaspilerCompiler jaspilerCompiler;
     private Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> stringGetterMap;
 
     public V8Jaspiler(V8Runtime v8Runtime) {
         super();
+        creatorMap = new HashMap<>();
+        creatorMap.put(FUNCTION_CREATE_FIELD_ACCESS, this::createFieldAccess);
+        creatorMap.put(FUNCTION_CREATE_IDENT, this::createIdent);
+        creatorMap.put(FUNCTION_CREATE_NAME, this::createName);
+        creatorMap.put(FUNCTION_TRANSFORM_SYNC, this::transformSync);
         jaspilerCompiler = new JaspilerCompiler();
         stringGetterMap = null;
         this.v8Runtime = v8Runtime;
@@ -115,12 +124,9 @@ public final class V8Jaspiler
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             stringGetterMap = new HashMap<>();
-            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_CREATE_FIELD_ACCESS, this::createFieldAccess);
-            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_CREATE_IDENT, this::createIdent);
-            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_CREATE_NAME, this::createName);
-            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_TRANSFORM_SYNC, this::transformSync);
             constructorMap.forEach((key, value) -> V8Register.putStringGetter(
                     v8Runtime, stringGetterMap, key, v8Values -> v8Runtime.toV8Value(value.get())));
+            creatorMap.forEach((key, value) -> V8Register.putStringGetter(v8Runtime, stringGetterMap, key, value));
         }
         return stringGetterMap;
     }

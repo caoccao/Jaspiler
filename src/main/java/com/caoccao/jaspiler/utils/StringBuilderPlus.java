@@ -181,7 +181,7 @@ public class StringBuilderPlus implements IJTConstants, Appendable, CharSequence
 
     public boolean endsWithWhitespace() {
         if (stringBuilder == null || stringBuilder.isEmpty()) {
-            return false;
+            return true;
         }
         return switch (stringBuilder.charAt(stringBuilder.length() - 1)) {
             case ' ', '\n' -> true;

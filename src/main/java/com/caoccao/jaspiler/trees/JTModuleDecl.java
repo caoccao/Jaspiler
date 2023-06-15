@@ -18,7 +18,6 @@ package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.utils.V8Register;
-import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -131,7 +130,7 @@ public final class JTModuleDecl
             V8Register.putStringSetter(stringSetterMap, PROPERTY_DIRECTIVES,
                     (propertyName, propertyValue) -> replaceDirectives(directives, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_NAME,
-                    (propertyName, propertyValue) -> setName(propertyValue));
+                    (propertyName, propertyValue) -> replaceExpression(this::setName, propertyValue));
         }
         return stringSetterMap;
     }
@@ -142,14 +141,6 @@ public final class JTModuleDecl
         }
         this.moduleType = Objects.requireNonNull(moduleType);
         return setActionChange();
-    }
-
-    private boolean setName(V8Value v8Value) throws JavetException {
-        if (v8Runtime.toObject(v8Value) instanceof JTExpression<?, ?> tree) {
-            setName(tree);
-            return true;
-        }
-        return false;
     }
 
     public JTModuleDecl setName(JTExpression<?, ?> name) {
