@@ -52,11 +52,10 @@ Quick Start
     public class B {
     }
 
-Documents
-=========
+Document
+========
 
-* Supported feature list is in this `typescript file <blob/main/scripts/node/jaspiler/index.d.ts>`_.
-* More documents are on the way...
+The complete document is at the `wiki <https://github.com/caoccao/Jaspiler/wiki>`_.
 
 Q & A
 =====
