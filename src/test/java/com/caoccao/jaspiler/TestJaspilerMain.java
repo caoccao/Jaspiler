@@ -16,6 +16,7 @@
 
 package com.caoccao.jaspiler;
 
+import com.caoccao.jaspiler.utils.SystemUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -25,18 +26,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestJaspilerMain {
     @Test
-    @Tag("manual")
     public void testQuickStart() throws Exception {
         var jaspilerMain = new JaspilerMain();
-        jaspilerMain.setFile(new File("scripts/node/test/test_quick_start.js").getAbsoluteFile());
+        jaspilerMain.setFile(
+                SystemUtils.INITIAL_WORKING_DIRECTORY.resolve("scripts/node/test/test_quick_start.js")
+                        .toAbsolutePath().toFile());
         assertEquals(0, jaspilerMain.call());
     }
 
     @Test
-    @Tag("manual")
     public void testTransform() throws Exception {
         var jaspilerMain = new JaspilerMain();
-        jaspilerMain.setFile(new File("scripts/node/test/test_transform.js").getAbsoluteFile());
+        jaspilerMain.setFile(
+                SystemUtils.INITIAL_WORKING_DIRECTORY.resolve("scripts/node/test/test_transform.js")
+                        .toAbsolutePath().toFile());
         assertEquals(0, jaspilerMain.call());
     }
 }

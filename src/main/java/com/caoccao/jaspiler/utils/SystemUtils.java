@@ -19,6 +19,7 @@ package com.caoccao.jaspiler.utils;
 import java.nio.file.Path;
 
 public final class SystemUtils {
+    public static final Path INITIAL_WORKING_DIRECTORY = getWorkingDirectory();
     public static final String SYSTEM_PROPERTY_JAVA_IO_TMPDIR = "java.io.tmpdir";
     public static final String SYSTEM_PROPERTY_USER_DIR = "user.dir";
 

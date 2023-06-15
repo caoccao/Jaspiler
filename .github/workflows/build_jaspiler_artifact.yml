@@ -38,6 +38,14 @@ jobs:
         with:
           gradle-version: 8.1
 
+      - name: Setup NPM
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: NPM Install
+        run: cd scripts/node && npm install && cd ../../
+
       - name: Build the Artifact
         run: gradle build test
 
@@ -64,6 +72,14 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           gradle-version: 8.1
+
+      - name: Setup NPM
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: NPM Install
+        run: cd scripts/node && npm install && cd ../../
 
       - name: Build the Artifact
         run: gradle build test
