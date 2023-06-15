@@ -89,6 +89,10 @@ public abstract sealed class MockAllInOnePublicClass
         assertEquals(1, b);
     }
 
+    private int add(int left, int right) {
+        return left + right;
+    }
+
     @Override
     @JaspilerContract.Ignore
     public void close() throws Exception {
@@ -97,5 +101,7 @@ public abstract sealed class MockAllInOnePublicClass
 }
 
 final class MockChild extends MockAllInOnePublicClass {
-
+    @SuppressWarnings("unchecked")
+    public class MockChild1 {
+    }
 }

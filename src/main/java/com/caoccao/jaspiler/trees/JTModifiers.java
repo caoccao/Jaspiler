@@ -20,9 +20,12 @@ import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.utils.ForEachUtils;
 import com.caoccao.jaspiler.utils.StringBuilderPlus;
 import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
+import com.caoccao.javet.values.primitive.V8ValueString;
+import com.caoccao.javet.values.reference.V8ValueArray;
 import com.sun.source.tree.ModifiersTree;
 import com.sun.source.tree.TreeVisitor;
 
@@ -37,6 +40,7 @@ public final class JTModifiers
     private static final List<Modifier> OTHER_MODIFIERS = List.of(
             Modifier.FINAL, Modifier.TRANSIENT, Modifier.VOLATILE,
             Modifier.SYNCHRONIZED, Modifier.NATIVE, Modifier.STRICTFP);
+    private static final String PROPERTY_FLAGS = "flags";
     private static final List<Modifier> SCOPE_MODIFIERS = List.of(
             Modifier.PUBLIC, Modifier.PROTECTED, Modifier.PRIVATE);
     private static final List<Modifier> SEALED_OR_NON_SEALED_MODIFIERS = List.of(
@@ -93,6 +97,10 @@ public final class JTModifiers
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
             V8Register.putStringGetter(stringGetterMap, PROPERTY_ANNOTATIONS, propertyName -> v8Runtime.toV8Value(getAnnotations()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_FLAGS,
+                    propertyName -> v8Runtime.toV8Value(getFlags().stream()
+                            .map(Modifier::toString)
+                            .toList()));
         }
         return stringGetterMap;
     }
@@ -103,8 +111,26 @@ public final class JTModifiers
             super.proxyGetStringSetterMap();
             V8Register.putStringSetter(stringSetterMap, PROPERTY_ANNOTATIONS,
                     (propertyName, propertyValue) -> replaceAnnotations(annotations, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_FLAGS,
+                    (propertyName, propertyValue) -> setFlags(propertyValue));
         }
         return stringSetterMap;
+    }
+
+    private boolean setFlags(V8Value v8Value) throws JavetException {
+        if (v8Value instanceof V8ValueArray v8ValueArray) {
+            flags.clear();
+            v8ValueArray.forEach(v8ValueItem -> {
+                if (v8ValueItem instanceof V8ValueString v8ValueString) {
+                    try {
+                        flags.add(Modifier.valueOf(v8ValueString.getValue()));
+                    } catch (Throwable ignored) {
+                    }
+                }
+            });
+            return true;
+        }
+        return false;
     }
 
     @Override

@@ -218,6 +218,14 @@ public abstract class JTTree<
         return false;
     }
 
+    protected boolean replaceBlock(Function<JTBlock, NewTree> setter, V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof JTBlock tree) {
+            setter.apply(tree);
+            return true;
+        }
+        return false;
+    }
+
     protected boolean replaceDirectives(List<JTDirective<?, ?>> list, V8Value v8Value) throws JavetException {
         if (v8Runtime.toObject(v8Value) instanceof List<?> trees) {
             list.clear();
@@ -324,6 +332,27 @@ public abstract class JTTree<
             trees.stream()
                     .filter(tree -> tree instanceof JTTypeParameter)
                     .map(tree -> ((JTTypeParameter) tree).setParentTree(this))
+                    .forEach(list::add);
+            setActionChange();
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean replaceVariableDecl(Function<JTVariableDecl, NewTree> setter, V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof JTVariableDecl tree) {
+            setter.apply(tree);
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean replaceVariableDecls(List<JTVariableDecl> list, V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof List<?> trees) {
+            list.clear();
+            trees.stream()
+                    .filter(tree -> tree instanceof JTVariableDecl)
+                    .map(tree -> ((JTVariableDecl) tree).setParentTree(this))
                     .forEach(list::add);
             setActionChange();
             return true;

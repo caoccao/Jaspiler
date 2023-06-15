@@ -63,6 +63,7 @@ public final class V8Jaspiler
         constructorMap.put("newClassDecl", JTClassDecl::new);
         constructorMap.put("newIdent", JTIdent::new);
         constructorMap.put("newImport", JTImport::new);
+        constructorMap.put("newMethodDecl", JTMethodDecl::new);
         constructorMap.put("newPackageDecl", JTPackageDecl::new);
         constructorMap.put("newVariableDecl", JTVariableDecl::new);
     }

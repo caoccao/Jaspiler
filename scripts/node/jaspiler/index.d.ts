@@ -148,6 +148,11 @@ interface JTAnnotation extends JTExpression<JTAnnotation> {
   annotationType: JTTree<?>;
 }
 
+interface JTBlock extends JTStatement<JTBlock> {
+  statements: JTStatement<?>[];
+  staticBlock: boolean;
+}
+
 interface JTCaseLabel<Tree extends JTCaseLabel<Tree>> extends JTTree<JTCaseLabel> {
 }
 
@@ -187,6 +192,18 @@ interface JTImport extends JTTree<JTImport> {
 
 interface JTIdent extends JTExpression<JTIdent> {
   name: JTName;
+}
+
+interface JTMethodDecl extends JTTree<JTMethodDecl> {
+  body: JTBlock;
+  defaultValue: JTExpression<?>;
+  modifiers: JTModifiers;
+  name: JTName;
+  parameters: JTVariableDecl[];
+  receiverParameter: JTVariableDecl;
+  returnType: JTExpression<?>;
+  throwExpressions: JTExpression<?>[];
+  typeParameters: JTTypeParameter[];
 }
 
 interface JTModifiers extends JTTree<JTModifiers> {
@@ -282,6 +299,7 @@ interface TransformOptionsPluginVisitor {
   CompilationUnit(node: JTCompilationUnit): void;
   Identifier(node: JTIdent): void;
   Import(node: JTImport): void;
+  Method(node: JTMethodDecl): void;
   Package(node: JTPackageDecl): void;
   Variable(node: JTVariableDecl): void;
 }
@@ -300,6 +318,7 @@ declare namespace jaspiler {
   function newClassDecl(): JTClassDecl;
   function newIdent(): JTIdent;
   function newImport(): JTImport;
+  function newMethodDecl(): JTMethodDecl;
   function newPackageDecl(): JTPackageDecl;
   function newVariableDecl(): JTVariableDecl;
 

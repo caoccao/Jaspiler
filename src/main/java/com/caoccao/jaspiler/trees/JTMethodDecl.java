@@ -16,19 +16,30 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.utils.ForEachUtils;
 import com.caoccao.jaspiler.utils.StringBuilderPlus;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.TreeVisitor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public final class JTMethodDecl
         extends JTTree<MethodTree, JTMethodDecl>
         implements MethodTree {
+    private static final String PROPERTY_BODY = "body";
+    private static final String PROPERTY_DEFAULT_VALUE = "defaultValue";
+    private static final String PROPERTY_MODIFIERS = "modifiers";
+    private static final String PROPERTY_NAME = "name";
+    private static final String PROPERTY_PARAMETERS = "parameters";
+    private static final String PROPERTY_RECEIVER_PARAMETER = "receiverParameter";
+    private static final String PROPERTY_RETURN_TYPE = "returnType";
+    private static final String PROPERTY_THROW_EXPRESSIONS = "throwExpressions";
+    private static final String PROPERTY_TYPE_PARAMETERS = "typeParameters";
     private final List<JTVariableDecl> parameters;
     private final List<JTExpression<?, ?>> throwExpressions;
     private final List<JTTypeParameter> typeParameters;
@@ -149,6 +160,49 @@ public final class JTMethodDecl
     @Override
     public List<JTTypeParameter> getTypeParameters() {
         return typeParameters;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_BODY, propertyName -> v8Runtime.toV8Value(getBody()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_DEFAULT_VALUE, propertyName -> v8Runtime.toV8Value(getDefaultValue()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_MODIFIERS, propertyName -> v8Runtime.toV8Value(getModifiers()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_NAME, propertyName -> v8Runtime.toV8Value(getName()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_PARAMETERS, propertyName -> v8Runtime.toV8Value(getParameters()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_RECEIVER_PARAMETER, propertyName -> v8Runtime.toV8Value(getReceiverParameter()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_RETURN_TYPE, propertyName -> v8Runtime.toV8Value(getReturnType()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_THROW_EXPRESSIONS, propertyName -> v8Runtime.toV8Value(getThrows()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_TYPE_PARAMETERS, propertyName -> v8Runtime.toV8Value(getTypeParameters()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_BODY,
+                    (propertyName, propertyValue) -> replaceBlock(this::setBody, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_DEFAULT_VALUE,
+                    (propertyName, propertyValue) -> replaceExpression(this::setDefaultValue, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_MODIFIERS,
+                    (propertyName, propertyValue) -> replaceModifiers(this::setModifiers, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_NAME,
+                    (propertyName, propertyValue) -> replaceName(this::setName, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_PARAMETERS,
+                    (propertyName, propertyValue) -> replaceVariableDecls(parameters, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_RECEIVER_PARAMETER,
+                    (propertyName, propertyValue) -> replaceVariableDecl(this::setReceiverParameter, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_RETURN_TYPE,
+                    (propertyName, propertyValue) -> replaceExpression(this::setReturnType, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_THROW_EXPRESSIONS,
+                    (propertyName, propertyValue) -> replaceExpressions(throwExpressions, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_TYPE_PARAMETERS,
+                    (propertyName, propertyValue) -> replaceTypeParameters(typeParameters, propertyValue));
+        }
+        return stringSetterMap;
     }
 
     public JTMethodDecl setBody(JTBlock body) {

@@ -168,7 +168,7 @@ function testImports() {
 // Class
 
 function testClass() {
-  let isMockAnnotationFound = false;
+  const simpleNames = []
   const result = jaspiler.transformSync(pathMockAllInOnePublicClass, {
     plugins: [{
       visitor: {
@@ -176,9 +176,10 @@ function testClass() {
           assert.equal('com.caoccao.jaspiler.trees.JTClassDecl', node.className);
           const modifiers = node.modifiers;
           assert.equal('com.caoccao.jaspiler.trees.JTModifiers', modifiers.className);
-          if ('MockAnnotation' == node.simpleName.value) {
+          const simpleName = node.simpleName.value;
+          simpleNames.push(simpleName);
+          if ('MockAnnotation' == simpleName) {
             assert.equal(JTKind.ANNOTATION_TYPE, node.kind);
-            isMockAnnotationFound = true;
             const annotations = modifiers.annotations;
             assert.equal(4, annotations.length);
             annotations.push(annotations.shift());
@@ -199,7 +200,7 @@ function testClass() {
             assert.equal(0, node.permitsClauses.length);
             assert.equal(2, node.members.length);
             assert.equal('String[] names() default {"A", "B"};', node.members[0].toString());
-          } else if ('MockAllInOnePublicClass' == node.simpleName.value) {
+          } else if ('MockAllInOnePublicClass' == simpleName) {
             assert.equal(JTKind.CLASS, node.kind);
             assert.isNotNull(node.extendsClause);
             assert.equal('Object', node.extendsClause.toString());
@@ -207,16 +208,18 @@ function testClass() {
             assert.equal('Serializable', node.implementsClauses[0].toString());
             assert.equal(1, node.permitsClauses.length);
             assert.equal('MockChild', node.permitsClauses[0].toString());
-            assert.equal(6, node.members.length);
+            assert.equal(7, node.members.length);
             assert.equal('private String a;', node.members[1].toString());
-          } else if ('MockChild' == node.simpleName.value) {
+          } else if ('MockChild' == simpleName) {
             node.simpleName = jaspiler.createName('NewMockChild');
+          } else if ('MockChild1' == simpleName) {
+            node.simpleName = jaspiler.createName('NewMockChild1');
           }
         },
       },
     }],
   });
-  assert.isTrue(isMockAnnotationFound, 'Class MockAnnotation should be found.');
+  assert.equal('MockAnnotation,MockAllInOnePublicClass,,MockChild,MockChild1', simpleNames.join(','));
   assert.include(result.code, '@NotInherited\n'
     + '@Retention(RetentionPolicy.RUNTIME, aaa.bbb)\n'
     + '@Target(ElementType.ANNOTATION_TYPE)\n'
@@ -289,11 +292,54 @@ function testVariable() {
       },
     }],
   });
-  console.info(result.code);
   assert.include(result.code, '\n    private String aa;\n');
   assert.include(result.code, '\n    @SuppressWarnings("unchecked")\n');
   assert.include(result.code, '\n    public final <T> void Test(T xx, @Deprecated int yy) throws IOException, NoClassDefFoundError {\n');
   assert.include(result.code, '\n        int cc = 5;\n');
+}
+
+// Method
+
+function testMethod() {
+  const methodNames = [];
+  const result = jaspiler.transformSync(pathMockAllInOnePublicClass, {
+    plugins: [{
+      visitor: {
+        Method(node) {
+          assert.equal('com.caoccao.jaspiler.trees.JTMethodDecl', node.className);
+          const methodName = node.name.value;
+          methodNames.push(methodName);
+          if (methodName == 'names') {
+            const modifiers = node.modifiers;
+            assert.isEmpty(modifiers.toString());
+            assert.isEmpty(modifiers.annotations);
+            assert.isEmpty(modifiers.flags);
+            assert.isEmpty(node.parameters);
+            assert.isNull(node.receiverParameter);
+            assert.isEmpty(node.returnType);
+            assert.isEmpty(node.throwExpressions);
+            assert.isEmpty(node.typeParameters);
+            assert.equal('com.caoccao.jaspiler.trees.JTNewArray', node.defaultValue.className);
+            assert.equal('{"A", "B"}', node.defaultValue.toString());
+            node.defaultValue = jaspiler.createFieldAccess('ABC');
+          } else if (methodName == 'value') {
+            assert.equal('com.caoccao.jaspiler.trees.JTLiteral', node.defaultValue.className);
+            assert.equal(JTKind.STRING_LITERAL, node.defaultValue.kind);
+          } else if (methodName == 'Test') {
+            assert.equal(1, node.modifiers.annotations.length);
+            assert.equal(2, node.modifiers.flags.length);
+            assert.equal(1, node.typeParameters.length);
+            assert.equal('T', node.typeParameters[0].toString());
+            assert.equal('void', node.returnType.toString());
+            assert.equal(2, node.throwExpressions.length);
+            assert.equal(2, node.parameters.length);
+          }
+        },
+      },
+    }],
+  });
+  assert.equal('names,value,Test,add,close', methodNames.join(','));
+  assert.include(result.code, '\n    String[] names() default ABC;\n');
 }
 
 testAstForFile();
@@ -312,3 +358,5 @@ testIdentifier();
 testImport();
 // Variable
 testVariable();
+// Method
+testMethod();
