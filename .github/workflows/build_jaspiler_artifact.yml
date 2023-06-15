@@ -1,6 +1,6 @@
 name: Build Jaspiler
 concurrency:
-  group: build_jaspiler_artifact_${{ github.ref }}
+  group: build_jaspiler_${{ github.ref }}
   cancel-in-progress: true
 on:
   workflow_dispatch:
@@ -16,9 +16,12 @@ on:
       - "**.rst"
       - "docs/**"
 
+env:
+  JASPILER_VERSION: 0.1.0
+
 jobs:
-  jaspiler_artifact:
-    name: Build Jaspiler Artifact
+  build_jaspiler_linux_and_windows:
+    name: Build Jaspiler for Linux and Windows
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the code
@@ -41,5 +44,5 @@ jobs:
       - name: Upload the Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: jaspiler
+          name: jaspiler-${{ env.JASPILER_VERSION }}
           path: build/libs/*.jar
