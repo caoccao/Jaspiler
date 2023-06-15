@@ -65,8 +65,9 @@ Why do I Need a Java to Java Transpiler?
 ----------------------------------------
 
 * I want to code with JDK 17 but support JDK 8/11. Jaspiler can help transform the code from JDK 17 to JDK 8/11.
-* I want to remove some proprietary features at source code level before deploying the binaries to an on-premises environment to prevent the reverse engineering. Jaspiler can help add/update/remove any part of the code at AST level.
-* I want to obfuscate the code. Jaspiler can help perform all kinds of code obfuscation.
+* I want to remove some proprietary cloud features at source code level before deploying the binaries to an on-premise environment to prevent the reverse engineering. Jaspiler can help add/update/remove any part of the code at the AST level.
+* I want to translate the Java code to JavaScript/Python/Go/.... Jaspiler can provide the complete AST and allow all kinds of translation.
+* I want to obfuscate the code. Jaspiler can help perform all kinds of code obfuscation at the AST level.
 
 What's the Status of Jaspiler?
 ------------------------------
