@@ -42,23 +42,31 @@ import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
-public class V8Jaspiler
+public final class V8Jaspiler
         extends BaseLoggingObject
         implements IJavetDirectProxyHandler<JaspilerCheckedException>, IJavetClosable {
     public static final String NAME = "jaspiler";
-    protected static final String FUNCTION_CREATE_FIELD_ACCESS = "createFieldAccess";
-    protected static final String FUNCTION_CREATE_IDENT = "createIdent";
-    protected static final String FUNCTION_CREATE_NAME = "createName";
-    protected static final String FUNCTION_NEW_ANNOTATION = "newAnnotation";
-    protected static final String FUNCTION_NEW_IMPORT = "newImport";
-    protected static final String FUNCTION_NEW_PACKAGE_DECL = "newPackageDecl";
-    protected static final String FUNCTION_TRANSFORM_SYNC = "transformSync";
-    protected static final String PROPERTIES_AST = "ast";
-    protected static final String PROPERTIES_CODE = "code";
-    protected JaspilerCompiler jaspilerCompiler;
-    protected Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> stringGetterMap;
-    protected V8Runtime v8Runtime;
+    private static final String FUNCTION_CREATE_FIELD_ACCESS = "createFieldAccess";
+    private static final String FUNCTION_CREATE_IDENT = "createIdent";
+    private static final String FUNCTION_CREATE_NAME = "createName";
+    private static final String FUNCTION_TRANSFORM_SYNC = "transformSync";
+    private static final String PROPERTIES_AST = "ast";
+    private static final String PROPERTIES_CODE = "code";
+    private static final Map<String, Supplier<JTTree<?, ?>>> constructorMap;
+
+    static {
+        constructorMap = new HashMap<>();
+        constructorMap.put("newAnnotation", JTAnnotation::new);
+        constructorMap.put("newIdent", JTIdent::new);
+        constructorMap.put("newImport", JTImport::new);
+        constructorMap.put("newPackageDecl", JTPackageDecl::new);
+    }
+
+    private final V8Runtime v8Runtime;
+    private JaspilerCompiler jaspilerCompiler;
+    private Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> stringGetterMap;
 
     public V8Jaspiler(V8Runtime v8Runtime) {
         super();
@@ -110,13 +118,9 @@ public class V8Jaspiler
             V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_CREATE_FIELD_ACCESS, this::createFieldAccess);
             V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_CREATE_IDENT, this::createIdent);
             V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_CREATE_NAME, this::createName);
-            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_NEW_ANNOTATION,
-                    v8Values -> v8Runtime.toV8Value(new JTAnnotation()));
-            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_NEW_IMPORT,
-                    v8Values -> v8Runtime.toV8Value(new JTImport()));
-            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_NEW_PACKAGE_DECL,
-                    v8Values -> v8Runtime.toV8Value(new JTPackageDecl()));
             V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_TRANSFORM_SYNC, this::transformSync);
+            constructorMap.forEach((key, value) -> V8Register.putStringGetter(
+                    v8Runtime, stringGetterMap, key, v8Values -> v8Runtime.toV8Value(value.get())));
         }
         return stringGetterMap;
     }
@@ -165,7 +169,7 @@ public class V8Jaspiler
         }
     }
 
-    protected File validateFile(String filePath) throws JaspilerArgumentException {
+    private File validateFile(String filePath) throws JaspilerArgumentException {
         File file = new File(filePath);
         if (!file.exists()) {
             throw new JaspilerArgumentException(
@@ -182,7 +186,7 @@ public class V8Jaspiler
         return file;
     }
 
-    protected void validateLength(
+    private void validateLength(
             String functionName, V8Value[] v8Values, int index)
             throws JaspilerArgumentException {
         if (v8Values == null || v8Values.length < index || index < 0) {
@@ -191,7 +195,7 @@ public class V8Jaspiler
         }
     }
 
-    protected V8ValueObject validateObject(
+    private V8ValueObject validateObject(
             String functionName, V8Value[] v8Values, int index)
             throws JaspilerArgumentException {
         validateLength(functionName, v8Values, index);
@@ -203,7 +207,7 @@ public class V8Jaspiler
                 MessageFormat.format("Argument type mismatches in {0}. Object is expected.", functionName));
     }
 
-    protected String validateString(
+    private String validateString(
             String functionName, V8Value[] v8Values, int index)
             throws JaspilerArgumentException {
         validateLength(functionName, v8Values, index);

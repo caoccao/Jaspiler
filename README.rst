@@ -41,7 +41,7 @@ Quick Start
 
 .. code-block:: shell
 
-    java -cp Jaspiler-${version}.jar test.js
+    java -jar Jaspiler-${version}.jar test.js
 
 * The output is as follows:
 

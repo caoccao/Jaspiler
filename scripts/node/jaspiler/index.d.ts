@@ -286,6 +286,7 @@ declare namespace jaspiler {
   function createName(name: string): JTName;
 
   function newAnnotation(): JTAnnotation;
+  function newIdent(): JTIdent;
   function newImport(): JTImport;
   function newPackageDecl(): JTPackageDecl;
 

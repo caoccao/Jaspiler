@@ -109,10 +109,7 @@ public final class JTIdent
     @Override
     public String toString() {
         if (isActionChange()) {
-            if (name == null) {
-                return IJTConstants.EMPTY;
-            }
-            return name.toString();
+            return name == null ? IJTConstants.EMPTY : name.toString();
         }
         return super.toString();
     }
