@@ -93,13 +93,7 @@ public final class JTName implements Name, IJavetDirectProxyHandler<JaspilerChec
         if (stringSetterMap == null) {
             stringSetterMap = new HashMap<>();
             V8Register.putStringSetter(stringSetterMap, PROPERTY_VALUE,
-                    (propertyName, propertyValue) -> {
-                        if (propertyValue instanceof V8ValueString v8ValueStringValue) {
-                            setValue(v8ValueStringValue.getValue());
-                            return true;
-                        }
-                        return false;
-                    });
+                    (propertyName, propertyValue) -> setValue(propertyValue));
         }
         return stringSetterMap;
     }
@@ -117,6 +111,14 @@ public final class JTName implements Name, IJavetDirectProxyHandler<JaspilerChec
     @Override
     public void setV8Runtime(V8Runtime v8Runtime) {
         this.v8Runtime = v8Runtime;
+    }
+
+    private boolean setValue(V8Value v8Value) {
+        if (v8Value instanceof V8ValueString v8ValueStringValue) {
+            setValue(v8ValueStringValue.getValue());
+            return true;
+        }
+        return false;
     }
 
     public JTName setValue(String value) {

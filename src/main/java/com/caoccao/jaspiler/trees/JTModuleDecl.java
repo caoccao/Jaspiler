@@ -18,6 +18,7 @@ package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -115,8 +116,8 @@ public final class JTModuleDecl
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
             V8Register.putStringGetter(stringGetterMap, PROPERTY_ANNOTATIONS, propertyName -> v8Runtime.toV8Value(getAnnotations()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_NAME, propertyName -> v8Runtime.toV8Value(getName()));
             V8Register.putStringGetter(stringGetterMap, PROPERTY_DIRECTIVES, propertyName -> v8Runtime.toV8Value(getDirectives()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_NAME, propertyName -> v8Runtime.toV8Value(getName()));
         }
         return stringGetterMap;
     }
@@ -126,39 +127,11 @@ public final class JTModuleDecl
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
             V8Register.putStringSetter(stringSetterMap, PROPERTY_ANNOTATIONS,
-                    (propertyName, propertyValue) -> {
-                        if (v8Runtime.toObject(propertyValue) instanceof List<?> trees) {
-                            annotations.clear();
-                            trees.stream()
-                                    .filter(tree -> tree instanceof JTAnnotation)
-                                    .map(tree -> ((JTAnnotation) tree).setParentTree(this))
-                                    .forEach(annotations::add);
-                            setActionChange();
-                            return true;
-                        }
-                        return false;
-                    });
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_NAME,
-                    (propertyName, propertyValue) -> {
-                        if (v8Runtime.toObject(propertyValue) instanceof JTExpression<?, ?> tree) {
-                            setName(tree);
-                            return true;
-                        }
-                        return false;
-                    });
+                    (propertyName, propertyValue) -> replaceAnnotations(annotations, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_DIRECTIVES,
-                    (propertyName, propertyValue) -> {
-                        if (v8Runtime.toObject(propertyValue) instanceof List<?> trees) {
-                            directives.clear();
-                            trees.stream()
-                                    .filter(tree -> tree instanceof JTDirective<?, ?>)
-                                    .map(tree -> ((JTDirective<?, ?>) tree).setParentTree(this))
-                                    .forEach(directives::add);
-                            setActionChange();
-                            return true;
-                        }
-                        return false;
-                    });
+                    (propertyName, propertyValue) -> replaceDirectives(directives, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_NAME,
+                    (propertyName, propertyValue) -> setName(propertyValue));
         }
         return stringSetterMap;
     }
@@ -169,6 +142,14 @@ public final class JTModuleDecl
         }
         this.moduleType = Objects.requireNonNull(moduleType);
         return setActionChange();
+    }
+
+    private boolean setName(V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof JTExpression<?, ?> tree) {
+            setName(tree);
+            return true;
+        }
+        return false;
     }
 
     public JTModuleDecl setName(JTExpression<?, ?> name) {

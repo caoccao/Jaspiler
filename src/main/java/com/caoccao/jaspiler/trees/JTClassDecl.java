@@ -21,6 +21,7 @@ import com.caoccao.jaspiler.exceptions.JaspilerNotSupportedException;
 import com.caoccao.jaspiler.utils.ForEachUtils;
 import com.caoccao.jaspiler.utils.StringBuilderPlus;
 import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -164,83 +165,29 @@ public final class JTClassDecl
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
             V8Register.putStringSetter(stringSetterMap, PROPERTY_EXTENDS_CLAUSE,
-                    (propertyName, propertyValue) -> {
-                        if (v8Runtime.toObject(propertyValue) instanceof JTExpression<?, ?> tree) {
-                            setExtendsClause(tree);
-                            return true;
-                        }
-                        return false;
-                    });
+                    (propertyName, propertyValue) -> setExtendsClause(propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_IMPLEMENTS_CLAUSES,
-                    (propertyName, propertyValue) -> {
-                        if (v8Runtime.toObject(propertyValue) instanceof List<?> trees) {
-                            implementsClauses.clear();
-                            trees.stream()
-                                    .filter(tree -> tree instanceof JTExpression<?, ?>)
-                                    .map(tree -> ((JTExpression<?, ?>) tree).setParentTree(this))
-                                    .forEach(implementsClauses::add);
-                            setActionChange();
-                            return true;
-                        }
-                        return false;
-                    });
+                    (propertyName, propertyValue) -> replaceExpressions(implementsClauses, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_MEMBERS,
-                    (propertyName, propertyValue) -> {
-                        if (v8Runtime.toObject(propertyValue) instanceof List<?> trees) {
-                            members.clear();
-                            trees.stream()
-                                    .filter(tree -> tree instanceof JTTree<?, ?>)
-                                    .map(tree -> ((JTTree<?, ?>) tree).setParentTree(this))
-                                    .forEach(members::add);
-                            setActionChange();
-                            return true;
-                        }
-                        return false;
-                    });
+                    (propertyName, propertyValue) -> replaceTrees(members, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_MODIFIERS,
-                    (propertyName, propertyValue) -> {
-                        if (v8Runtime.toObject(propertyValue) instanceof JTModifiers tree) {
-                            setModifiers(tree);
-                            return true;
-                        }
-                        return false;
-                    });
+                    (propertyName, propertyValue) -> setModifiers(propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_PERMITS_CLAUSES,
-                    (propertyName, propertyValue) -> {
-                        if (v8Runtime.toObject(propertyValue) instanceof List<?> trees) {
-                            permitsClauses.clear();
-                            trees.stream()
-                                    .filter(tree -> tree instanceof JTExpression<?, ?>)
-                                    .map(tree -> ((JTExpression<?, ?>) tree).setParentTree(this))
-                                    .forEach(permitsClauses::add);
-                            setActionChange();
-                            return true;
-                        }
-                        return false;
-                    });
+                    (propertyName, propertyValue) -> replaceExpressions(permitsClauses, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_SIMPLE_NAME,
-                    (propertyName, propertyValue) -> {
-                        if (v8Runtime.toObject(propertyValue) instanceof JTName tree) {
-                            setSimpleName(tree);
-                            return true;
-                        }
-                        return false;
-                    });
+                    (propertyName, propertyValue) -> setSimpleName(propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_TYPE_PARAMETERS,
-                    (propertyName, propertyValue) -> {
-                        if (v8Runtime.toObject(propertyValue) instanceof List<?> trees) {
-                            typeParameters.clear();
-                            trees.stream()
-                                    .filter(tree -> tree instanceof JTTypeParameter)
-                                    .map(tree -> ((JTTypeParameter) tree).setParentTree(this))
-                                    .forEach(typeParameters::add);
-                            setActionChange();
-                            return true;
-                        }
-                        return false;
-                    });
+                    (propertyName, propertyValue) -> replaceTypeParameters(typeParameters, propertyValue));
         }
         return stringSetterMap;
+    }
+
+    private boolean setExtendsClause(V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof JTExpression<?, ?> tree) {
+            setExtendsClause(tree);
+            return true;
+        }
+        return false;
     }
 
     public JTClassDecl setExtendsClause(JTExpression<?, ?> extendsClause) {
@@ -262,12 +209,28 @@ public final class JTClassDecl
         return setActionChange();
     }
 
+    private boolean setModifiers(V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof JTModifiers tree) {
+            setModifiers(tree);
+            return true;
+        }
+        return false;
+    }
+
     public JTClassDecl setModifiers(JTModifiers modifiers) {
         if (this.modifiers == modifiers) {
             return this;
         }
         this.modifiers = Objects.requireNonNull(modifiers).setParentTree(this);
         return setActionChange();
+    }
+
+    private boolean setSimpleName(V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof JTName tree) {
+            setSimpleName(tree);
+            return true;
+        }
+        return false;
     }
 
     public JTClassDecl setSimpleName(JTName simpleName) {

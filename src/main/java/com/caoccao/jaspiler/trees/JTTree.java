@@ -21,6 +21,7 @@ import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.exceptions.JaspilerNotImplementedException;
 import com.caoccao.jaspiler.utils.BaseLoggingObject;
 import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.interop.V8Runtime;
@@ -201,6 +202,84 @@ public abstract class JTTree<
                     description -> v8Runtime.createV8ValueString(toString()));
         }
         return symbolGetterMap;
+    }
+
+    protected boolean replaceAnnotations(List<JTAnnotation> list, V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof List<?> trees) {
+            list.clear();
+            trees.stream()
+                    .filter(tree -> tree instanceof JTAnnotation)
+                    .map(tree -> ((JTAnnotation) tree).setParentTree(this))
+                    .forEach(list::add);
+            setActionChange();
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean replaceDirectives(List<JTDirective<?, ?>> list, V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof List<?> trees) {
+            list.clear();
+            trees.stream()
+                    .filter(tree -> tree instanceof JTDirective<?, ?>)
+                    .map(tree -> ((JTDirective<?, ?>) tree).setParentTree(this))
+                    .forEach(list::add);
+            setActionChange();
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean replaceExpressions(List<JTExpression<?, ?>> list, V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof List<?> trees) {
+            list.clear();
+            trees.stream()
+                    .filter(tree -> tree instanceof JTExpression<?, ?>)
+                    .map(tree -> ((JTExpression<?, ?>) tree).setParentTree(this))
+                    .forEach(list::add);
+            setActionChange();
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean replaceImports(List<JTImport> list, V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof List<?> trees) {
+            list.clear();
+            trees.stream()
+                    .filter(tree -> tree instanceof JTImport)
+                    .map(tree -> ((JTImport) tree).setParentTree(this))
+                    .forEach(list::add);
+            setActionChange();
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean replaceTrees(List<JTTree<?, ?>> list, V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof List<?> trees) {
+            list.clear();
+            trees.stream()
+                    .filter(tree -> tree instanceof JTTree<?, ?>)
+                    .map(tree -> ((JTTree<?, ?>) tree).setParentTree(this))
+                    .forEach(list::add);
+            setActionChange();
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean replaceTypeParameters(List<JTTypeParameter> list, V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof List<?> trees) {
+            list.clear();
+            trees.stream()
+                    .filter(tree -> tree instanceof JTTypeParameter)
+                    .map(tree -> ((JTTypeParameter) tree).setParentTree(this))
+                    .forEach(list::add);
+            setActionChange();
+            return true;
+        }
+        return false;
     }
 
     protected boolean save(Writer writer) throws IOException {

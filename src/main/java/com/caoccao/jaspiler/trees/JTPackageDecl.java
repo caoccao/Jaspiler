@@ -20,6 +20,7 @@ import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.utils.ForEachUtils;
 import com.caoccao.jaspiler.utils.StringBuilderPlus;
 import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -103,28 +104,19 @@ public final class JTPackageDecl
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
             V8Register.putStringSetter(stringSetterMap, PROPERTY_ANNOTATIONS,
-                    (propertyName, propertyValue) -> {
-                        if (v8Runtime.toObject(propertyValue) instanceof List<?> trees) {
-                            annotations.clear();
-                            trees.stream()
-                                    .filter(tree -> tree instanceof JTAnnotation)
-                                    .map(tree -> ((JTAnnotation) tree).setParentTree(this))
-                                    .forEach(annotations::add);
-                            setActionChange();
-                            return true;
-                        }
-                        return false;
-                    });
+                    (propertyName, propertyValue) -> replaceAnnotations(annotations, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_PACKAGE_NAME,
-                    (propertyName, propertyValue) -> {
-                        if (v8Runtime.toObject(propertyValue) instanceof JTExpression<?, ?> tree) {
-                            setPackageName(tree);
-                            return true;
-                        }
-                        return false;
-                    });
+                    (propertyName, propertyValue) -> setPackageName(propertyValue));
         }
         return stringSetterMap;
+    }
+
+    private boolean setPackageName(V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof JTExpression<?, ?> tree) {
+            setPackageName(tree);
+            return true;
+        }
+        return false;
     }
 
     public JTPackageDecl setPackageName(JTExpression<?, ?> packageName) {

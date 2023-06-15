@@ -22,6 +22,7 @@ import com.caoccao.jaspiler.options.JaspilerTransformOptions;
 import com.caoccao.jaspiler.utils.ForEachUtils;
 import com.caoccao.jaspiler.utils.StringBuilderPlus;
 import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -232,11 +233,16 @@ public final class JTCompilationUnit
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_IMPORTS, propertyName -> v8Runtime.toV8Value(getImports()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_MODULE, propertyName -> v8Runtime.toV8Value(getModule()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_PACKAGE, propertyName -> v8Runtime.toV8Value(getPackage()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_SOURCE_FILE, propertyName -> v8Runtime.createV8ValueString(getSourceFile().getName()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_TYPE_DECLS, propertyName -> v8Runtime.toV8Value(getTypeDecls()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_IMPORTS,
+                    propertyName -> v8Runtime.toV8Value(getImports()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_MODULE,
+                    propertyName -> v8Runtime.toV8Value(getModule()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_PACKAGE,
+                    propertyName -> v8Runtime.toV8Value(getPackage()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_SOURCE_FILE,
+                    propertyName -> v8Runtime.createV8ValueString(getSourceFile().getName()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_TYPE_DECLS,
+                    propertyName -> v8Runtime.toV8Value(getTypeDecls()));
         }
         return stringGetterMap;
     }
@@ -246,47 +252,13 @@ public final class JTCompilationUnit
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
             V8Register.putStringSetter(stringSetterMap, PROPERTY_IMPORTS,
-                    (propertyName, propertyValue) -> {
-                        if (v8Runtime.toObject(propertyValue) instanceof List<?> trees) {
-                            imports.clear();
-                            trees.stream()
-                                    .filter(tree -> tree instanceof JTImport)
-                                    .map(tree -> ((JTImport) tree).setParentTree(this))
-                                    .forEach(imports::add);
-                            setActionChange();
-                            return true;
-                        }
-                        return false;
-                    });
+                    (propertyName, propertyValue) -> replaceImports(imports, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_MODULE,
-                    (propertyName, propertyValue) -> {
-                        if (v8Runtime.toObject(propertyValue) instanceof JTModuleDecl tree) {
-                            setModule(tree);
-                            return true;
-                        }
-                        return false;
-                    });
+                    (propertyName, propertyValue) -> setModule(propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_PACKAGE,
-                    (propertyName, propertyValue) -> {
-                        if (v8Runtime.toObject(propertyValue) instanceof JTPackageDecl tree) {
-                            setPackageTree(tree);
-                            return true;
-                        }
-                        return false;
-                    });
+                    (propertyName, propertyValue) -> setPackageTree(propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_TYPE_DECLS,
-                    (propertyName, propertyValue) -> {
-                        if (v8Runtime.toObject(propertyValue) instanceof List<?> trees) {
-                            typeDecls.clear();
-                            trees.stream()
-                                    .filter(tree -> tree instanceof JTTree<?, ?>)
-                                    .map(tree -> ((JTTree<?, ?>) tree).setParentTree(this))
-                                    .forEach(typeDecls::add);
-                            setActionChange();
-                            return true;
-                        }
-                        return false;
-                    });
+                    (propertyName, propertyValue) -> replaceTrees(typeDecls, propertyValue));
         }
         return stringSetterMap;
     }
@@ -359,12 +331,28 @@ public final class JTCompilationUnit
         return super.save(writer);
     }
 
+    private boolean setModule(V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof JTModuleDecl tree) {
+            setModule(tree);
+            return true;
+        }
+        return false;
+    }
+
     public JTCompilationUnit setModule(JTModuleDecl moduleTree) {
         if (this.moduleTree == moduleTree) {
             return this;
         }
         this.moduleTree = Optional.ofNullable(moduleTree).map(o -> o.setParentTree(this)).orElse(null);
         return setActionChange();
+    }
+
+    private boolean setPackageTree(V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof JTPackageDecl tree) {
+            setPackageTree(tree);
+            return true;
+        }
+        return false;
     }
 
     public JTCompilationUnit setPackageTree(JTPackageDecl packageTree) {

@@ -102,18 +102,7 @@ public final class JTModifiers
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
             V8Register.putStringSetter(stringSetterMap, PROPERTY_ANNOTATIONS,
-                    (propertyName, propertyValue) -> {
-                        if (v8Runtime.toObject(propertyValue) instanceof List<?> trees) {
-                            annotations.clear();
-                            trees.stream()
-                                    .filter(tree -> tree instanceof JTAnnotation)
-                                    .map(tree -> ((JTAnnotation) tree).setParentTree(this))
-                                    .forEach(annotations::add);
-                            setActionChange();
-                            return true;
-                        }
-                        return false;
-                    });
+                    (propertyName, propertyValue) -> replaceAnnotations(annotations, propertyValue));
         }
         return stringSetterMap;
     }

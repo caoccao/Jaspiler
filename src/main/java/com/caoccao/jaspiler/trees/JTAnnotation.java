@@ -20,6 +20,7 @@ import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.utils.ForEachUtils;
 import com.caoccao.jaspiler.utils.StringBuilderPlus;
 import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -35,8 +36,8 @@ import java.util.*;
 public final class JTAnnotation
         extends JTExpression<AnnotationTree, JTAnnotation>
         implements AnnotationTree {
-    private static final String PROPERTY_ARGUMENTS = "arguments";
     private static final String PROPERTY_ANNOTATION_TYPE = "annotationType";
+    private static final String PROPERTY_ARGUMENTS = "arguments";
     private final List<JTExpression<?, ?>> arguments;
     private JTTree<?, ?> annotationType;
 
@@ -104,28 +105,19 @@ public final class JTAnnotation
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
             V8Register.putStringSetter(stringSetterMap, PROPERTY_ANNOTATION_TYPE,
-                    (propertyName, propertyValue) -> {
-                        if (v8Runtime.toObject(propertyValue) instanceof JTTree<?, ?> tree) {
-                            setAnnotationType(tree);
-                            return true;
-                        }
-                        return false;
-                    });
+                    (propertyName, propertyValue) -> setAnnotationType(propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_ARGUMENTS,
-                    (propertyName, propertyValue) -> {
-                        if (v8Runtime.toObject(propertyValue) instanceof List<?> trees) {
-                            arguments.clear();
-                            trees.stream()
-                                    .filter(tree -> tree instanceof JTExpression<?, ?>)
-                                    .map(tree -> ((JTExpression<?, ?>) tree).setParentTree(this))
-                                    .forEach(arguments::add);
-                            setActionChange();
-                            return true;
-                        }
-                        return false;
-                    });
+                    (propertyName, propertyValue) -> replaceExpressions(arguments, propertyValue));
         }
         return stringSetterMap;
+    }
+
+    private boolean setAnnotationType(V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof JTTree<?, ?> tree) {
+            setAnnotationType(tree);
+            return true;
+        }
+        return false;
     }
 
     public JTAnnotation setAnnotationType(JTTree<?, ?> annotationType) {
