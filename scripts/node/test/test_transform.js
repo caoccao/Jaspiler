@@ -49,7 +49,7 @@ function testAstForString() {
     public class A {
     }
     `,
-    { ast: true, sourceType: 'string' });
+    { ast: true, fileName: 'A', sourceType: 'string' });
   // Assert { ast, code }
   assert.isObject(result);
   assert.isObject(result.ast);
@@ -193,6 +193,8 @@ function testClass() {
             assert.equal('MockChild', node.permitsClauses[0].toString());
             assert.equal(6, node.members.length);
             assert.equal('private String a;', node.members[1].toString());
+          } else if ('MockChild' == node.simpleName.value) {
+            node.simpleName = jaspiler.createName('NewMockChild');
           }
         },
       },
@@ -203,6 +205,7 @@ function testClass() {
     + '@Retention(RetentionPolicy.RUNTIME, aaa.bbb)\n'
     + '@Target(ElementType.ANNOTATION_TYPE)\n'
     + '@Documented\n');
+  assert.include(result.code, 'final class NewMockChild extends MockAllInOnePublicClass {');
 }
 
 testAstForFile();
