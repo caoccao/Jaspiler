@@ -18,7 +18,7 @@ package com.caoccao.jaspiler.styles;
 
 import com.caoccao.jaspiler.enums.JavaKeyword;
 
-public interface IStyle<Style extends IStyle<Style>> {
+public interface IStyleWriter<StyleWriter extends IStyleWriter<StyleWriter>> {
     String AT = "@";
     String COMMA = ",";
     String COMMA_ = ", ";
@@ -35,55 +35,55 @@ public interface IStyle<Style extends IStyle<Style>> {
     String SEMI_COLON = ";";
     String SPACE = " ";
 
-    Style append(boolean b);
+    StyleWriter append(boolean b);
 
-    Style append(double d);
+    StyleWriter append(double d);
 
-    Style append(float f);
+    StyleWriter append(float f);
 
-    Style append(int i);
+    StyleWriter append(int i);
 
-    Style append(long l);
+    StyleWriter append(long l);
 
-    Style append(short s);
+    StyleWriter append(short s);
 
-    Style append(Object object);
+    StyleWriter append(Object object);
 
-    Style append(char[] str);
+    StyleWriter append(char[] str);
 
-    Style appendAt();
+    StyleWriter appendAt();
 
-    Style appendComma();
+    StyleWriter appendComma();
 
-    Style appendDot();
+    StyleWriter appendDot();
 
-    Style appendEqual();
+    StyleWriter appendEqual();
 
-    Style appendKeyword(JavaKeyword javaKeyword);
+    StyleWriter appendKeyword(JavaKeyword javaKeyword);
 
-    Style appendLeftArrow();
+    StyleWriter appendLeftArrow();
 
-    Style appendLeftCurlyBracket();
+    StyleWriter appendLeftCurlyBracket();
 
-    Style appendLeftParenthesis();
+    StyleWriter appendLeftParenthesis();
 
-    Style appendLineSeparator();
+    StyleWriter appendLineSeparator();
 
-    Style appendLineSeparator(int count);
+    StyleWriter appendLineSeparator(int count);
 
-    Style appendRightArrow();
+    StyleWriter appendRightArrow();
 
-    Style appendRightCurlyBracket();
+    StyleWriter appendRightCurlyBracket();
 
-    Style appendRightParenthesis();
+    StyleWriter appendRightParenthesis();
 
-    Style appendSemiColon();
+    StyleWriter appendSemiColon();
 
-    Style appendSpace();
+    StyleWriter appendSpace();
 
-    Style appendSpace(int count);
+    StyleWriter appendSpace(int count);
 
-    Style appendSpaceIfNeeded();
+    StyleWriter appendSpaceIfNeeded();
 
     boolean endsWithWhitespace();
 }

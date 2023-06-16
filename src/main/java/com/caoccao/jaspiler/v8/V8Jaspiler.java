@@ -22,6 +22,7 @@ import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.exceptions.JaspilerExecutionException;
 import com.caoccao.jaspiler.exceptions.JaspilerParseException;
 import com.caoccao.jaspiler.options.JaspilerTransformOptions;
+import com.caoccao.jaspiler.styles.StandardStyleWriter;
 import com.caoccao.jaspiler.trees.*;
 import com.caoccao.jaspiler.utils.BaseLoggingObject;
 import com.caoccao.jaspiler.utils.V8Register;
@@ -39,7 +40,6 @@ import org.apache.commons.collections4.CollectionUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -162,10 +162,9 @@ public final class V8Jaspiler
                     v8ValueObjectResult.set(PROPERTIES_AST, compilationUnitTree);
                 }
                 if (v8JaspilerOptions.isCode()) {
-                    try (var stringWriter = new StringWriter()) {
-                        if (compilationUnitTree.save(stringWriter)) {
-                            v8ValueObjectResult.set(PROPERTIES_CODE, stringWriter.toString());
-                        }
+                    var writer = new StandardStyleWriter();
+                    if (compilationUnitTree.save(writer)) {
+                        v8ValueObjectResult.set(PROPERTIES_CODE, writer.toString());
                     }
                 }
                 v8Scope.setEscapable();

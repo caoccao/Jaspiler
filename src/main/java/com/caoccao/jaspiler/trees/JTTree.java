@@ -19,6 +19,8 @@ package com.caoccao.jaspiler.trees;
 import com.caoccao.jaspiler.JaspilerContract;
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.exceptions.JaspilerNotImplementedException;
+import com.caoccao.jaspiler.styles.IStyleWriter;
+import com.caoccao.jaspiler.styles.StandardStyleWriter;
 import com.caoccao.jaspiler.utils.BaseLoggingObject;
 import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.exceptions.JavetException;
@@ -29,10 +31,7 @@ import com.caoccao.javet.values.V8Value;
 import com.caoccao.javet.values.reference.V8ValueSymbol;
 import com.caoccao.javet.values.reference.builtin.V8ValueBuiltInSymbol;
 import com.sun.source.tree.Tree;
-import org.apache.commons.lang3.StringUtils;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -361,11 +360,20 @@ public abstract class JTTree<
         return false;
     }
 
-    protected boolean save(Writer writer) throws IOException {
+    @Override
+    public boolean save(IStyleWriter<?> writer) {
         if (isActionIgnore()) {
             return false;
         }
-        writer.write(toString());
+        if (isActionChange()) {
+            throw new JaspilerNotImplementedException(getClass().getSimpleName() + "{} is not implemented yet.");
+        }
+        if (!getOriginalPosition().isValid()) {
+            return false;
+        }
+        writer.append(getOriginalCode().substring(
+                (int) getOriginalPosition().startPosition(),
+                (int) getOriginalPosition().endPosition()));
         return true;
     }
 
@@ -389,24 +397,8 @@ public abstract class JTTree<
 
     @Override
     public String toString() {
-        if (isActionIgnore()) {
-            return StringUtils.EMPTY;
-        }
-        if (isActionChange()) {
-            throw new JaspilerNotImplementedException(getClass().getSimpleName() + "{} is not implemented yet.");
-        }
-        if (!getOriginalPosition().isValid()) {
-            return StringUtils.EMPTY;
-        }
-        return getOriginalCode().substring(
-                (int) getOriginalPosition().startPosition(),
-                (int) getOriginalPosition().endPosition());
-    }
-
-    protected NewTree writeStrings(Writer writer, String... strings) throws IOException {
-        for (String str : strings) {
-            writer.write(str);
-        }
-        return (NewTree) this;
+        var writer = new StandardStyleWriter();
+        save(writer);
+        return writer.toString();
     }
 }

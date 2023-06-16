@@ -17,8 +17,8 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.styles.IStyleWriter;
 import com.caoccao.jaspiler.utils.ForEachUtils;
-import com.caoccao.jaspiler.styles.StandardStyle;
 import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
@@ -117,6 +117,28 @@ public final class JTModifiers
         return stringSetterMap;
     }
 
+    @Override
+    public boolean save(IStyleWriter<?> writer) {
+        if (isActionChange()) {
+            int indentAnnotation = getIndent(-1);
+            ForEachUtils.forEach(
+                    annotations.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
+                    tree -> writer.appendSpace(indentAnnotation).append(tree).appendLineSeparator());
+            List<Modifier> modifiers = new ArrayList<>();
+            SCOPE_MODIFIERS.stream().filter(flags::contains).findFirst().ifPresent(modifiers::add);
+            ABSTRACT_OR_DEFAULT_OR_STATIC_MODIFIERS.stream().filter(flags::contains).findFirst().ifPresent(modifiers::add);
+            SEALED_OR_NON_SEALED_MODIFIERS.stream().filter(flags::contains).findFirst().ifPresent(modifiers::add);
+            OTHER_MODIFIERS.stream().filter(flags::contains).forEach(modifiers::add);
+            ForEachUtils.forEach(
+                    modifiers,
+                    writer::append,
+                    tree -> writer.appendSpace(),
+                    trees -> writer.appendSpaceIfNeeded());
+            return true;
+        }
+        return super.save(writer);
+    }
+
     private boolean setFlags(V8Value v8Value) throws JavetException {
         if (v8Value instanceof V8ValueArray v8ValueArray) {
             flags.clear();
@@ -131,28 +153,5 @@ public final class JTModifiers
             return true;
         }
         return false;
-    }
-
-    @Override
-    public String toString() {
-        if (isActionChange()) {
-            int indentAnnotation = getIndent(-1);
-            final var sbp = new StandardStyle();
-            ForEachUtils.forEach(
-                    annotations.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
-                    tree -> sbp.appendSpace(indentAnnotation).append(tree).appendLineSeparator());
-            List<Modifier> modifiers = new ArrayList<>();
-            SCOPE_MODIFIERS.stream().filter(flags::contains).findFirst().ifPresent(modifiers::add);
-            ABSTRACT_OR_DEFAULT_OR_STATIC_MODIFIERS.stream().filter(flags::contains).findFirst().ifPresent(modifiers::add);
-            SEALED_OR_NON_SEALED_MODIFIERS.stream().filter(flags::contains).findFirst().ifPresent(modifiers::add);
-            OTHER_MODIFIERS.stream().filter(flags::contains).forEach(modifiers::add);
-            ForEachUtils.forEach(
-                    modifiers,
-                    sbp::append,
-                    tree -> sbp.appendSpace(),
-                    trees -> sbp.appendSpaceIfNeeded());
-            return sbp.toString();
-        }
-        return super.toString();
     }
 }

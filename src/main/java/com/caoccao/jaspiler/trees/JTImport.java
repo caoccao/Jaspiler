@@ -18,7 +18,7 @@ package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.enums.JavaKeyword;
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
-import com.caoccao.jaspiler.styles.StandardStyle;
+import com.caoccao.jaspiler.styles.IStyleWriter;
 import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
@@ -112,6 +112,19 @@ public final class JTImport
         return stringSetterMap;
     }
 
+    @Override
+    public boolean save(IStyleWriter<?> writer) {
+        if (isActionChange()) {
+            writer.appendKeyword(JavaKeyword.IMPORT).appendSpace();
+            if (staticImport) {
+                writer.appendKeyword(JavaKeyword.STATIC).appendSpace();
+            }
+            writer.append(qualifiedIdentifier).appendSemiColon();
+            return true;
+        }
+        return super.save(writer);
+    }
+
     public JTImport setQualifiedIdentifier(JTTree<?, ?> qualifiedIdentifier) {
         if (this.qualifiedIdentifier == qualifiedIdentifier) {
             return this;
@@ -134,19 +147,5 @@ public final class JTImport
         }
         this.staticImport = staticImport;
         return setActionChange();
-    }
-
-    @Override
-    public String toString() {
-        if (isActionChange()) {
-            final var sbp = new StandardStyle();
-            sbp.appendKeyword(JavaKeyword.IMPORT).appendSpace();
-            if (staticImport) {
-                sbp.appendKeyword(JavaKeyword.STATIC).appendSpace();
-            }
-            sbp.append(qualifiedIdentifier).appendSemiColon();
-            return sbp.toString();
-        }
-        return super.toString();
     }
 }

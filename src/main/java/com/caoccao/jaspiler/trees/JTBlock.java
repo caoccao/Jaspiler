@@ -17,8 +17,8 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.enums.JavaKeyword;
+import com.caoccao.jaspiler.styles.IStyleWriter;
 import com.caoccao.jaspiler.utils.ForEachUtils;
-import com.caoccao.jaspiler.styles.StandardStyle;
 import com.sun.source.tree.BlockTree;
 import com.sun.source.tree.TreeVisitor;
 
@@ -79,31 +79,30 @@ public final class JTBlock
         return staticBlock;
     }
 
+    @Override
+    public boolean save(IStyleWriter<?> writer) {
+        if (isActionChange()) {
+            int indent = getIndent();
+            int parentIndent = indent - getCompilationUnit().getOptions().getIndentSize();
+            if (staticBlock) {
+                writer.appendSpace(indent).appendKeyword(JavaKeyword.STATIC).appendSpace();
+            }
+            writer.appendLeftCurlyBracket().appendLineSeparator();
+            ForEachUtils.forEach(
+                    statements.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
+                    tree -> writer.appendSpace(indent).append(tree),
+                    tree -> writer.appendLineSeparator());
+            writer.appendLineSeparator().appendSpace(parentIndent).appendRightCurlyBracket();
+            return true;
+        }
+        return super.save(writer);
+    }
+
     public JTBlock setStatic(boolean staticBlock) {
         if (this.staticBlock == staticBlock) {
             return this;
         }
         this.staticBlock = staticBlock;
         return setActionChange();
-    }
-
-    @Override
-    public String toString() {
-        if (isActionChange()) {
-            final var sbp = new StandardStyle();
-            int indent = getIndent();
-            int parentIndent = indent - getCompilationUnit().getOptions().getIndentSize();
-            if (staticBlock) {
-                sbp.appendSpace(indent).appendKeyword(JavaKeyword.STATIC).appendSpace();
-            }
-            sbp.appendLeftCurlyBracket().appendLineSeparator();
-            ForEachUtils.forEach(
-                    statements.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
-                    tree -> sbp.appendSpace(indent).append(tree),
-                    tree -> sbp.appendLineSeparator());
-            sbp.appendLineSeparator().appendSpace(parentIndent).appendRightCurlyBracket();
-            return sbp.toString();
-        }
-        return super.toString();
     }
 }

@@ -16,7 +16,7 @@
 
 package com.caoccao.jaspiler.trees;
 
-import com.caoccao.jaspiler.styles.StandardStyle;
+import com.caoccao.jaspiler.styles.StandardStyleWriter;
 import com.sun.source.doctree.DocCommentTree;
 import com.sun.source.doctree.DocTree;
 import com.sun.source.tree.CompilationUnitTree;
@@ -72,11 +72,11 @@ public record JTPosition(
 
     @Override
     public String toString() {
-        final var sbp = new StandardStyle();
-        sbp.append("S: ").append(startPosition).appendComma().appendSpace();
-        sbp.append("E: ").append(endPosition).appendComma().appendSpace();
-        sbp.append("L: ").append(lineNumber).appendComma().appendSpace();
-        sbp.append("C: ").append(columnNumber);
-        return sbp.toString();
+        final var writer = new StandardStyleWriter();
+        writer.append("S: ").append(startPosition).appendComma().appendSpace();
+        writer.append("E: ").append(endPosition).appendComma().appendSpace();
+        writer.append("L: ").append(lineNumber).appendComma().appendSpace();
+        writer.append("C: ").append(columnNumber);
+        return writer.toString();
     }
 }

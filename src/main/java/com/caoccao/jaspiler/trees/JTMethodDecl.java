@@ -18,8 +18,8 @@ package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.enums.JavaKeyword;
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.styles.IStyleWriter;
 import com.caoccao.jaspiler.utils.ForEachUtils;
-import com.caoccao.jaspiler.styles.StandardStyle;
 import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
@@ -206,6 +206,46 @@ public final class JTMethodDecl
         return stringSetterMap;
     }
 
+    @Override
+    public boolean save(IStyleWriter<?> writer) {
+        if (isActionChange()) {
+            Optional.ofNullable(modifiers).ifPresent(writer::append);
+            ForEachUtils.forEach(
+                    typeParameters.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
+                    writer::append,
+                    tree -> writer.appendComma().appendSpace(),
+                    trees -> writer.appendSpaceIfNeeded().appendLeftArrow(),
+                    trees -> writer.appendRightArrow());
+            Optional.of(returnType)
+                    .filter(tree -> !tree.isActionIgnore())
+                    .ifPresent(tree -> writer.appendSpaceIfNeeded().append(tree));
+            writer.appendSpaceIfNeeded().append(name).appendLeftParenthesis();
+            ForEachUtils.forEach(
+                    parameters.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
+                    writer::append,
+                    tree -> writer.appendComma().appendSpace());
+            writer.appendRightParenthesis();
+            Optional.ofNullable(receiverParameter)
+                    .filter(tree -> !tree.isActionIgnore())
+                    .ifPresent(tree -> writer.appendSpace().append(tree));
+            ForEachUtils.forEach(
+                    throwExpressions.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
+                    writer::append,
+                    tree -> writer.appendComma().appendSpace(),
+                    trees -> writer.appendSpace().appendKeyword(JavaKeyword.THROWS).appendSpace());
+            Optional.ofNullable(defaultValue)
+                    .filter(tree -> !tree.isActionIgnore())
+                    .ifPresent(tree -> writer.appendSpaceIfNeeded().appendKeyword(JavaKeyword.DEFAULT).appendSpace().append(tree));
+            if (body != null && !body.isActionIgnore()) {
+                writer.appendSpaceIfNeeded().append(body);
+            } else {
+                writer.appendSemiColon();
+            }
+            return true;
+        }
+        return super.save(writer);
+    }
+
     public JTMethodDecl setBody(JTBlock body) {
         if (this.body == body) {
             return this;
@@ -252,46 +292,5 @@ public final class JTMethodDecl
         }
         this.returnType = Objects.requireNonNull(returnType).setParentTree(this);
         return setActionChange();
-    }
-
-    @Override
-    public String toString() {
-        if (isActionChange()) {
-            final var sbp = new StandardStyle();
-            Optional.ofNullable(modifiers).ifPresent(sbp::append);
-            ForEachUtils.forEach(
-                    typeParameters.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
-                    sbp::append,
-                    tree -> sbp.appendComma().appendSpace(),
-                    trees -> sbp.appendSpaceIfNeeded().appendLeftArrow(),
-                    trees -> sbp.appendRightArrow());
-            Optional.of(returnType)
-                    .filter(tree -> !tree.isActionIgnore())
-                    .ifPresent(tree -> sbp.appendSpaceIfNeeded().append(tree));
-            sbp.appendSpaceIfNeeded().append(name).appendLeftParenthesis();
-            ForEachUtils.forEach(
-                    parameters.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
-                    sbp::append,
-                    tree -> sbp.appendComma().appendSpace());
-            sbp.appendRightParenthesis();
-            Optional.ofNullable(receiverParameter)
-                    .filter(tree -> !tree.isActionIgnore())
-                    .ifPresent(tree -> sbp.appendSpace().append(tree));
-            ForEachUtils.forEach(
-                    throwExpressions.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
-                    sbp::append,
-                    tree -> sbp.appendComma().appendSpace(),
-                    trees -> sbp.appendSpace().appendKeyword(JavaKeyword.THROWS).appendSpace());
-            Optional.ofNullable(defaultValue)
-                    .filter(tree -> !tree.isActionIgnore())
-                    .ifPresent(tree -> sbp.appendSpaceIfNeeded().appendKeyword(JavaKeyword.DEFAULT).appendSpace().append(tree));
-            if (body != null && !body.isActionIgnore()) {
-                sbp.appendSpaceIfNeeded().append(body);
-            } else {
-                sbp.appendSemiColon();
-            }
-            return sbp.toString();
-        }
-        return super.toString();
     }
 }

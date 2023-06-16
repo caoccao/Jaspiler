@@ -17,7 +17,7 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
-import com.caoccao.jaspiler.styles.StandardStyle;
+import com.caoccao.jaspiler.styles.IStyleWriter;
 import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
@@ -150,6 +150,23 @@ public final class JTVariableDecl
         return stringSetterMap;
     }
 
+    @Override
+    public boolean save(IStyleWriter<?> writer) {
+        if (isActionChange()) {
+            Optional.ofNullable(modifiers).ifPresent(writer::append);
+            Optional.ofNullable(type).ifPresent(tree -> writer.appendSpaceIfNeeded().append(tree));
+            Optional.ofNullable(nameExpression).ifPresent(tree -> writer.appendSpaceIfNeeded().append(tree));
+            Optional.ofNullable(name).ifPresent(tree -> writer.appendSpaceIfNeeded().append(tree));
+            Optional.ofNullable(initializer).ifPresent(
+                    tree -> writer.appendSpaceIfNeeded().appendEqual().appendSpace().append(tree));
+            if (getParentTree() instanceof JTClassDecl || getParentTree() instanceof JTBlock) {
+                writer.appendSemiColon();
+            }
+            return true;
+        }
+        return super.save(writer);
+    }
+
     private boolean setInitialValue(V8Value v8Value) throws JavetException {
         if (v8Runtime.toObject(v8Value) instanceof JTExpression<?, ?> tree) {
             setNameExpression(tree);
@@ -196,23 +213,5 @@ public final class JTVariableDecl
         }
         this.type = Optional.ofNullable(type).map(o -> o.setParentTree(this)).orElse(null);
         return setActionChange();
-    }
-
-    @Override
-    public String toString() {
-        if (isActionChange()) {
-            final var sbp = new StandardStyle();
-            Optional.ofNullable(modifiers).ifPresent(sbp::append);
-            Optional.ofNullable(type).ifPresent(tree -> sbp.appendSpaceIfNeeded().append(tree));
-            Optional.ofNullable(nameExpression).ifPresent(tree -> sbp.appendSpaceIfNeeded().append(tree));
-            Optional.ofNullable(name).ifPresent(tree -> sbp.appendSpaceIfNeeded().append(tree));
-            Optional.ofNullable(initializer).ifPresent(
-                    tree -> sbp.appendSpaceIfNeeded().appendEqual().appendSpace().append(tree));
-            if (getParentTree() instanceof JTClassDecl || getParentTree() instanceof JTBlock) {
-                sbp.appendSemiColon();
-            }
-            return sbp.toString();
-        }
-        return super.toString();
     }
 }

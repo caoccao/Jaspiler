@@ -18,6 +18,7 @@ package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.JaspilerContract;
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.styles.IStyleWriter;
 import com.caoccao.javet.interop.proxy.IJavetDirectProxyHandler;
 import com.sun.source.tree.Tree;
 
@@ -47,8 +48,9 @@ public interface IJTTree<
         return !isActionIgnore() && !isActionChange();
     }
 
-    NewTree setAction(JaspilerContract.Action action);
+    boolean save(IStyleWriter<?> writer);
 
+    NewTree setAction(JaspilerContract.Action action);
 
     default NewTree setActionChange() {
         return setAction(JaspilerContract.Action.Change);

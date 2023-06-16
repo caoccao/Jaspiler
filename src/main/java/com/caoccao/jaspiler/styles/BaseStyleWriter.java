@@ -24,195 +24,195 @@ import java.util.List;
 import java.util.Objects;
 
 @SuppressWarnings("unchecked")
-public abstract class BaseStyle<Style extends BaseStyle<Style>>
-        implements IStyle<Style>, Appendable, CharSequence {
+public abstract class BaseStyleWriter<StyleWriter extends BaseStyleWriter<StyleWriter>>
+        implements IStyleWriter<StyleWriter>, Appendable, CharSequence {
     protected final List<String> lines;
     protected int lengthOfLines;
     protected StringBuilder stringBuilder;
 
-    public BaseStyle() {
+    public BaseStyleWriter() {
         lines = new ArrayList<>();
         lengthOfLines = 0;
         stringBuilder = new StringBuilder();
     }
 
     @Override
-    public Style append(CharSequence csq) {
+    public StyleWriter append(CharSequence csq) {
         stringBuilder.append(csq);
-        return (Style) this;
+        return (StyleWriter) this;
     }
 
     @Override
-    public Style append(CharSequence csq, int start, int end) {
+    public StyleWriter append(CharSequence csq, int start, int end) {
         stringBuilder.append(csq, start, end);
-        return (Style) this;
+        return (StyleWriter) this;
     }
 
     @Override
-    public Style append(boolean b) {
+    public StyleWriter append(boolean b) {
         stringBuilder.append(b);
-        return (Style) this;
+        return (StyleWriter) this;
     }
 
     @Override
-    public Style append(char c) {
+    public StyleWriter append(char c) {
         stringBuilder.append(c);
-        return (Style) this;
+        return (StyleWriter) this;
     }
 
     @Override
-    public Style append(double d) {
+    public StyleWriter append(double d) {
         stringBuilder.append(d);
-        return (Style) this;
+        return (StyleWriter) this;
     }
 
     @Override
-    public Style append(float f) {
+    public StyleWriter append(float f) {
         stringBuilder.append(f);
-        return (Style) this;
+        return (StyleWriter) this;
     }
 
     @Override
-    public Style append(int i) {
+    public StyleWriter append(int i) {
         stringBuilder.append(i);
-        return (Style) this;
+        return (StyleWriter) this;
     }
 
     @Override
-    public Style append(long l) {
+    public StyleWriter append(long l) {
         stringBuilder.append(l);
-        return (Style) this;
+        return (StyleWriter) this;
     }
 
     @Override
-    public Style append(short s) {
+    public StyleWriter append(short s) {
         stringBuilder.append(s);
-        return (Style) this;
+        return (StyleWriter) this;
     }
 
     @Override
-    public Style append(Object object) {
+    public StyleWriter append(Object object) {
         stringBuilder.append(object);
-        return (Style) this;
+        return (StyleWriter) this;
     }
 
     @Override
-    public Style append(char[] str) {
+    public StyleWriter append(char[] str) {
         stringBuilder.append(str);
-        return (Style) this;
+        return (StyleWriter) this;
     }
 
     @Override
-    public Style appendAt() {
+    public StyleWriter appendAt() {
         stringBuilder.append(AT);
-        return (Style) this;
+        return (StyleWriter) this;
     }
 
     @Override
-    public Style appendComma() {
+    public StyleWriter appendComma() {
         stringBuilder.append(COMMA);
-        return (Style) this;
+        return (StyleWriter) this;
     }
 
     @Override
-    public Style appendDot() {
+    public StyleWriter appendDot() {
         stringBuilder.append(DOT);
-        return (Style) this;
+        return (StyleWriter) this;
     }
 
     @Override
-    public Style appendEqual() {
+    public StyleWriter appendEqual() {
         stringBuilder.append(EQUAL);
-        return (Style) this;
+        return (StyleWriter) this;
     }
 
     @Override
-    public Style appendKeyword(JavaKeyword javaKeyword) {
+    public StyleWriter appendKeyword(JavaKeyword javaKeyword) {
         stringBuilder.append(Objects.requireNonNull(javaKeyword).getValue());
-        return (Style) this;
+        return (StyleWriter) this;
     }
 
     @Override
-    public Style appendLeftArrow() {
+    public StyleWriter appendLeftArrow() {
         stringBuilder.append(LEFT_ARROW);
-        return (Style) this;
+        return (StyleWriter) this;
     }
 
     @Override
-    public Style appendLeftCurlyBracket() {
+    public StyleWriter appendLeftCurlyBracket() {
         stringBuilder.append(LEFT_CURLY_BRACKET);
-        return (Style) this;
+        return (StyleWriter) this;
     }
 
     @Override
-    public Style appendLeftParenthesis() {
+    public StyleWriter appendLeftParenthesis() {
         stringBuilder.append(LEFT_PARENTHESIS);
-        return (Style) this;
+        return (StyleWriter) this;
     }
 
     @Override
-    public Style appendLineSeparator() {
+    public StyleWriter appendLineSeparator() {
         String line = stringBuilder.toString();
         lines.add(line);
         lengthOfLines += line.length();
         stringBuilder = new StringBuilder();
-        return (Style) this;
+        return (StyleWriter) this;
     }
 
     @Override
-    public Style appendLineSeparator(int count) {
+    public StyleWriter appendLineSeparator(int count) {
         for (int i = 0; i < count; i++) {
             appendLineSeparator();
         }
-        return (Style) this;
+        return (StyleWriter) this;
     }
 
     @Override
-    public Style appendRightArrow() {
+    public StyleWriter appendRightArrow() {
         stringBuilder.append(RIGHT_ARROW);
-        return (Style) this;
+        return (StyleWriter) this;
     }
 
     @Override
-    public Style appendRightCurlyBracket() {
+    public StyleWriter appendRightCurlyBracket() {
         stringBuilder.append(RIGHT_CURLY_BRACKET);
-        return (Style) this;
+        return (StyleWriter) this;
     }
 
     @Override
-    public Style appendRightParenthesis() {
+    public StyleWriter appendRightParenthesis() {
         stringBuilder.append(RIGHT_PARENTHESIS);
-        return (Style) this;
+        return (StyleWriter) this;
     }
 
     @Override
-    public Style appendSemiColon() {
+    public StyleWriter appendSemiColon() {
         stringBuilder.append(SEMI_COLON);
-        return (Style) this;
+        return (StyleWriter) this;
     }
 
     @Override
-    public Style appendSpace() {
+    public StyleWriter appendSpace() {
         stringBuilder.append(SPACE);
-        return (Style) this;
+        return (StyleWriter) this;
     }
 
     @Override
-    public Style appendSpace(int count) {
+    public StyleWriter appendSpace(int count) {
         if (count == 1) {
             appendSpace();
         } else if (count > 1) {
             stringBuilder.append(StringUtils.repeat(SPACE, count));
         }
-        return (Style) this;
+        return (StyleWriter) this;
     }
 
     @Override
-    public Style appendSpaceIfNeeded() {
+    public StyleWriter appendSpaceIfNeeded() {
         if (!endsWithWhitespace()) {
             appendSpace();
         }
-        return (Style) this;
+        return (StyleWriter) this;
     }
 
     @Override

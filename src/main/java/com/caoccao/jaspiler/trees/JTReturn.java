@@ -17,7 +17,7 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.enums.JavaKeyword;
-import com.caoccao.jaspiler.styles.StandardStyle;
+import com.caoccao.jaspiler.styles.IStyleWriter;
 import com.sun.source.tree.ReturnTree;
 import com.sun.source.tree.TreeVisitor;
 
@@ -70,23 +70,22 @@ public final class JTReturn
         return Kind.RETURN;
     }
 
+    @Override
+    public boolean save(IStyleWriter<?> writer) {
+        if (isActionChange()) {
+            writer.appendKeyword(JavaKeyword.RETURN);
+            Optional.ofNullable(expression).ifPresent(tree -> writer.appendSpace().append(tree));
+            writer.appendSemiColon();
+            return true;
+        }
+        return super.save(writer);
+    }
+
     public JTReturn setExpression(JTExpression<?, ?> expression) {
         if (this.expression == expression) {
             return this;
         }
         this.expression = Objects.requireNonNull(expression).setParentTree(this);
         return setActionChange();
-    }
-
-    @Override
-    public String toString() {
-        if (isActionChange()) {
-            final var sbp = new StandardStyle();
-            sbp.appendKeyword(JavaKeyword.RETURN);
-            Optional.ofNullable(expression).ifPresent(tree -> sbp.appendSpace().append(tree));
-            sbp.appendSemiColon();
-            return sbp.toString();
-        }
-        return super.toString();
     }
 }

@@ -16,5 +16,5 @@
 
 package com.caoccao.jaspiler.styles;
 
-public class StandardStyle extends BaseStyle<StandardStyle> {
+public class StandardStyleWriter extends BaseStyleWriter<StandardStyleWriter> {
 }

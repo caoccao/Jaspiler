@@ -19,6 +19,7 @@ package com.caoccao.jaspiler;
 import com.caoccao.jaspiler.contexts.JaspilerDocContext;
 import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
 import com.caoccao.jaspiler.options.JaspilerTransformOptions;
+import com.caoccao.jaspiler.styles.StandardStyleWriter;
 import com.caoccao.jaspiler.utils.BaseLoggingObject;
 import com.caoccao.jaspiler.utils.MockUtils;
 import com.sun.source.util.DocTreeScanner;
@@ -27,7 +28,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.io.IOException;
-import java.io.StringWriter;
 
 public abstract class BaseTestSuite extends BaseLoggingObject {
     protected JaspilerCompiler compiler;
@@ -63,9 +63,8 @@ public abstract class BaseTestSuite extends BaseLoggingObject {
                 transformScanner,
                 docScanner,
                 JaspilerTransformOptions.Default);
-        try (StringWriter writer = new StringWriter()) {
-            compiler.getTransformContexts().get(0).getCompilationUnitTree().save(writer);
-            return writer.toString();
-        }
+        var writer = new StandardStyleWriter();
+        compiler.getTransformContexts().get(0).getCompilationUnitTree().save(writer);
+        return writer.toString();
     }
 }

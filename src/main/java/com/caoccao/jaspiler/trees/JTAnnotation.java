@@ -17,8 +17,8 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.styles.IStyleWriter;
 import com.caoccao.jaspiler.utils.ForEachUtils;
-import com.caoccao.jaspiler.styles.StandardStyle;
 import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
@@ -111,28 +111,27 @@ public final class JTAnnotation
         return stringSetterMap;
     }
 
+    @Override
+    public boolean save(IStyleWriter<?> writer) {
+        if (isActionChange()) {
+            int indent = getIndent();
+            writer.appendAt().append(annotationType);
+            ForEachUtils.forEach(
+                    arguments.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
+                    writer::append,
+                    tree -> writer.appendComma().appendSpace(),
+                    trees -> writer.appendLeftParenthesis(),
+                    trees -> writer.appendRightParenthesis());
+            return true;
+        }
+        return super.save(writer);
+    }
+
     public JTAnnotation setAnnotationType(JTTree<?, ?> annotationType) {
         if (this.annotationType == annotationType) {
             return this;
         }
         this.annotationType = Objects.requireNonNull(annotationType).setParentTree(this);
         return setActionChange();
-    }
-
-    @Override
-    public String toString() {
-        if (isActionChange()) {
-            int indent = getIndent();
-            final var sbp = new StandardStyle();
-            sbp.appendAt().append(annotationType);
-            ForEachUtils.forEach(
-                    arguments.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
-                    sbp::append,
-                    tree -> sbp.appendComma().appendSpace(),
-                    trees -> sbp.appendLeftParenthesis(),
-                    trees -> sbp.appendRightParenthesis());
-            return sbp.toString();
-        }
-        return super.toString();
     }
 }

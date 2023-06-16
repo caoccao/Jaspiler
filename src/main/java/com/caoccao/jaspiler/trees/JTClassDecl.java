@@ -19,7 +19,7 @@ package com.caoccao.jaspiler.trees;
 import com.caoccao.jaspiler.enums.JavaKeyword;
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.exceptions.JaspilerNotSupportedException;
-import com.caoccao.jaspiler.styles.StandardStyle;
+import com.caoccao.jaspiler.styles.IStyleWriter;
 import com.caoccao.jaspiler.utils.ForEachUtils;
 import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
@@ -182,6 +182,54 @@ public final class JTClassDecl
         return stringSetterMap;
     }
 
+    @Override
+    public boolean save(IStyleWriter<?> writer) {
+        if (isActionChange()) {
+            int indent = getIndent();
+            int childIndent = indent + getCompilationUnit().getOptions().getIndentSize();
+            Optional.ofNullable(modifiers).ifPresent(writer::append);
+            ForEachUtils.forEach(
+                    typeParameters.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
+                    writer::append,
+                    tree -> writer.appendComma().appendSpace(),
+                    trees -> writer.appendSpaceIfNeeded().appendLeftArrow(),
+                    trees -> writer.appendSpaceIfNeeded().appendRightArrow());
+            switch (kind) {
+                case ANNOTATION_TYPE -> {
+                    if (modifiers.isActionChange()) {
+                        writer.appendSpaceIfNeeded().appendAt();
+                    }
+                    writer.appendKeyword(JavaKeyword.INTERFACE);
+                }
+                case CLASS -> writer.appendSpaceIfNeeded().appendKeyword(JavaKeyword.CLASS);
+                case ENUM -> writer.appendSpaceIfNeeded().appendKeyword(JavaKeyword.ENUM);
+                case INTERFACE -> writer.appendSpaceIfNeeded().appendKeyword(JavaKeyword.INTERFACE);
+                case RECORD -> writer.appendSpaceIfNeeded().appendKeyword(JavaKeyword.RECORD);
+            }
+            writer.appendSpaceIfNeeded().append(simpleName);
+            Optional.ofNullable(extendsClause)
+                    .ifPresent(tree -> writer.appendSpaceIfNeeded().appendKeyword(JavaKeyword.EXTENDS).appendSpace().append(tree));
+            ForEachUtils.forEach(
+                    implementsClauses.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
+                    writer::append,
+                    tree -> writer.appendComma().appendSpace(),
+                    trees -> writer.appendSpaceIfNeeded().appendKeyword(JavaKeyword.IMPLEMENTS).appendSpace());
+            ForEachUtils.forEach(
+                    permitsClauses.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
+                    writer::append,
+                    tree -> writer.appendComma().appendSpace(),
+                    trees -> writer.appendSpaceIfNeeded().appendKeyword(JavaKeyword.PERMITS).appendSpace());
+            writer.appendSpaceIfNeeded().appendLeftCurlyBracket().appendLineSeparator();
+            ForEachUtils.forEach(
+                    members.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
+                    tree -> writer.appendSpace(childIndent).append(tree).appendLineSeparator(),
+                    tree -> writer.appendLineSeparator());
+            writer.appendSpace(indent).appendRightCurlyBracket().appendLineSeparator();
+            return true;
+        }
+        return super.save(writer);
+    }
+
     public JTClassDecl setExtendsClause(JTExpression<?, ?> extendsClause) {
         if (this.extendsClause == extendsClause) {
             return this;
@@ -215,54 +263,5 @@ public final class JTClassDecl
         }
         this.simpleName = Objects.requireNonNull(simpleName);
         return setActionChange();
-    }
-
-    @Override
-    public String toString() {
-        if (isActionChange()) {
-            int indent = getIndent();
-            int childIndent = indent + getCompilationUnit().getOptions().getIndentSize();
-            final var sbp = new StandardStyle();
-            Optional.ofNullable(modifiers).ifPresent(sbp::append);
-            ForEachUtils.forEach(
-                    typeParameters.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
-                    sbp::append,
-                    tree -> sbp.appendComma().appendSpace(),
-                    trees -> sbp.appendSpaceIfNeeded().appendLeftArrow(),
-                    trees -> sbp.appendSpaceIfNeeded().appendRightArrow());
-            switch (kind) {
-                case ANNOTATION_TYPE -> {
-                    if (modifiers.isActionChange()) {
-                        sbp.appendSpaceIfNeeded().appendAt();
-                    }
-                    sbp.appendKeyword(JavaKeyword.INTERFACE);
-                }
-                case CLASS -> sbp.appendSpaceIfNeeded().appendKeyword(JavaKeyword.CLASS);
-                case ENUM -> sbp.appendSpaceIfNeeded().appendKeyword(JavaKeyword.ENUM);
-                case INTERFACE -> sbp.appendSpaceIfNeeded().appendKeyword(JavaKeyword.INTERFACE);
-                case RECORD -> sbp.appendSpaceIfNeeded().appendKeyword(JavaKeyword.RECORD);
-            }
-            sbp.appendSpaceIfNeeded().append(simpleName);
-            Optional.ofNullable(extendsClause)
-                    .ifPresent(tree -> sbp.appendSpaceIfNeeded().appendKeyword(JavaKeyword.EXTENDS).appendSpace().append(tree));
-            ForEachUtils.forEach(
-                    implementsClauses.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
-                    sbp::append,
-                    tree -> sbp.appendComma().appendSpace(),
-                    trees -> sbp.appendSpaceIfNeeded().appendKeyword(JavaKeyword.IMPLEMENTS).appendSpace());
-            ForEachUtils.forEach(
-                    permitsClauses.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
-                    sbp::append,
-                    tree -> sbp.appendComma().appendSpace(),
-                    trees -> sbp.appendSpaceIfNeeded().appendKeyword(JavaKeyword.PERMITS).appendSpace());
-            sbp.appendSpaceIfNeeded().appendLeftCurlyBracket().appendLineSeparator();
-            ForEachUtils.forEach(
-                    members.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
-                    tree -> sbp.appendSpace(childIndent).append(tree).appendLineSeparator(),
-                    tree -> sbp.appendLineSeparator());
-            sbp.appendSpace(indent).appendRightCurlyBracket().appendLineSeparator();
-            return sbp.toString();
-        }
-        return super.toString();
     }
 }

@@ -16,7 +16,7 @@
 
 package com.caoccao.jaspiler.trees;
 
-import com.caoccao.jaspiler.styles.StandardStyle;
+import com.caoccao.jaspiler.styles.IStyleWriter;
 import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.TreeVisitor;
 
@@ -81,6 +81,20 @@ public final class JTFieldAccess
         return Kind.MEMBER_SELECT;
     }
 
+    @Override
+    public boolean save(IStyleWriter<?> writer) {
+        if (isActionChange()) {
+            if (expression != null) {
+                writer.append(expression).appendDot();
+            }
+            if (identifier != null) {
+                writer.append(identifier);
+            }
+            return true;
+        }
+        return super.save(writer);
+    }
+
     public JTFieldAccess setExpression(JTExpression<?, ?> expression) {
         if (this.expression == expression) {
             return this;
@@ -95,20 +109,5 @@ public final class JTFieldAccess
         }
         this.identifier = Objects.requireNonNull(identifier);
         return setActionChange();
-    }
-
-    @Override
-    public String toString() {
-        if (isActionChange()) {
-            final var sbp = new StandardStyle();
-            if (expression != null) {
-                sbp.append(expression).appendDot();
-            }
-            if (identifier != null) {
-                sbp.append(identifier);
-            }
-            return sbp.toString();
-        }
-        return super.toString();
     }
 }

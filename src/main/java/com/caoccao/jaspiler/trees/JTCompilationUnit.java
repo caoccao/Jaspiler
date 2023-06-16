@@ -16,11 +16,10 @@
 
 package com.caoccao.jaspiler.trees;
 
-import com.caoccao.jaspiler.JaspilerContract;
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.options.JaspilerTransformOptions;
+import com.caoccao.jaspiler.styles.IStyleWriter;
 import com.caoccao.jaspiler.utils.ForEachUtils;
-import com.caoccao.jaspiler.styles.StandardStyle;
 import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
@@ -34,14 +33,7 @@ import com.sun.source.util.SourcePositions;
 import com.sun.source.util.Trees;
 
 import javax.tools.JavaFileObject;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.text.MessageFormat;
 import java.util.*;
 
 /**
@@ -262,59 +254,8 @@ public final class JTCompilationUnit
         return stringSetterMap;
     }
 
-    public boolean save(Path outputPath) throws IOException {
-        return save(outputPath, StandardCharsets.UTF_8);
-    }
-
-    public boolean save(Path outputPath, Charset charset) throws IOException {
-        if (getAction() == JaspilerContract.Action.Ignore) {
-            return false;
-        }
-        JavaFileObject javaFileObject = getSourceFile();
-        File file = outputPath.resolve(javaFileObject.getName().replace('.', '/') + javaFileObject.getKind().extension).toFile();
-        logger.debug("Writing to {}.", file.getAbsolutePath());
-        File parentFile = file.getParentFile();
-        if (parentFile.exists()) {
-            if (parentFile.isDirectory()) {
-                if (file.exists()) {
-                    if (file.isDirectory()) {
-                        String errorMessage = MessageFormat.format(
-                                "Cannot write to {0} because it is a directory.",
-                                file.getAbsolutePath());
-                        throw new IOException(errorMessage);
-                    }
-                    if (!file.canWrite()) {
-                        String errorMessage = MessageFormat.format(
-                                "Cannot write to {0} because it is not writable.",
-                                file.getAbsolutePath());
-                        throw new IOException(errorMessage);
-                    }
-                } else if (!parentFile.canWrite()) {
-                    String errorMessage = MessageFormat.format(
-                            "Cannot write to {0} because it is not writable.",
-                            parentFile.getAbsolutePath());
-                    throw new IOException(errorMessage);
-                }
-            } else {
-                String errorMessage = MessageFormat.format(
-                        "Cannot write to {0} because {1} is not a directory.",
-                        file.getAbsolutePath(),
-                        parentFile.getAbsolutePath());
-                throw new IOException(errorMessage);
-            }
-        } else if (!parentFile.mkdirs()) {
-            String errorMessage = MessageFormat.format(
-                    "Cannot create {0}.",
-                    parentFile.getAbsolutePath());
-            throw new IOException(errorMessage);
-        }
-        try (FileWriter fileWriter = new FileWriter(file, charset)) {
-            return save(fileWriter);
-        }
-    }
-
     @Override
-    public boolean save(Writer writer) throws IOException {
+    public boolean save(IStyleWriter<?> writer) {
         if (isActionChange()) {
             /*
              * If the public type is annotated with {@link JaspilerContract.Ignore},
@@ -325,9 +266,31 @@ public final class JTCompilationUnit
                     .anyMatch(IJTTree::isActionIgnore);
             if (ignore) {
                 setActionIgnore();
+                return false;
             }
+            if (getOptions().isPreserveCopyrights()
+                    && getOriginalPosition().isValid()
+                    && getOriginalPosition().startPosition() > 0) {
+                writer.append(getOriginalCode().substring(0, (int) getOriginalPosition().startPosition()));
+            }
+            Optional.ofNullable(packageTree).ifPresent(tree -> writer.append(tree).appendLineSeparator());
+            ForEachUtils.forEach(
+                    imports.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
+                    writer::append,
+                    tree -> writer.appendLineSeparator(),
+                    trees -> writer.appendLineSeparator(),
+                    trees -> writer.appendLineSeparator());
+            ForEachUtils.forEach(
+                    typeDecls.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
+                    writer::append,
+                    tree -> writer.appendLineSeparator(),
+                    trees -> writer.appendLineSeparator(),
+                    trees -> writer.appendLineSeparator());
+            Optional.ofNullable(moduleTree).ifPresent(tree -> writer.append(tree).appendLineSeparator());
+        } else {
+            writer.append(getOriginalCode());
         }
-        return super.save(writer);
+        return true;
     }
 
     public JTCompilationUnit setModule(JTModuleDecl moduleTree) {
@@ -344,33 +307,5 @@ public final class JTCompilationUnit
         }
         this.packageTree = Objects.requireNonNull(packageTree).setParentTree(this);
         return setActionChange();
-    }
-
-    @Override
-    public String toString() {
-        if (isActionChange()) {
-            final var sbp = new StandardStyle();
-            if (getOptions().isPreserveCopyrights()
-                    && getOriginalPosition().isValid()
-                    && getOriginalPosition().startPosition() > 0) {
-                sbp.append(getOriginalCode(), 0, (int) getOriginalPosition().startPosition());
-            }
-            Optional.ofNullable(packageTree).ifPresent(tree -> sbp.append(tree).appendLineSeparator());
-            ForEachUtils.forEach(
-                    imports.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
-                    sbp::append,
-                    tree -> sbp.appendLineSeparator(),
-                    trees -> sbp.appendLineSeparator(),
-                    trees -> sbp.appendLineSeparator());
-            ForEachUtils.forEach(
-                    typeDecls.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
-                    sbp::append,
-                    tree -> sbp.appendLineSeparator(),
-                    trees -> sbp.appendLineSeparator(),
-                    trees -> sbp.appendLineSeparator());
-            Optional.ofNullable(moduleTree).ifPresent(tree -> sbp.append(tree).appendLineSeparator());
-            return sbp.toString();
-        }
-        return getOriginalCode();
     }
 }
