@@ -185,8 +185,7 @@ public final class JTClassDecl
     @Override
     public boolean save(IStyleWriter<?> writer) {
         if (isActionChange()) {
-            int indent = getIndent();
-            int childIndent = indent + getCompilationUnit().getOptions().getIndentSize();
+            writer.increaseDepth();
             Optional.ofNullable(modifiers).ifPresent(writer::append);
             ForEachUtils.forEach(
                     typeParameters.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
@@ -199,32 +198,34 @@ public final class JTClassDecl
                     if (modifiers.isActionChange()) {
                         writer.appendSpaceIfNeeded().appendAt();
                     }
-                    writer.appendKeyword(JavaKeyword.INTERFACE);
+                    // This is a very special case because the unchanged code contains '@'.
+                    writer.append(JavaKeyword.INTERFACE.getValue());
                 }
-                case CLASS -> writer.appendSpaceIfNeeded().appendKeyword(JavaKeyword.CLASS);
-                case ENUM -> writer.appendSpaceIfNeeded().appendKeyword(JavaKeyword.ENUM);
-                case INTERFACE -> writer.appendSpaceIfNeeded().appendKeyword(JavaKeyword.INTERFACE);
-                case RECORD -> writer.appendSpaceIfNeeded().appendKeyword(JavaKeyword.RECORD);
+                case CLASS -> writer.appendKeyword(JavaKeyword.CLASS);
+                case ENUM -> writer.appendKeyword(JavaKeyword.ENUM);
+                case INTERFACE -> writer.appendKeyword(JavaKeyword.INTERFACE);
+                case RECORD -> writer.appendKeyword(JavaKeyword.RECORD);
             }
             writer.appendSpaceIfNeeded().append(simpleName);
             Optional.ofNullable(extendsClause)
-                    .ifPresent(tree -> writer.appendSpaceIfNeeded().appendKeyword(JavaKeyword.EXTENDS).appendSpace().append(tree));
+                    .ifPresent(tree -> writer.appendKeyword(JavaKeyword.EXTENDS).appendSpace().append(tree));
             ForEachUtils.forEach(
                     implementsClauses.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
                     writer::append,
                     tree -> writer.appendComma().appendSpace(),
-                    trees -> writer.appendSpaceIfNeeded().appendKeyword(JavaKeyword.IMPLEMENTS).appendSpace());
+                    trees -> writer.appendKeyword(JavaKeyword.IMPLEMENTS).appendSpace());
             ForEachUtils.forEach(
                     permitsClauses.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
                     writer::append,
                     tree -> writer.appendComma().appendSpace(),
-                    trees -> writer.appendSpaceIfNeeded().appendKeyword(JavaKeyword.PERMITS).appendSpace());
-            writer.appendSpaceIfNeeded().appendLeftCurlyBracket().appendLineSeparator();
+                    trees -> writer.appendKeyword(JavaKeyword.PERMITS).appendSpace());
+            writer.appendSpaceIfNeeded().appendClassOpen();
             ForEachUtils.forEach(
                     members.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
-                    tree -> writer.appendSpace(childIndent).append(tree).appendLineSeparator(),
+                    tree -> writer.appendIndent().append(tree).appendLineSeparator(),
                     tree -> writer.appendLineSeparator());
-            writer.appendSpace(indent).appendRightCurlyBracket().appendLineSeparator();
+            writer.decreaseDepth();
+            writer.appendClassClose();
             return true;
         }
         return super.save(writer);

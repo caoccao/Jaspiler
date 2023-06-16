@@ -51,11 +51,14 @@ public class TestJTMethodDecl extends BaseTestSuite {
         }
         String code = transform(new TestTransformScanner(), MockAllInOnePublicClass.class);
         List<String> texts = List.of(
+                "@SuppressWarnings(\"unchecked\")\n" +
+                        "public abstract sealed class MockAllInOnePublicClass extends Object implements Serializable, AutoCloseable\n" +
+                        "            permits MockChild {\n",
                 "public final <T> void " +
                         newMethodNames[0] + "(T x, @Deprecated int y) " +
                         "throws IOException, NoClassDefFoundError {\n" +
                         "        return null;\n" +
-                        "    }",
+                        "    }\n",
                 "String[] mockNames() default {\"A\", \"B\"};",
                 "String mockValue() default \"value\";");
         texts.forEach(text -> assertTrue(code.contains(text)));

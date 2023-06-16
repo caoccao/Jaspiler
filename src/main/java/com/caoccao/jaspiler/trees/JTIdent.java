@@ -17,13 +17,13 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.styles.IStyleWriter;
 import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.TreeVisitor;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 import java.util.Objects;
@@ -90,19 +90,22 @@ public final class JTIdent
         return stringSetterMap;
     }
 
+    @Override
+    public boolean save(IStyleWriter<?> writer) {
+        if (isActionChange()) {
+            if (name != null) {
+                writer.append(name);
+            }
+            return true;
+        }
+        return super.save(writer);
+    }
+
     public JTIdent setName(JTName name) {
         if (this.name == name) {
             return this;
         }
         this.name = Objects.requireNonNull(name);
         return setActionChange();
-    }
-
-    @Override
-    public String toString() {
-        if (isActionChange()) {
-            return name == null ? StringUtils.EMPTY : name.toString();
-        }
-        return super.toString();
     }
 }

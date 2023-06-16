@@ -72,11 +72,11 @@ public record JTPosition(
 
     @Override
     public String toString() {
-        final var writer = new StandardStyleWriter();
-        writer.append("S: ").append(startPosition).appendComma().appendSpace();
-        writer.append("E: ").append(endPosition).appendComma().appendSpace();
-        writer.append("L: ").append(lineNumber).appendComma().appendSpace();
-        writer.append("C: ").append(columnNumber);
-        return writer.toString();
+        final var stringBuilder = new StringBuilder();
+        stringBuilder.append("S: ").append(startPosition).append(", ");
+        stringBuilder.append("E: ").append(endPosition).append(", ");
+        stringBuilder.append("L: ").append(lineNumber).append(", ");
+        stringBuilder.append("C: ").append(columnNumber);
+        return stringBuilder.toString();
     }
 }

@@ -21,7 +21,6 @@ import com.caoccao.jaspiler.exceptions.JaspilerArgumentException;
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.exceptions.JaspilerExecutionException;
 import com.caoccao.jaspiler.exceptions.JaspilerParseException;
-import com.caoccao.jaspiler.options.JaspilerTransformOptions;
 import com.caoccao.jaspiler.styles.StandardStyleWriter;
 import com.caoccao.jaspiler.trees.*;
 import com.caoccao.jaspiler.utils.BaseLoggingObject;
@@ -147,10 +146,7 @@ public final class V8Jaspiler
                 String codeString = validateString(FUNCTION_TRANSFORM_SYNC, v8Values, 0);
                 jaspilerCompiler.addJavaFileStringObject(v8JaspilerOptions.getFileName(), codeString);
             }
-            jaspilerCompiler.transform(
-                    jaspilerTransformScanner,
-                    jaspilerDocScanner,
-                    JaspilerTransformOptions.Default);
+            jaspilerCompiler.transform(jaspilerTransformScanner, jaspilerDocScanner);
             if (CollectionUtils.isNotEmpty(jaspilerTransformScanner.getExceptions())) {
                 var e = jaspilerTransformScanner.getExceptions().get(0);
                 throw new JaspilerExecutionException(e.getMessage(), e);
@@ -162,7 +158,7 @@ public final class V8Jaspiler
                     v8ValueObjectResult.set(PROPERTIES_AST, compilationUnitTree);
                 }
                 if (v8JaspilerOptions.isCode()) {
-                    var writer = new StandardStyleWriter();
+                    var writer = new StandardStyleWriter(v8JaspilerOptions.getStyleOptions());
                     if (compilationUnitTree.save(writer)) {
                         v8ValueObjectResult.set(PROPERTIES_CODE, writer.toString());
                     }

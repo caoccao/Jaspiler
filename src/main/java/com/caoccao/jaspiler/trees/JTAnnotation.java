@@ -114,7 +114,6 @@ public final class JTAnnotation
     @Override
     public boolean save(IStyleWriter<?> writer) {
         if (isActionChange()) {
-            int indent = getIndent();
             writer.appendAt().append(annotationType);
             ForEachUtils.forEach(
                     arguments.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),

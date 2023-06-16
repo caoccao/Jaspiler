@@ -82,17 +82,17 @@ public final class JTBlock
     @Override
     public boolean save(IStyleWriter<?> writer) {
         if (isActionChange()) {
-            int indent = getIndent();
-            int parentIndent = indent - getCompilationUnit().getOptions().getIndentSize();
             if (staticBlock) {
-                writer.appendSpace(indent).appendKeyword(JavaKeyword.STATIC).appendSpace();
+                writer.appendLineSeparator().appendIndent().appendKeyword(JavaKeyword.STATIC).appendSpace();
             }
-            writer.appendLeftCurlyBracket().appendLineSeparator();
+            writer.appendBlockOpen();
+            writer.increaseDepth();
             ForEachUtils.forEach(
                     statements.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
-                    tree -> writer.appendSpace(indent).append(tree),
+                    tree -> writer.appendIndent().append(tree),
                     tree -> writer.appendLineSeparator());
-            writer.appendLineSeparator().appendSpace(parentIndent).appendRightCurlyBracket();
+            writer.decreaseDepth();
+            writer.appendLineSeparator().appendIndent().appendBlockClose();
             return true;
         }
         return super.save(writer);

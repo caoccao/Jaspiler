@@ -280,7 +280,7 @@ function testVariable() {
         Variable(node) {
           const value = node.name.value;
           if ('x' == value) {
-            node.name = jaspiler.createName('xx');
+            node.name = jaspiler.createName('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
           } else if ('y' == value) {
             node.name = jaspiler.createName('yy');
           } else if ('a' == value) {
@@ -292,9 +292,14 @@ function testVariable() {
       },
     }],
   });
+  console.info(result.code);
   assert.include(result.code, '\n    private String aa;\n');
   assert.include(result.code, '\n    @SuppressWarnings("unchecked")\n');
-  assert.include(result.code, '\n    public final <T> void Test(T xx, @Deprecated int yy) throws IOException, NoClassDefFoundError {\n');
+  assert.include(
+    result.code,
+    '\n    @SuppressWarnings("unchecked")\n'
+    + '    public final <T> void Test(T xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, @Deprecated int yy)\n'
+    + '            throws IOException, NoClassDefFoundError {\n');
   assert.include(result.code, '\n        int cc = 5;\n');
 }
 

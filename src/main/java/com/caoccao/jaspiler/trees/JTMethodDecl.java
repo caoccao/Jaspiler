@@ -232,10 +232,10 @@ public final class JTMethodDecl
                     throwExpressions.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
                     writer::append,
                     tree -> writer.appendComma().appendSpace(),
-                    trees -> writer.appendSpace().appendKeyword(JavaKeyword.THROWS).appendSpace());
+                    trees -> writer.appendKeyword(JavaKeyword.THROWS).appendSpace());
             Optional.ofNullable(defaultValue)
                     .filter(tree -> !tree.isActionIgnore())
-                    .ifPresent(tree -> writer.appendSpaceIfNeeded().appendKeyword(JavaKeyword.DEFAULT).appendSpace().append(tree));
+                    .ifPresent(tree -> writer.appendKeyword(JavaKeyword.DEFAULT).appendSpace().append(tree));
             if (body != null && !body.isActionIgnore()) {
                 writer.appendSpaceIfNeeded().append(body);
             } else {

@@ -18,8 +18,8 @@ package com.caoccao.jaspiler;
 
 import com.caoccao.jaspiler.contexts.JaspilerDocContext;
 import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
-import com.caoccao.jaspiler.options.JaspilerTransformOptions;
 import com.caoccao.jaspiler.styles.StandardStyleWriter;
+import com.caoccao.jaspiler.styles.StyleOptions;
 import com.caoccao.jaspiler.utils.BaseLoggingObject;
 import com.caoccao.jaspiler.utils.MockUtils;
 import com.sun.source.util.DocTreeScanner;
@@ -59,11 +59,8 @@ public abstract class BaseTestSuite extends BaseLoggingObject {
             throws IOException {
         compiler.clearJavaFileObject();
         compiler.addJavaFileObjects(MockUtils.getSourcePath(clazz));
-        compiler.transform(
-                transformScanner,
-                docScanner,
-                JaspilerTransformOptions.Default);
-        var writer = new StandardStyleWriter();
+        compiler.transform(transformScanner, docScanner);
+        var writer = new StandardStyleWriter(StyleOptions.Default);
         compiler.getTransformContexts().get(0).getCompilationUnitTree().save(writer);
         return writer.toString();
     }

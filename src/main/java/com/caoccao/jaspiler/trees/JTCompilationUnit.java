@@ -17,7 +17,6 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
-import com.caoccao.jaspiler.options.JaspilerTransformOptions;
 import com.caoccao.jaspiler.styles.IStyleWriter;
 import com.caoccao.jaspiler.utils.ForEachUtils;
 import com.caoccao.jaspiler.utils.V8Register;
@@ -52,7 +51,6 @@ public final class JTCompilationUnit
     private final DocSourcePositions docSourcePositions;
     private final DocTrees docTrees;
     private final List<JTImport> imports;
-    private final JaspilerTransformOptions options;
     private final SourcePositions sourcePositions;
     private final Trees trees;
     private final List<JTTree<?, ?>> typeDecls;
@@ -64,14 +62,12 @@ public final class JTCompilationUnit
     public JTCompilationUnit(
             Trees trees,
             DocTrees docTrees,
-            CompilationUnitTree originalTree,
-            JaspilerTransformOptions options) {
+            CompilationUnitTree originalTree) {
         super(Objects.requireNonNull(originalTree), null);
         docCommentTree = Objects.requireNonNull(docTrees).getDocCommentTree(getOriginalTree().getSourceFile());
         docSourcePositions = docTrees.getSourcePositions();
         this.docTrees = docTrees;
         imports = new ArrayList<>();
-        this.options = options;
         originalCode = null;
         packageTree = null;
         sourcePositions = Objects.requireNonNull(trees).getSourcePositions();
@@ -141,10 +137,6 @@ public final class JTCompilationUnit
     @Override
     public ModuleTree getModule() {
         return moduleTree;
-    }
-
-    public JaspilerTransformOptions getOptions() {
-        return options;
     }
 
     @Override
@@ -268,7 +260,7 @@ public final class JTCompilationUnit
                 setActionIgnore();
                 return false;
             }
-            if (getOptions().isPreserveCopyrights()
+            if (writer.getOptions().isPreserveCopyrights()
                     && getOriginalPosition().isValid()
                     && getOriginalPosition().startPosition() > 0) {
                 writer.append(getOriginalCode().substring(0, (int) getOriginalPosition().startPosition()));
@@ -283,7 +275,7 @@ public final class JTCompilationUnit
             ForEachUtils.forEach(
                     typeDecls.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
                     writer::append,
-                    tree -> writer.appendLineSeparator(),
+                    tree -> writer.appendTypeSeparator(),
                     trees -> writer.appendLineSeparator(),
                     trees -> writer.appendLineSeparator());
             Optional.ofNullable(moduleTree).ifPresent(tree -> writer.append(tree).appendLineSeparator());

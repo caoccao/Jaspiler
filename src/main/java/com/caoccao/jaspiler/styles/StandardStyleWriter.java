@@ -16,5 +16,49 @@
 
 package com.caoccao.jaspiler.styles;
 
+import com.caoccao.jaspiler.enums.JavaKeyword;
+
 public class StandardStyleWriter extends BaseStyleWriter<StandardStyleWriter> {
+
+    public StandardStyleWriter(StyleOptions options) {
+        super(options);
+    }
+
+    @Override
+    public StandardStyleWriter appendBlockClose() {
+        return appendRightCurlyBracket();
+    }
+
+    @Override
+    public StandardStyleWriter appendBlockOpen() {
+        return appendLeftCurlyBracket().appendLineSeparator();
+    }
+
+    @Override
+    public StandardStyleWriter appendClassClose() {
+        return appendIndent(getDepth()).appendRightCurlyBracket();
+    }
+
+    @Override
+    public StandardStyleWriter appendClassOpen() {
+        return appendLeftCurlyBracket().appendLineSeparator();
+    }
+
+    @Override
+    public StandardStyleWriter appendIndent() {
+        return appendIndent(getDepth());
+    }
+
+    @Override
+    public StandardStyleWriter appendKeyword(JavaKeyword javaKeyword) {
+        if (stringBuilder.length() + javaKeyword.getLength() >= options.getWordWrapColumn()) {
+            appendLineSeparator().appendIndent(getDepth()).appendContinuationIndent();
+        }
+        return super.appendKeyword(javaKeyword);
+    }
+
+    @Override
+    public StandardStyleWriter appendTypeSeparator() {
+        return appendLineSeparator(2);
+    }
 }

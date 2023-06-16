@@ -289,11 +289,11 @@ interface TransformOptions {
    */
   sourceType?: 'string' | 'file';
   /**
-   * Style of the source
+   * Transform style
    *
-   * Default: `standard`
+   * Default: null
    */
-  style?: 'compact' | 'standard';
+  style?: TransformOptionStyle;
 }
 
 interface TransformOptionsPlugin {
@@ -308,6 +308,39 @@ interface TransformOptionsPluginVisitor {
   Method(node: JTMethodDecl): void;
   Package(node: JTPackageDecl): void;
   Variable(node: JTVariableDecl): void;
+}
+
+interface TransformOptionStyle {
+  /**
+   * Size of the continuation indent
+   *
+   * Default: 8
+   */
+  continuationIndentSize: number;
+  /**
+   * Size of the indent
+   *
+   * Default: 4
+   */
+  indentSize: number;
+  /**
+   * Preserve the copyrights or not
+   *
+   * Default: true
+   */
+  preserveCopyrights: boolean;
+  /**
+   * Style type
+   *
+   * Default: 'standard'
+   */
+  type: 'compact' | 'standard';
+  /**
+   * Wrap if the line length is greater than
+   *
+   * Default: 120
+   */
+  wordWrapColumn: number;
 }
 
 interface TransformResult {

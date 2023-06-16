@@ -120,10 +120,10 @@ public final class JTModifiers
     @Override
     public boolean save(IStyleWriter<?> writer) {
         if (isActionChange()) {
-            int indentAnnotation = getIndent(-1);
+            int annotationDepth = writer.getDepth() - 1;
             ForEachUtils.forEach(
                     annotations.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
-                    tree -> writer.appendSpace(indentAnnotation).append(tree).appendLineSeparator());
+                    tree -> writer.appendIndent(annotationDepth).append(tree).appendLineSeparator());
             List<Modifier> modifiers = new ArrayList<>();
             SCOPE_MODIFIERS.stream().filter(flags::contains).findFirst().ifPresent(modifiers::add);
             ABSTRACT_OR_DEFAULT_OR_STATIC_MODIFIERS.stream().filter(flags::contains).findFirst().ifPresent(modifiers::add);

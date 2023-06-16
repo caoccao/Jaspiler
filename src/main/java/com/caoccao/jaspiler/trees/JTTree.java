@@ -21,6 +21,7 @@ import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.exceptions.JaspilerNotImplementedException;
 import com.caoccao.jaspiler.styles.IStyleWriter;
 import com.caoccao.jaspiler.styles.StandardStyleWriter;
+import com.caoccao.jaspiler.styles.StyleOptions;
 import com.caoccao.jaspiler.utils.BaseLoggingObject;
 import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.exceptions.JavetException;
@@ -89,23 +90,6 @@ public abstract class JTTree<
 
     List<JTTree<?, ?>> getAllNodes() {
         return new ArrayList<>();
-    }
-
-    int getIndent() {
-        return getIndent(0);
-    }
-
-    int getIndent(int depth) {
-        int indent = depth * getCompilationUnit().getOptions().getIndentSize();
-        var ancestorTree = getParentTree();
-        while (ancestorTree != null && !(ancestorTree instanceof JTCompilationUnit)) {
-            if (ancestorTree instanceof JTClassDecl
-                    || ancestorTree instanceof JTMethodDecl) {
-                indent += getCompilationUnit().getOptions().getIndentSize();
-            }
-            ancestorTree = ancestorTree.getParentTree();
-        }
-        return Math.max(0, indent);
     }
 
     protected long getOptionalEndPosition(long position) {
@@ -397,7 +381,7 @@ public abstract class JTTree<
 
     @Override
     public String toString() {
-        var writer = new StandardStyleWriter();
+        var writer = new StandardStyleWriter(StyleOptions.Default);
         save(writer);
         return writer.toString();
     }

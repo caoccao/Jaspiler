@@ -16,6 +16,7 @@
 
 package com.caoccao.jaspiler.v8;
 
+import com.caoccao.jaspiler.styles.StyleOptions;
 import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interfaces.IJavetClosable;
 import com.caoccao.javet.utils.JavetResourceUtils;
@@ -32,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -39,14 +41,20 @@ public final class V8JaspilerOptions implements IJavetClosable {
     private static final String DEFAULT_FILE_NAME = "Dummy";
     private static final String PROPERTY_AST = "ast";
     private static final String PROPERTY_CODE = "code";
+    private static final String PROPERTY_CONTINUATION_INDENT_SIZE = "continuationIndentSize";
     private static final String PROPERTY_FILE_NAME = "fileName";
+    private static final String PROPERTY_INDENT_SIZE = "indentSize";
     private static final String PROPERTY_PLUGINS = "plugins";
+    private static final String PROPERTY_PRESERVE_COPYRIGHTS = "preserveCopyrights";
     private static final String PROPERTY_SOURCE_TYPE = "sourceType";
+    private static final String PROPERTY_STYLE = "style";
+    private static final String PROPERTY_WORD_WRAP_COLUMN = "wordWrapColumn";
     private final List<Plugin> plugins;
     private boolean ast;
     private boolean code;
     private String fileName;
     private SourceType sourceType;
+    private StyleOptions styleOptions;
 
     public V8JaspilerOptions() {
         ast = false;
@@ -54,6 +62,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         fileName = null;
         plugins = new ArrayList<>();
         sourceType = SourceType.File;
+        styleOptions = StyleOptions.Default;
     }
 
     @Override
@@ -65,8 +74,9 @@ public final class V8JaspilerOptions implements IJavetClosable {
     public V8JaspilerOptions deserialize(V8ValueObject v8ValueObject) throws JavetException {
         deserializeAst(v8ValueObject);
         deserializeCode(v8ValueObject);
-        deserializeSourceTypeAndFileName(v8ValueObject);
         deserializePlugins(v8ValueObject);
+        deserializeSourceTypeAndFileName(v8ValueObject);
+        deserializeStyle(v8ValueObject);
         return this;
     }
 
@@ -119,6 +129,20 @@ public final class V8JaspilerOptions implements IJavetClosable {
         }
     }
 
+    private void deserializeStyle(V8ValueObject v8ValueObject) throws JavetException {
+        try (V8Value v8Value = v8ValueObject.get(PROPERTY_STYLE)) {
+            if (v8Value instanceof V8ValueObject v8ValueObjectStyle) {
+                styleOptions = new StyleOptions();
+                Optional.ofNullable(v8ValueObjectStyle.getInteger(PROPERTY_CONTINUATION_INDENT_SIZE)).ifPresent(styleOptions::setContinuationIndentSize);
+                Optional.ofNullable(v8ValueObjectStyle.getInteger(PROPERTY_INDENT_SIZE)).ifPresent(styleOptions::setIndentSize);
+                Optional.ofNullable(v8ValueObjectStyle.getBoolean(PROPERTY_PRESERVE_COPYRIGHTS)).ifPresent(styleOptions::setPreserveCopyrights);
+                Optional.ofNullable(v8ValueObjectStyle.getInteger(PROPERTY_WORD_WRAP_COLUMN)).ifPresent(styleOptions::setWordWrapColumn);
+                // TODO: To support type.
+                styleOptions.seal();
+            }
+        }
+    }
+
     public String getFileName() {
         return fileName;
     }
@@ -129,6 +153,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
     public SourceType getSourceType() {
         return sourceType;
+    }
+
+    public StyleOptions getStyleOptions() {
+        return styleOptions;
     }
 
     public boolean isAst() {
@@ -158,6 +186,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
     public void setSourceType(SourceType sourceType) {
         this.sourceType = sourceType;
+    }
+
+    public void setStyleOptions(StyleOptions styleOptions) {
+        this.styleOptions = styleOptions;
     }
 
     public enum SourceType {

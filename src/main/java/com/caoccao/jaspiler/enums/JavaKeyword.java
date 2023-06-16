@@ -88,7 +88,16 @@ public enum JavaKeyword {
         this.value = value;
     }
 
+    public int getLength() {
+        return value.length();
+    }
+
     public String getValue() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
         return value;
     }
 }

@@ -17,6 +17,7 @@
 package com.caoccao.jaspiler.styles;
 
 import com.caoccao.jaspiler.enums.JavaKeyword;
+import com.caoccao.jaspiler.trees.IJTTree;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -27,12 +28,16 @@ import java.util.Objects;
 public abstract class BaseStyleWriter<StyleWriter extends BaseStyleWriter<StyleWriter>>
         implements IStyleWriter<StyleWriter>, Appendable, CharSequence {
     protected final List<String> lines;
+    protected final StyleOptions options;
+    protected int depth;
     protected int lengthOfLines;
     protected StringBuilder stringBuilder;
 
-    public BaseStyleWriter() {
+    public BaseStyleWriter(StyleOptions options) {
+        depth = 0;
         lines = new ArrayList<>();
         lengthOfLines = 0;
+        this.options = options;
         stringBuilder = new StringBuilder();
     }
 
@@ -103,51 +108,60 @@ public abstract class BaseStyleWriter<StyleWriter extends BaseStyleWriter<StyleW
     }
 
     @Override
-    public StyleWriter appendAt() {
-        stringBuilder.append(AT);
+    public StyleWriter append(IJTTree<?, ?> jtTree) {
+        jtTree.save(this);
         return (StyleWriter) this;
+    }
+
+    @Override
+    public StyleWriter appendAt() {
+        return append(AT);
     }
 
     @Override
     public StyleWriter appendComma() {
-        stringBuilder.append(COMMA);
-        return (StyleWriter) this;
+        return append(COMMA);
+    }
+
+    protected StyleWriter appendContinuationIndent() {
+        return append(StringUtils.repeat(SPACE, options.getContinuationIndentSize()));
     }
 
     @Override
     public StyleWriter appendDot() {
-        stringBuilder.append(DOT);
-        return (StyleWriter) this;
+        return append(DOT);
     }
 
     @Override
     public StyleWriter appendEqual() {
-        stringBuilder.append(EQUAL);
+        return append(EQUAL);
+    }
+
+    @Override
+    public StyleWriter appendIndent(int depth) {
+        if (depth > 0 && options.getIndentSize() > 0) {
+            stringBuilder.append(StringUtils.repeat(SPACE, depth * options.getIndentSize()));
+        }
         return (StyleWriter) this;
     }
 
     @Override
     public StyleWriter appendKeyword(JavaKeyword javaKeyword) {
-        stringBuilder.append(Objects.requireNonNull(javaKeyword).getValue());
-        return (StyleWriter) this;
+        return appendSpaceIfNeeded().append(Objects.requireNonNull(javaKeyword).getValue());
     }
 
     @Override
     public StyleWriter appendLeftArrow() {
-        stringBuilder.append(LEFT_ARROW);
-        return (StyleWriter) this;
+        return append(LEFT_ARROW);
     }
 
-    @Override
-    public StyleWriter appendLeftCurlyBracket() {
-        stringBuilder.append(LEFT_CURLY_BRACKET);
-        return (StyleWriter) this;
+    protected StyleWriter appendLeftCurlyBracket() {
+        return append(LEFT_CURLY_BRACKET);
     }
 
     @Override
     public StyleWriter appendLeftParenthesis() {
-        stringBuilder.append(LEFT_PARENTHESIS);
-        return (StyleWriter) this;
+        return append(LEFT_PARENTHESIS);
     }
 
     @Override
@@ -159,8 +173,7 @@ public abstract class BaseStyleWriter<StyleWriter extends BaseStyleWriter<StyleW
         return (StyleWriter) this;
     }
 
-    @Override
-    public StyleWriter appendLineSeparator(int count) {
+    protected StyleWriter appendLineSeparator(int count) {
         for (int i = 0; i < count; i++) {
             appendLineSeparator();
         }
@@ -169,42 +182,26 @@ public abstract class BaseStyleWriter<StyleWriter extends BaseStyleWriter<StyleW
 
     @Override
     public StyleWriter appendRightArrow() {
-        stringBuilder.append(RIGHT_ARROW);
-        return (StyleWriter) this;
+        return append(RIGHT_ARROW);
     }
 
-    @Override
-    public StyleWriter appendRightCurlyBracket() {
-        stringBuilder.append(RIGHT_CURLY_BRACKET);
-        return (StyleWriter) this;
+    protected StyleWriter appendRightCurlyBracket() {
+        return append(RIGHT_CURLY_BRACKET);
     }
 
     @Override
     public StyleWriter appendRightParenthesis() {
-        stringBuilder.append(RIGHT_PARENTHESIS);
-        return (StyleWriter) this;
+        return append(RIGHT_PARENTHESIS);
     }
 
     @Override
     public StyleWriter appendSemiColon() {
-        stringBuilder.append(SEMI_COLON);
-        return (StyleWriter) this;
+        return append(SEMI_COLON);
     }
 
     @Override
     public StyleWriter appendSpace() {
-        stringBuilder.append(SPACE);
-        return (StyleWriter) this;
-    }
-
-    @Override
-    public StyleWriter appendSpace(int count) {
-        if (count == 1) {
-            appendSpace();
-        } else if (count > 1) {
-            stringBuilder.append(StringUtils.repeat(SPACE, count));
-        }
-        return (StyleWriter) this;
+        return append(SPACE);
     }
 
     @Override
@@ -221,14 +218,34 @@ public abstract class BaseStyleWriter<StyleWriter extends BaseStyleWriter<StyleW
     }
 
     @Override
+    public int decreaseDepth() {
+        return depth > 0 ? --depth : depth;
+    }
+
+    @Override
     public boolean endsWithWhitespace() {
         if (stringBuilder.isEmpty()) {
             return true;
         }
         return switch (stringBuilder.charAt(stringBuilder.length() - 1)) {
-            case ' ', '\t', '\r', '\n' -> true;
+            case ' ', '(', '\t', '\r', '\n' -> true;
             default -> false;
         };
+    }
+
+    @Override
+    public int getDepth() {
+        return depth;
+    }
+
+    @Override
+    public StyleOptions getOptions() {
+        return options;
+    }
+
+    @Override
+    public int increaseDepth() {
+        return ++depth;
     }
 
     @Override

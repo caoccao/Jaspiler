@@ -17,6 +17,7 @@
 package com.caoccao.jaspiler.styles;
 
 import com.caoccao.jaspiler.enums.JavaKeyword;
+import com.caoccao.jaspiler.trees.IJTTree;
 
 public interface IStyleWriter<StyleWriter extends IStyleWriter<StyleWriter>> {
     String AT = "@";
@@ -49,9 +50,19 @@ public interface IStyleWriter<StyleWriter extends IStyleWriter<StyleWriter>> {
 
     StyleWriter append(Object object);
 
+    StyleWriter append(IJTTree<?, ?> jtTree);
+
     StyleWriter append(char[] str);
 
     StyleWriter appendAt();
+
+    StyleWriter appendBlockClose();
+
+    StyleWriter appendBlockOpen();
+
+    StyleWriter appendClassClose();
+
+    StyleWriter appendClassOpen();
 
     StyleWriter appendComma();
 
@@ -59,21 +70,19 @@ public interface IStyleWriter<StyleWriter extends IStyleWriter<StyleWriter>> {
 
     StyleWriter appendEqual();
 
+    StyleWriter appendIndent();
+
+    StyleWriter appendIndent(int depth);
+
     StyleWriter appendKeyword(JavaKeyword javaKeyword);
 
     StyleWriter appendLeftArrow();
-
-    StyleWriter appendLeftCurlyBracket();
 
     StyleWriter appendLeftParenthesis();
 
     StyleWriter appendLineSeparator();
 
-    StyleWriter appendLineSeparator(int count);
-
     StyleWriter appendRightArrow();
-
-    StyleWriter appendRightCurlyBracket();
 
     StyleWriter appendRightParenthesis();
 
@@ -81,9 +90,17 @@ public interface IStyleWriter<StyleWriter extends IStyleWriter<StyleWriter>> {
 
     StyleWriter appendSpace();
 
-    StyleWriter appendSpace(int count);
-
     StyleWriter appendSpaceIfNeeded();
 
+    StyleWriter appendTypeSeparator();
+
+    int decreaseDepth();
+
     boolean endsWithWhitespace();
+
+    int getDepth();
+
+    StyleOptions getOptions();
+
+    int increaseDepth();
 }

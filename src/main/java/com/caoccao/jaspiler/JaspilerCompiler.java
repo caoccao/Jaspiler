@@ -19,7 +19,7 @@ package com.caoccao.jaspiler;
 import com.caoccao.jaspiler.contexts.JaspilerDocContext;
 import com.caoccao.jaspiler.contexts.JaspilerParseContext;
 import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
-import com.caoccao.jaspiler.options.JaspilerTransformOptions;
+import com.caoccao.jaspiler.styles.StyleOptions;
 import com.caoccao.jaspiler.trees.JTCompilationUnit;
 import com.caoccao.jaspiler.utils.BaseLoggingObject;
 import com.caoccao.jaspiler.utils.JavaFileStringObject;
@@ -137,8 +137,7 @@ public final class JaspilerCompiler extends BaseLoggingObject {
     public <TransformScanner extends TreePathScanner<TransformScanner, JaspilerTransformContext>,
             DocScanner extends DocTreeScanner<DocScanner, JaspilerDocContext>> JaspilerCompiler transform(
             TransformScanner transformScanner,
-            DocScanner docScanner,
-            JaspilerTransformOptions options)
+            DocScanner docScanner)
             throws IOException {
         transformContexts.clear();
         docContexts.clear();
@@ -148,7 +147,7 @@ public final class JaspilerCompiler extends BaseLoggingObject {
             var trees = Trees.instance(task);
             var docTrees = DocTrees.instance(task);
             for (var compilationUnit : task.parse()) {
-                var jtCompilationUnit = new JTCompilationUnit(trees, docTrees, compilationUnit, options).analyze();
+                var jtCompilationUnit = new JTCompilationUnit(trees, docTrees, compilationUnit).analyze();
                 var transformContext = new JaspilerTransformContext(jtCompilationUnit);
                 transformContexts.add(transformContext);
                 transformScanner.scan(jtCompilationUnit, transformContext);
