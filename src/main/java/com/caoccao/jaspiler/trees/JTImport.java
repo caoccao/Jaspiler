@@ -16,8 +16,9 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.enums.JavaKeyword;
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
-import com.caoccao.jaspiler.utils.StringBuilderPlus;
+import com.caoccao.jaspiler.styles.StandardStyle;
 import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
@@ -138,12 +139,12 @@ public final class JTImport
     @Override
     public String toString() {
         if (isActionChange()) {
-            final var sbp = new StringBuilderPlus();
-            sbp.append(IJTConstants.IMPORT).appendSpace();
+            final var sbp = new StandardStyle();
+            sbp.appendKeyword(JavaKeyword.IMPORT).appendSpace();
             if (staticImport) {
-                sbp.append(IJTConstants.STATIC).appendSpace();
+                sbp.appendKeyword(JavaKeyword.STATIC).appendSpace();
             }
-            sbp.append(qualifiedIdentifier).append(IJTConstants.SEMI_COLON);
+            sbp.append(qualifiedIdentifier).appendSemiColon();
             return sbp.toString();
         }
         return super.toString();

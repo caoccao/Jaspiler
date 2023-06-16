@@ -116,8 +116,8 @@ public class TestJTClassDecl extends BaseTestSuite {
         }
         String code = transform(new TestTransformScanner(), MockAllInOnePublicClass.class);
         var texts = List.of(
-                "public abstract sealed class " + newClassName,
-                "@interface " + newAnnotationName + " {");
+                "\npublic abstract sealed class " + newClassName,
+                "\n@interface " + newAnnotationName + " {\n");
         texts.forEach(text -> assertTrue(code.contains(text), text));
     }
 }

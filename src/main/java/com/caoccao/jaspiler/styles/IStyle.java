@@ -14,36 +14,76 @@
  * limitations under the License.
  */
 
-package com.caoccao.jaspiler.trees;
+package com.caoccao.jaspiler.styles;
 
-public interface IJTConstants {
+import com.caoccao.jaspiler.enums.JavaKeyword;
+
+public interface IStyle<Style extends IStyle<Style>> {
     String AT = "@";
-    String CLASS = "class";
     String COMMA = ",";
     String COMMA_ = ", ";
-    String DEFAULT = "default";
     String DOT = ".";
     String EMPTY = "";
-    String ENUM = "enum";
     String EQUAL = "=";
-    String EXTENDS = "extends";
-    String IMPLEMENTS = "implements";
-    String IMPORT = "import";
-    String INTERFACE = "interface";
     String LEFT_ARROW = "<";
     String LEFT_CURLY_BRACKET = "{";
     String LEFT_PARENTHESIS = "(";
     String LINE_SEPARATOR = "\n";
-    String PACKAGE = "package";
-    String PERMITS = "permits";
-    String RECORD = "record";
-    String RETURN = "return";
     String RIGHT_ARROW = ">";
     String RIGHT_CURLY_BRACKET = "}";
     String RIGHT_PARENTHESIS = ")";
     String SEMI_COLON = ";";
     String SPACE = " ";
-    String STATIC = "static";
-    String THROWS = "throws";
-    String UNEXPECTED = "unexpected";
+
+    Style append(boolean b);
+
+    Style append(double d);
+
+    Style append(float f);
+
+    Style append(int i);
+
+    Style append(long l);
+
+    Style append(short s);
+
+    Style append(Object object);
+
+    Style append(char[] str);
+
+    Style appendAt();
+
+    Style appendComma();
+
+    Style appendDot();
+
+    Style appendEqual();
+
+    Style appendKeyword(JavaKeyword javaKeyword);
+
+    Style appendLeftArrow();
+
+    Style appendLeftCurlyBracket();
+
+    Style appendLeftParenthesis();
+
+    Style appendLineSeparator();
+
+    Style appendLineSeparator(int count);
+
+    Style appendRightArrow();
+
+    Style appendRightCurlyBracket();
+
+    Style appendRightParenthesis();
+
+    Style appendSemiColon();
+
+    Style appendSpace();
+
+    Style appendSpace(int count);
+
+    Style appendSpaceIfNeeded();
+
+    boolean endsWithWhitespace();
 }

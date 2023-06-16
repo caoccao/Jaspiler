@@ -16,8 +16,9 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.enums.JavaKeyword;
 import com.caoccao.jaspiler.utils.ForEachUtils;
-import com.caoccao.jaspiler.utils.StringBuilderPlus;
+import com.caoccao.jaspiler.styles.StandardStyle;
 import com.sun.source.tree.BlockTree;
 import com.sun.source.tree.TreeVisitor;
 
@@ -89,11 +90,11 @@ public final class JTBlock
     @Override
     public String toString() {
         if (isActionChange()) {
-            final var sbp = new StringBuilderPlus();
+            final var sbp = new StandardStyle();
             int indent = getIndent();
             int parentIndent = indent - getCompilationUnit().getOptions().getIndentSize();
             if (staticBlock) {
-                sbp.appendSpace(indent).append(IJTConstants.STATIC).appendSpace();
+                sbp.appendSpace(indent).appendKeyword(JavaKeyword.STATIC).appendSpace();
             }
             sbp.appendLeftCurlyBracket().appendLineSeparator();
             ForEachUtils.forEach(

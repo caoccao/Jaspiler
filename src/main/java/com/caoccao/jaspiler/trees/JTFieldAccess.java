@@ -16,7 +16,7 @@
 
 package com.caoccao.jaspiler.trees;
 
-import com.caoccao.jaspiler.utils.StringBuilderPlus;
+import com.caoccao.jaspiler.styles.StandardStyle;
 import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.TreeVisitor;
 
@@ -100,7 +100,7 @@ public final class JTFieldAccess
     @Override
     public String toString() {
         if (isActionChange()) {
-            final var sbp = new StringBuilderPlus();
+            final var sbp = new StandardStyle();
             if (expression != null) {
                 sbp.append(expression).appendDot();
             }

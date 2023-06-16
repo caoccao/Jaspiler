@@ -288,6 +288,12 @@ interface TransformOptions {
    * Default: `file`
    */
   sourceType?: 'string' | 'file';
+  /**
+   * Style of the source
+   *
+   * Default: `standard`
+   */
+  style?: 'compact' | 'standard';
 }
 
 interface TransformOptionsPlugin {

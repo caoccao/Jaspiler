@@ -16,7 +16,8 @@
 
 package com.caoccao.jaspiler.trees;
 
-import com.caoccao.jaspiler.utils.StringBuilderPlus;
+import com.caoccao.jaspiler.enums.JavaKeyword;
+import com.caoccao.jaspiler.styles.StandardStyle;
 import com.sun.source.tree.ReturnTree;
 import com.sun.source.tree.TreeVisitor;
 
@@ -80,8 +81,8 @@ public final class JTReturn
     @Override
     public String toString() {
         if (isActionChange()) {
-            final var sbp = new StringBuilderPlus();
-            sbp.append(IJTConstants.RETURN);
+            final var sbp = new StandardStyle();
+            sbp.appendKeyword(JavaKeyword.RETURN);
             Optional.ofNullable(expression).ifPresent(tree -> sbp.appendSpace().append(tree));
             sbp.appendSemiColon();
             return sbp.toString();

@@ -23,6 +23,7 @@ import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.TreeVisitor;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 import java.util.Objects;
@@ -100,7 +101,7 @@ public final class JTIdent
     @Override
     public String toString() {
         if (isActionChange()) {
-            return name == null ? IJTConstants.EMPTY : name.toString();
+            return name == null ? StringUtils.EMPTY : name.toString();
         }
         return super.toString();
     }

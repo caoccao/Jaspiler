@@ -17,7 +17,7 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
-import com.caoccao.jaspiler.utils.StringBuilderPlus;
+import com.caoccao.jaspiler.styles.StandardStyle;
 import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
@@ -201,7 +201,7 @@ public final class JTVariableDecl
     @Override
     public String toString() {
         if (isActionChange()) {
-            final var sbp = new StringBuilderPlus();
+            final var sbp = new StandardStyle();
             Optional.ofNullable(modifiers).ifPresent(sbp::append);
             Optional.ofNullable(type).ifPresent(tree -> sbp.appendSpaceIfNeeded().append(tree));
             Optional.ofNullable(nameExpression).ifPresent(tree -> sbp.appendSpaceIfNeeded().append(tree));

@@ -16,9 +16,10 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.enums.JavaKeyword;
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.utils.ForEachUtils;
-import com.caoccao.jaspiler.utils.StringBuilderPlus;
+import com.caoccao.jaspiler.styles.StandardStyle;
 import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
@@ -256,7 +257,7 @@ public final class JTMethodDecl
     @Override
     public String toString() {
         if (isActionChange()) {
-            final var sbp = new StringBuilderPlus();
+            final var sbp = new StandardStyle();
             Optional.ofNullable(modifiers).ifPresent(sbp::append);
             ForEachUtils.forEach(
                     typeParameters.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
@@ -280,10 +281,10 @@ public final class JTMethodDecl
                     throwExpressions.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
                     sbp::append,
                     tree -> sbp.appendComma().appendSpace(),
-                    trees -> sbp.appendSpace().append(IJTConstants.THROWS).appendSpace());
+                    trees -> sbp.appendSpace().appendKeyword(JavaKeyword.THROWS).appendSpace());
             Optional.ofNullable(defaultValue)
                     .filter(tree -> !tree.isActionIgnore())
-                    .ifPresent(tree -> sbp.appendSpaceIfNeeded().append(IJTConstants.DEFAULT).appendSpace().append(tree));
+                    .ifPresent(tree -> sbp.appendSpaceIfNeeded().appendKeyword(JavaKeyword.DEFAULT).appendSpace().append(tree));
             if (body != null && !body.isActionIgnore()) {
                 sbp.appendSpaceIfNeeded().append(body);
             } else {

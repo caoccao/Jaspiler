@@ -29,6 +29,7 @@ import com.caoccao.javet.values.V8Value;
 import com.caoccao.javet.values.reference.V8ValueSymbol;
 import com.caoccao.javet.values.reference.builtin.V8ValueBuiltInSymbol;
 import com.sun.source.tree.Tree;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -389,13 +390,13 @@ public abstract class JTTree<
     @Override
     public String toString() {
         if (isActionIgnore()) {
-            return IJTConstants.EMPTY;
+            return StringUtils.EMPTY;
         }
         if (isActionChange()) {
             throw new JaspilerNotImplementedException(getClass().getSimpleName() + "{} is not implemented yet.");
         }
         if (!getOriginalPosition().isValid()) {
-            return IJTConstants.EMPTY;
+            return StringUtils.EMPTY;
         }
         return getOriginalCode().substring(
                 (int) getOriginalPosition().startPosition(),

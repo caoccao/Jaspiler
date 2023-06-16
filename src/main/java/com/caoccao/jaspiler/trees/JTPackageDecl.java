@@ -16,9 +16,10 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.enums.JavaKeyword;
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.utils.ForEachUtils;
-import com.caoccao.jaspiler.utils.StringBuilderPlus;
+import com.caoccao.jaspiler.styles.StandardStyle;
 import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
@@ -121,7 +122,7 @@ public final class JTPackageDecl
     @Override
     public String toString() {
         if (isActionChange()) {
-            final var sbp = new StringBuilderPlus();
+            final var sbp = new StandardStyle();
             ForEachUtils.forEach(
                     annotations.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
                     sbp::append,
@@ -129,7 +130,7 @@ public final class JTPackageDecl
                     null,
                     trees -> sbp.appendLineSeparator());
             Optional.ofNullable(packageName)
-                    .ifPresent(tree -> sbp.append(IJTConstants.PACKAGE).appendSpace().append(tree).appendSemiColon());
+                    .ifPresent(tree -> sbp.appendKeyword(JavaKeyword.PACKAGE).appendSpace().append(tree).appendSemiColon());
             return sbp.toString();
         }
         return super.toString();

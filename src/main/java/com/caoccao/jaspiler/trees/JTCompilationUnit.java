@@ -20,7 +20,7 @@ import com.caoccao.jaspiler.JaspilerContract;
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.options.JaspilerTransformOptions;
 import com.caoccao.jaspiler.utils.ForEachUtils;
-import com.caoccao.jaspiler.utils.StringBuilderPlus;
+import com.caoccao.jaspiler.styles.StandardStyle;
 import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
@@ -349,7 +349,7 @@ public final class JTCompilationUnit
     @Override
     public String toString() {
         if (isActionChange()) {
-            final var sbp = new StringBuilderPlus();
+            final var sbp = new StandardStyle();
             if (getOptions().isPreserveCopyrights()
                     && getOriginalPosition().isValid()
                     && getOriginalPosition().startPosition() > 0) {

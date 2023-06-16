@@ -18,7 +18,7 @@ package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.utils.ForEachUtils;
-import com.caoccao.jaspiler.utils.StringBuilderPlus;
+import com.caoccao.jaspiler.styles.StandardStyle;
 import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
@@ -137,7 +137,7 @@ public final class JTModifiers
     public String toString() {
         if (isActionChange()) {
             int indentAnnotation = getIndent(-1);
-            final var sbp = new StringBuilderPlus();
+            final var sbp = new StandardStyle();
             ForEachUtils.forEach(
                     annotations.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
                     tree -> sbp.appendSpace(indentAnnotation).append(tree).appendLineSeparator());

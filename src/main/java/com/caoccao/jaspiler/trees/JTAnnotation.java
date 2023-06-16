@@ -18,7 +18,7 @@ package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.utils.ForEachUtils;
-import com.caoccao.jaspiler.utils.StringBuilderPlus;
+import com.caoccao.jaspiler.styles.StandardStyle;
 import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
@@ -123,7 +123,7 @@ public final class JTAnnotation
     public String toString() {
         if (isActionChange()) {
             int indent = getIndent();
-            final var sbp = new StringBuilderPlus();
+            final var sbp = new StandardStyle();
             sbp.appendAt().append(annotationType);
             ForEachUtils.forEach(
                     arguments.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
