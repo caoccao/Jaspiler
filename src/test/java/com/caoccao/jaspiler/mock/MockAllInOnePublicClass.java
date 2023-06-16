@@ -50,6 +50,10 @@ public abstract sealed class MockAllInOnePublicClass
     private String a;
     private List<Object> list;
 
+    static {
+        System.out.println("static block");
+    }
+
     @Deprecated
     private Map<String, Object> map = new HashMap<>() {{
         put("a", 1);

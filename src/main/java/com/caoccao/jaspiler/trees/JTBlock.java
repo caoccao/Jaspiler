@@ -17,18 +17,27 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.enums.JavaKeyword;
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.styles.IStyleWriter;
 import com.caoccao.jaspiler.utils.ForEachUtils;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
+import com.caoccao.javet.values.primitive.V8ValueBoolean;
 import com.sun.source.tree.BlockTree;
 import com.sun.source.tree.TreeVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public final class JTBlock
         extends JTStatement<BlockTree, JTBlock>
         implements BlockTree {
+    private static final String PROPERTY_STATEMENTS = "statements";
+    private static final String PROPERTY_STATIC = "static";
     private final List<JTStatement<?, ?>> statements;
     private boolean staticBlock;
 
@@ -80,6 +89,28 @@ public final class JTBlock
     }
 
     @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_STATEMENTS, propertyName -> v8Runtime.toV8Value(getStatements()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_STATIC, propertyName -> v8Runtime.createV8ValueBoolean(isStatic()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_STATEMENTS,
+                    (propertyName, propertyValue) -> replaceStatements(statements, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_STATIC,
+                    (propertyName, propertyValue) -> setStatic(propertyValue));
+        }
+        return stringSetterMap;
+    }
+
+    @Override
     public boolean save(IStyleWriter<?> writer) {
         if (isActionChange()) {
             if (staticBlock) {
@@ -96,6 +127,14 @@ public final class JTBlock
             return true;
         }
         return super.save(writer);
+    }
+
+    private boolean setStatic(V8Value v8Value) {
+        if (v8Value instanceof V8ValueBoolean v8ValueBoolean) {
+            setStatic(v8ValueBoolean.getValue());
+            return true;
+        }
+        return false;
     }
 
     public JTBlock setStatic(boolean staticBlock) {

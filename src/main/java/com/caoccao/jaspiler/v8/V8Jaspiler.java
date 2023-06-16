@@ -59,6 +59,7 @@ public final class V8Jaspiler
     static {
         constructorMap = new HashMap<>();
         constructorMap.put("newAnnotation", JTAnnotation::new);
+        constructorMap.put("newBlock", JTBlock::new);
         constructorMap.put("newClassDecl", JTClassDecl::new);
         constructorMap.put("newIdent", JTIdent::new);
         constructorMap.put("newImport", JTImport::new);

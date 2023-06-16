@@ -19,6 +19,8 @@ package com.caoccao.jaspiler.v8;
 import com.caoccao.jaspiler.contexts.JaspilerTransformContext;
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.visiters.BaseJaspilerTransformScanner;
+import com.caoccao.javet.exceptions.BaseJavetScriptingException;
+import com.caoccao.javet.exceptions.JavetExecutionException;
 import com.caoccao.javet.values.reference.V8ValueFunction;
 import com.sun.source.tree.*;
 import org.apache.commons.collections4.CollectionUtils;
@@ -56,7 +58,11 @@ public class V8JaspilerTransformScanner
                             v8ValueFunction.call(null, node);
                         } catch (Throwable t) {
                             getExceptions().add(t);
-                            logger.warn(t.getMessage(), t);
+                            if (t instanceof BaseJavetScriptingException baseJavetScriptingException) {
+                                logger.warn(baseJavetScriptingException.getScriptingError().toString(), t);
+                            } else {
+                                logger.warn(t.getMessage(), t);
+                            }
                         }
                     });
         }
@@ -64,6 +70,12 @@ public class V8JaspilerTransformScanner
 
     public List<Throwable> getExceptions() {
         return exceptions;
+    }
+
+    @Override
+    public V8JaspilerTransformScanner visitBlock(BlockTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitBlock());
+        return super.visitBlock(node, jaspilerTransformContext);
     }
 
     @Override
@@ -97,15 +109,15 @@ public class V8JaspilerTransformScanner
     }
 
     @Override
-    public V8JaspilerTransformScanner visitPackage(PackageTree node, JaspilerTransformContext jaspilerTransformContext) {
-        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitPackage());
-        return super.visitPackage(node, jaspilerTransformContext);
-    }
-
-    @Override
     public V8JaspilerTransformScanner visitMethod(MethodTree node, JaspilerTransformContext jaspilerTransformContext) {
         forEachPlugin(node, plugin -> plugin.getVisitor().getVisitMethod());
         return super.visitMethod(node, jaspilerTransformContext);
+    }
+
+    @Override
+    public V8JaspilerTransformScanner visitPackage(PackageTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitPackage());
+        return super.visitPackage(node, jaspilerTransformContext);
     }
 
     @Override

@@ -150,7 +150,7 @@ interface JTAnnotation extends JTExpression<JTAnnotation> {
 
 interface JTBlock extends JTStatement<JTBlock> {
   statements: JTStatement<?>[];
-  staticBlock: boolean;
+  static: boolean;
 }
 
 interface JTCaseLabel<Tree extends JTCaseLabel<Tree>> extends JTTree<JTCaseLabel> {
@@ -301,6 +301,7 @@ interface TransformOptionsPlugin {
 }
 
 interface TransformOptionsPluginVisitor {
+  Block(node: JTBlock): void;
   Class(node: JTClassDecl): void;
   CompilationUnit(node: JTCompilationUnit): void;
   Identifier(node: JTIdent): void;
@@ -354,6 +355,7 @@ declare namespace jaspiler {
   function createName(name: string): JTName;
 
   function newAnnotation(): JTAnnotation;
+  function newBlock(): JTBlock;
   function newClassDecl(): JTClassDecl;
   function newIdent(): JTIdent;
   function newImport(): JTImport;

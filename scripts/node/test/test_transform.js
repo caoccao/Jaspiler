@@ -208,7 +208,7 @@ function testClass() {
             assert.equal('Serializable', node.implementsClauses[0].toString());
             assert.equal(1, node.permitsClauses.length);
             assert.equal('MockChild', node.permitsClauses[0].toString());
-            assert.equal(7, node.members.length);
+            assert.equal(8, node.members.length);
             assert.equal('private String a;', node.members[1].toString());
           } else if ('MockChild' == simpleName) {
             node.simpleName = jaspiler.createName('NewMockChild');
@@ -292,7 +292,6 @@ function testVariable() {
       },
     }],
   });
-  console.info(result.code);
   assert.include(result.code, '\n    private String aa;\n');
   assert.include(result.code, '\n    @SuppressWarnings("unchecked")\n');
   assert.include(
@@ -347,6 +346,30 @@ function testMethod() {
   assert.include(result.code, '\n    String[] names() default ABC;\n');
 }
 
+// Block
+function testBlock() {
+  const values = [];
+  const result = jaspiler.transformSync(pathMockAllInOnePublicClass, {
+    plugins: [{
+      visitor: {
+        Block(node) {
+          const value = node.toString();
+          if (value.includes('System.out.println("static block");')) {
+            values.push(value);
+            assert.equal(1, node.statements.length);
+            assert.isTrue(node.static);
+          } else if (value.includes('put("a", 1);')) {
+            values.push(value);
+            assert.equal(2, node.statements.length);
+            assert.isFalse(node.static);
+          }
+        },
+      },
+    }],
+  });
+  assert.equal(2, values.length);
+}
+
 testAstForFile();
 testAstForString();
 // Package
@@ -365,3 +388,5 @@ testImport();
 testVariable();
 // Method
 testMethod();
+// Block
+testBlock();

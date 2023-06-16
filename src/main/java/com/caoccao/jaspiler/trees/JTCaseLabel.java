@@ -21,7 +21,7 @@ import com.sun.source.tree.Tree;
 
 /**
  * The type Jt case label.
- * It reference com.sun.tools.javac.tree.JCTree.JCCaseLabel.
+ * It references com.sun.tools.javac.tree.JCTree.JCCaseLabel.
  */
 @SuppressWarnings("preview")
 public abstract class JTCaseLabel<

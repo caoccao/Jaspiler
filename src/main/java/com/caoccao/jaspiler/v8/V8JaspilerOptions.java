@@ -243,6 +243,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private final List<String> properties;
         private final List<Supplier<V8ValueFunction>> propertyGetters;
         private final List<Consumer<V8ValueFunction>> propertySetters;
+        private V8ValueFunction visitBlock;
         private V8ValueFunction visitClass;
         private V8ValueFunction visitCompilationUnit;
         private V8ValueFunction visitIdentifier;
@@ -250,9 +251,9 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitMethod;
         private V8ValueFunction visitPackage;
         private V8ValueFunction visitVariable;
-
         public Visitor() {
             properties = List.of(
+                    "Block",
                     "Class",
                     "CompilationUnit",
                     "Identifier",
@@ -261,6 +262,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "Package",
                     "Variable");
             propertyGetters = List.of(
+                    this::getVisitBlock,
                     this::getVisitClass,
                     this::getVisitCompilationUnit,
                     this::getVisitIdentifier,
@@ -269,6 +271,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitPackage,
                     this::getVisitVariable);
             propertySetters = List.of(
+                    this::setVisitBlock,
                     this::setVisitClass,
                     this::setVisitCompilationUnit,
                     this::setVisitIdentifier,
@@ -306,6 +309,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
                 JavetResourceUtils.safeClose(v8ValueValues);
             }
             return this;
+        }
+
+        public V8ValueFunction getVisitBlock() {
+            return visitBlock;
         }
 
         public V8ValueFunction getVisitClass() {
@@ -347,6 +354,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         private void reset() {
             propertySetters.forEach(setter -> setter.accept(null));
+        }
+
+        public void setVisitBlock(V8ValueFunction visitBlock) {
+            this.visitBlock = visitBlock;
         }
 
         public void setVisitClass(V8ValueFunction visitClass) {

@@ -289,6 +289,19 @@ public abstract class JTTree<
         return false;
     }
 
+    protected boolean replaceStatements(List<JTStatement<?, ?>> list, V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof List<?> trees) {
+            list.clear();
+            trees.stream()
+                    .filter(tree -> tree instanceof JTStatement<?, ?>)
+                    .map(tree -> ((JTStatement<?, ?>) tree).setParentTree(this))
+                    .forEach(list::add);
+            setActionChange();
+            return true;
+        }
+        return false;
+    }
+
     protected boolean replaceTree(Function<JTTree<?, ?>, NewTree> setter, V8Value v8Value) throws JavetException {
         if (v8Runtime.toObject(v8Value) instanceof JTTree<?, ?> tree) {
             setter.apply(tree);
