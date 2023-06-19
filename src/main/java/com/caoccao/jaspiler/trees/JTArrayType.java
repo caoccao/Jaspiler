@@ -16,16 +16,23 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.ArrayTypeTree;
 import com.sun.source.tree.TreeVisitor;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 public final class JTArrayType
         extends JTExpression<ArrayTypeTree, JTArrayType>
         implements ArrayTypeTree {
+    private static final String PROPERTY_TYPE = "type";
     private JTExpression<?, ?> type;
 
     public JTArrayType() {
@@ -66,6 +73,25 @@ public final class JTArrayType
     @Override
     public JTExpression<?, ?> getType() {
         return type;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_TYPE, propertyName -> v8Runtime.toV8Value(getType()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_TYPE,
+                    (propertyName, propertyValue) -> replaceExpression(this::setType, propertyValue));
+        }
+        return stringSetterMap;
     }
 
     public JTArrayType setType(JTExpression<?, ?> type) {

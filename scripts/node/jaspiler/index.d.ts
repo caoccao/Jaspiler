@@ -158,6 +158,10 @@ interface JTArrayAccess extends JTExpression<JTArrayAccess> {
   index: JTExpression<?>;
 }
 
+interface JTArrayType extends JTExpression<JTArrayType> {
+  type: JTExpression<?>;
+}
+
 interface JTBlock extends JTStatement<JTBlock> {
   statements: JTStatement<?>[];
   static: boolean;
