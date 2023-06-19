@@ -190,6 +190,12 @@ public class V8JaspilerTransformScanner
     }
 
     @Override
+    public V8JaspilerTransformScanner visitEnhancedForLoop(EnhancedForLoopTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitEnhancedForLoop());
+        return super.visitEnhancedForLoop(node, jaspilerTransformContext);
+    }
+
+    @Override
     public V8JaspilerTransformScanner visitIdentifier(
             IdentifierTree node,
             JaspilerTransformContext jaspilerTransformContext) {

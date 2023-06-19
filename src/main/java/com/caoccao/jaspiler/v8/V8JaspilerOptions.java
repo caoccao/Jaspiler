@@ -262,6 +262,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitContinue;
         private V8ValueFunction visitDefaultCaseLabel;
         private V8ValueFunction visitDoWhileLoop;
+        private V8ValueFunction visitEnhancedForLoop;
         private V8ValueFunction visitIdentifier;
         private V8ValueFunction visitImport;
         private V8ValueFunction visitMethod;
@@ -289,6 +290,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "Continue",
                     "DefaultCaseLabel",
                     "DoWhileLoop",
+                    "EnhancedForLoop",
                     "Identifier",
                     "Import",
                     "Method",
@@ -314,6 +316,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitContinue,
                     this::getVisitDefaultCaseLabel,
                     this::getVisitDoWhileLoop,
+                    this::getVisitEnhancedForLoop,
                     this::getVisitIdentifier,
                     this::getVisitImport,
                     this::getVisitMethod,
@@ -339,6 +342,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitContinue,
                     this::setVisitDefaultCaseLabel,
                     this::setVisitDoWhileLoop,
+                    this::setVisitEnhancedForLoop,
                     this::setVisitIdentifier,
                     this::setVisitImport,
                     this::setVisitMethod,
@@ -452,6 +456,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
             return visitDoWhileLoop;
         }
 
+        public V8ValueFunction getVisitEnhancedForLoop() {
+            return visitEnhancedForLoop;
+        }
+
         public V8ValueFunction getVisitIdentifier() {
             return visitIdentifier;
         }
@@ -559,6 +567,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitDoWhileLoop(V8ValueFunction visitDoWhileLoop) {
             this.visitDoWhileLoop = visitDoWhileLoop;
+        }
+
+        public void setVisitEnhancedForLoop(V8ValueFunction visitEnhancedForLoop) {
+            this.visitEnhancedForLoop = visitEnhancedForLoop;
         }
 
         public void setVisitIdentifier(V8ValueFunction visitIdentifier) {
