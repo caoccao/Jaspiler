@@ -178,6 +178,12 @@ interface JTAssignOp extends JTOperatorExpression<JTAssignOp> {
   variable: JTExpression<?>;
 }
 
+interface JTBinary extends JTOperatorExpression<JTBinary> {
+  kind: JTKind;
+  leftOperand: JTExpression<?>;
+  rightOperand: JTExpression<?>;
+}
+
 interface JTBlock extends JTStatement<JTBlock> {
   statements: JTStatement<?>[];
   static: boolean;
@@ -340,6 +346,7 @@ interface TransformOptionsPluginVisitor {
   ArrayType(node: JTArrayType): void;
   Assert(node: JTAssert): void;
   Assignment(node: JTAssign): void;
+  Binary(node: JTBinary): void;
   Block(node: JTBlock): void;
   Class(node: JTClassDecl): void;
   CompilationUnit(node: JTCompilationUnit): void;

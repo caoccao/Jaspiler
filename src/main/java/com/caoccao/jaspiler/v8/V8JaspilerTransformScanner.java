@@ -101,15 +101,15 @@ public class V8JaspilerTransformScanner
     }
 
     @Override
-    public V8JaspilerTransformScanner visitCompoundAssignment(CompoundAssignmentTree node, JaspilerTransformContext jaspilerTransformContext) {
-        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitCompoundAssignment());
-        return super.visitCompoundAssignment(node, jaspilerTransformContext);
-    }
-
-    @Override
     public V8JaspilerTransformScanner visitAssignment(AssignmentTree node, JaspilerTransformContext jaspilerTransformContext) {
         forEachPlugin(node, plugin -> plugin.getVisitor().getVisitAssignment());
         return super.visitAssignment(node, jaspilerTransformContext);
+    }
+
+    @Override
+    public V8JaspilerTransformScanner visitBinary(BinaryTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitBinary());
+        return super.visitBinary(node, jaspilerTransformContext);
     }
 
     @Override
@@ -132,6 +132,12 @@ public class V8JaspilerTransformScanner
             JaspilerTransformContext jaspilerTransformContext) {
         forEachPlugin(node, plugin -> plugin.getVisitor().getVisitCompilationUnit());
         return super.visitCompilationUnit(node, jaspilerTransformContext);
+    }
+
+    @Override
+    public V8JaspilerTransformScanner visitCompoundAssignment(CompoundAssignmentTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitCompoundAssignment());
+        return super.visitCompoundAssignment(node, jaspilerTransformContext);
     }
 
     @Override

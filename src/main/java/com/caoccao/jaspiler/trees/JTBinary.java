@@ -16,17 +16,27 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.exceptions.JaspilerNotSupportedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
+import com.caoccao.javet.values.primitive.V8ValueString;
 import com.sun.source.tree.BinaryTree;
 import com.sun.source.tree.TreeVisitor;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 public final class JTBinary
         extends JTOperatorExpression<BinaryTree, JTBinary>
         implements BinaryTree {
+    private static final String PROPERTY_KIND = "kind";
+    private static final String PROPERTY_LEFT_OPERAND = "leftOperand";
+    private static final String PROPERTY_RIGHT_OPERAND = "rightOperand";
     private Kind kind;
     private JTExpression<?, ?> leftOperand;
     private JTExpression<?, ?> rightOperand;
@@ -79,6 +89,38 @@ public final class JTBinary
     @Override
     public JTExpression<?, ?> getRightOperand() {
         return rightOperand;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_LEFT_OPERAND, propertyName -> v8Runtime.toV8Value(getLeftOperand()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_RIGHT_OPERAND, propertyName -> v8Runtime.toV8Value(getRightOperand()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_LEFT_OPERAND,
+                    (propertyName, propertyValue) -> replaceExpression(this::setLeftOperand, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_KIND,
+                    (propertyName, propertyValue) -> setKind(propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_RIGHT_OPERAND,
+                    (propertyName, propertyValue) -> replaceExpression(this::setRightOperand, propertyValue));
+        }
+        return stringSetterMap;
+    }
+
+    public boolean setKind(V8Value v8Value) {
+        if (v8Value instanceof V8ValueString v8ValueString) {
+            setKind(Kind.valueOf(v8ValueString.getValue()));
+            return true;
+        }
+        return false;
     }
 
     public JTBinary setKind(Kind kind) {

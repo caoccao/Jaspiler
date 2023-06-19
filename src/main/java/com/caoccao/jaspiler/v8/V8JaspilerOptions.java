@@ -249,6 +249,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitArrayType;
         private V8ValueFunction visitAssert;
         private V8ValueFunction visitAssignment;
+        private V8ValueFunction visitBinary;
         private V8ValueFunction visitBlock;
         private V8ValueFunction visitClass;
         private V8ValueFunction visitCompilationUnit;
@@ -266,6 +267,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "ArrayType",
                     "Assert",
                     "Assignment",
+                    "Binary",
                     "Block",
                     "Class",
                     "CompilationUnit",
@@ -282,6 +284,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitArrayType,
                     this::getVisitAssert,
                     this::getVisitAssignment,
+                    this::getVisitBinary,
                     this::getVisitBlock,
                     this::getVisitClass,
                     this::getVisitCompilationUnit,
@@ -298,6 +301,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitArrayType,
                     this::setVisitAssert,
                     this::setVisitAssignment,
+                    this::setVisitBinary,
                     this::setVisitBlock,
                     this::setVisitClass,
                     this::setVisitCompilationUnit,
@@ -361,6 +365,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public V8ValueFunction getVisitAssignment() {
             return visitAssignment;
+        }
+
+        public V8ValueFunction getVisitBinary() {
+            return visitBinary;
         }
 
         public V8ValueFunction getVisitBlock() {
@@ -434,6 +442,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitAssignment(V8ValueFunction visitAssignment) {
             this.visitAssignment = visitAssignment;
+        }
+
+        public void setVisitBinary(V8ValueFunction visitBinary) {
+            this.visitBinary = visitBinary;
         }
 
         public void setVisitBlock(V8ValueFunction visitBlock) {
