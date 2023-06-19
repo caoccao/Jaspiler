@@ -76,7 +76,7 @@ public final class JTTreeFactory {
                     case ANNOTATION_TYPE, CLASS, ENUM, INTERFACE, RECORD ->
                             r = (R) create((ClassTree) tree, parentTree, JTClassDecl::new);
                     case ARRAY_ACCESS -> r = (R) create((ArrayAccessTree) tree, parentTree, JTArrayAccess::new);
-                    case ARRAY_TYPE -> r = (R) create((ArrayTypeTree) tree, parentTree, JTArrayTypeTree::new);
+                    case ARRAY_TYPE -> r = (R) create((ArrayTypeTree) tree, parentTree, JTArrayType::new);
                     case ASSERT -> r = (R) create((AssertTree) tree, parentTree, JTAssert::new);
                     case ASSIGNMENT -> r = (R) create((AssignmentTree) tree, parentTree, JTAssign::new);
                     case BINDING_PATTERN ->

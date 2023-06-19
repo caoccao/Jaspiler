@@ -23,17 +23,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public final class JTArrayTypeTree
-        extends JTExpression<ArrayTypeTree, JTArrayTypeTree>
+public final class JTArrayType
+        extends JTExpression<ArrayTypeTree, JTArrayType>
         implements ArrayTypeTree {
     private JTExpression<?, ?> type;
 
-    public JTArrayTypeTree() {
+    public JTArrayType() {
         this(null, null);
         setActionChange();
     }
 
-    JTArrayTypeTree(ArrayTypeTree arrayTypeTree, JTTree<?, ?> parentTree) {
+    JTArrayType(ArrayTypeTree arrayTypeTree, JTTree<?, ?> parentTree) {
         super(arrayTypeTree, parentTree);
         type = null;
     }
@@ -44,7 +44,7 @@ public final class JTArrayTypeTree
     }
 
     @Override
-    JTArrayTypeTree analyze() {
+    JTArrayType analyze() {
         super.analyze();
         type = JTTreeFactory.create(getOriginalTree().getType(), this);
         return this;
@@ -68,7 +68,7 @@ public final class JTArrayTypeTree
         return type;
     }
 
-    public JTArrayTypeTree setType(JTExpression<?, ?> type) {
+    public JTArrayType setType(JTExpression<?, ?> type) {
         if (this.type == type) {
             return this;
         }

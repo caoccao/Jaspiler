@@ -48,6 +48,11 @@ public final class JTModifiers
     private final List<JTAnnotation> annotations;
     private final Set<Modifier> flags;
 
+    public JTModifiers() {
+        this(null, null);
+        setActionChange();
+    }
+
     JTModifiers(ModifiersTree modifiersTree, JTTree<?, ?> parentTree) {
         super(modifiersTree, parentTree);
         annotations = new ArrayList<>();
