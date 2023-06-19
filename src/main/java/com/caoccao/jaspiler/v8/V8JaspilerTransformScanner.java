@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
+@SuppressWarnings("preview")
 public class V8JaspilerTransformScanner
         extends BaseJaspilerTransformScanner<V8JaspilerTransformScanner>
         implements AutoCloseable {
@@ -137,18 +138,6 @@ public class V8JaspilerTransformScanner
     }
 
     @Override
-    public V8JaspilerTransformScanner visitContinue(ContinueTree node, JaspilerTransformContext jaspilerTransformContext) {
-        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitContinue());
-        return super.visitContinue(node, jaspilerTransformContext);
-    }
-
-    @Override
-    public V8JaspilerTransformScanner visitConditionalExpression(ConditionalExpressionTree node, JaspilerTransformContext jaspilerTransformContext) {
-        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitConditionalExpression());
-        return super.visitConditionalExpression(node, jaspilerTransformContext);
-    }
-
-    @Override
     public V8JaspilerTransformScanner visitCatch(CatchTree node, JaspilerTransformContext jaspilerTransformContext) {
         forEachPlugin(node, plugin -> plugin.getVisitor().getVisitCatch());
         return super.visitCatch(node, jaspilerTransformContext);
@@ -174,6 +163,24 @@ public class V8JaspilerTransformScanner
     public V8JaspilerTransformScanner visitCompoundAssignment(CompoundAssignmentTree node, JaspilerTransformContext jaspilerTransformContext) {
         forEachPlugin(node, plugin -> plugin.getVisitor().getVisitCompoundAssignment());
         return super.visitCompoundAssignment(node, jaspilerTransformContext);
+    }
+
+    @Override
+    public V8JaspilerTransformScanner visitConditionalExpression(ConditionalExpressionTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitConditionalExpression());
+        return super.visitConditionalExpression(node, jaspilerTransformContext);
+    }
+
+    @Override
+    public V8JaspilerTransformScanner visitContinue(ContinueTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitContinue());
+        return super.visitContinue(node, jaspilerTransformContext);
+    }
+
+    @Override
+    public V8JaspilerTransformScanner visitDefaultCaseLabel(DefaultCaseLabelTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitDefaultCaseLabel());
+        return super.visitDefaultCaseLabel(node, jaspilerTransformContext);
     }
 
     @Override

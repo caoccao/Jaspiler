@@ -245,6 +245,9 @@ interface JTContinue extends JTStatement<JTContinue> {
   label: JTName;
 }
 
+interface JTDefaultCaseLabel extends JTCaseLabel<JTDefaultCaseLabel> {
+}
+
 interface JTDirective<Tree extends JTDirective<Tree>> extends JTTree<JTDirective> {
 }
 
@@ -398,6 +401,7 @@ interface TransformOptionsPluginVisitor {
   CompoundAssignment(node: JTAssignOp): void;
   ConditionalExpression(node: JTConditional): void;
   Continue(node: JTContinue): void;
+  DefaultCaseLabel(node: JTDefaultCaseLabel): void;
   Identifier(node: JTIdent): void;
   Import(node: JTImport): void;
   Method(node: JTMethodDecl): void;
