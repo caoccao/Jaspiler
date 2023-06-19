@@ -162,6 +162,11 @@ interface JTArrayType extends JTExpression<JTArrayType> {
   type: JTExpression<?>;
 }
 
+interface JTAssert extends JTExpression<JTAssert> {
+  condition: JTExpression<?>;
+  detail: JTExpression<?>;
+}
+
 interface JTBlock extends JTStatement<JTBlock> {
   statements: JTStatement<?>[];
   static: boolean;

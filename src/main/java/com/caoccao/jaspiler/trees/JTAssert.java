@@ -16,16 +16,24 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.AssertTree;
 import com.sun.source.tree.TreeVisitor;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 public final class JTAssert
         extends JTStatement<AssertTree, JTAssert>
         implements AssertTree {
+    private static final String PROPERTY_CONDITION = "condition";
+    private static final String PROPERTY_DETAIL = "detail";
     private JTExpression<?, ?> condition;
     private JTExpression<?, ?> detail;
 
@@ -75,6 +83,28 @@ public final class JTAssert
     @Override
     public Kind getKind() {
         return Kind.ASSERT;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_CONDITION, propertyName -> v8Runtime.toV8Value(getCondition()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_DETAIL, propertyName -> v8Runtime.toV8Value(getDetail()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_CONDITION,
+                    (propertyName, propertyValue) -> replaceExpression(this::setCondition, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_DETAIL,
+                    (propertyName, propertyValue) -> replaceExpression(this::setDetail, propertyValue));
+        }
+        return stringSetterMap;
     }
 
     public JTAssert setCondition(JTExpression<?, ?> condition) {
