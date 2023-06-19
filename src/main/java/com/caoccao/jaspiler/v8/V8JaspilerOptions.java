@@ -252,6 +252,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitBinary;
         private V8ValueFunction visitBindingPattern;
         private V8ValueFunction visitBlock;
+        private V8ValueFunction visitBreak;
         private V8ValueFunction visitClass;
         private V8ValueFunction visitCompilationUnit;
         private V8ValueFunction visitCompoundAssignment;
@@ -272,6 +273,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "Binary",
                     "BindingPattern",
                     "Block",
+                    "Break",
                     "Class",
                     "CompilationUnit",
                     "CompoundAssignment",
@@ -290,6 +292,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitBinary,
                     this::getVisitBindingPattern,
                     this::getVisitBlock,
+                    this::getVisitBreak,
                     this::getVisitClass,
                     this::getVisitCompilationUnit,
                     this::getVisitCompoundAssignment,
@@ -308,6 +311,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitBinary,
                     this::setVisitBindingPattern,
                     this::setVisitBlock,
+                    this::setVisitBreak,
                     this::setVisitClass,
                     this::setVisitCompilationUnit,
                     this::setVisitCompoundAssignment,
@@ -382,6 +386,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public V8ValueFunction getVisitBlock() {
             return visitBlock;
+        }
+
+        public V8ValueFunction getVisitBreak() {
+            return visitBreak;
         }
 
         public V8ValueFunction getVisitClass() {
@@ -463,6 +471,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitBlock(V8ValueFunction visitBlock) {
             this.visitBlock = visitBlock;
+        }
+
+        public void setVisitBreak(V8ValueFunction visitBreak) {
+            this.visitBreak = visitBreak;
         }
 
         public void setVisitClass(V8ValueFunction visitClass) {

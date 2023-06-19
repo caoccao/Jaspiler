@@ -193,6 +193,10 @@ interface JTBlock extends JTStatement<JTBlock> {
   static: boolean;
 }
 
+interface JTBreak extends JTStatement<JTBreak> {
+  label: JTName;
+}
+
 interface JTCaseLabel<Tree extends JTCaseLabel<Tree>> extends JTTree<JTCaseLabel> {
 }
 
@@ -356,6 +360,7 @@ interface TransformOptionsPluginVisitor {
   Binary(node: JTBinary): void;
   BindingPattern(node: JTBindingPattern): void;
   Block(node: JTBlock): void;
+  Break(node: JTBreak): void;
   Class(node: JTClassDecl): void;
   CompilationUnit(node: JTCompilationUnit): void;
   CompoundAssignment(node: JTAssignOp): void;
