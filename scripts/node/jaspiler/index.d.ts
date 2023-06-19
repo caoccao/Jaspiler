@@ -184,6 +184,10 @@ interface JTBinary extends JTOperatorExpression<JTBinary> {
   rightOperand: JTExpression<?>;
 }
 
+interface JTBindingPattern extends JTPattern<JTBindingPattern> {
+  variable: JTVariableDecl;
+}
+
 interface JTBlock extends JTStatement<JTBlock> {
   statements: JTStatement<?>[];
   static: boolean;
@@ -263,6 +267,9 @@ interface JTOperatorExpression<Tree extends JTOperatorExpression<Tree>> extends 
 interface JTPackageDecl extends JTTree<JTPackageDecl> {
   annotations: JTAnnotation[];
   packageName: JTExpression<?>;
+}
+
+interface JTPattern<Tree extends JTPattern<Tree>> extends JTCaseLabel<JTPattern> {
 }
 
 interface JTStatement<Tree extends JTStatement<Tree>> extends JTTree<JTStatement> {
@@ -347,6 +354,7 @@ interface TransformOptionsPluginVisitor {
   Assert(node: JTAssert): void;
   Assignment(node: JTAssign): void;
   Binary(node: JTBinary): void;
+  BindingPattern(node: JTBindingPattern): void;
   Block(node: JTBlock): void;
   Class(node: JTClassDecl): void;
   CompilationUnit(node: JTCompilationUnit): void;

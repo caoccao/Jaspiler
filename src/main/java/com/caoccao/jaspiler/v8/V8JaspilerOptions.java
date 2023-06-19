@@ -250,6 +250,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitAssert;
         private V8ValueFunction visitAssignment;
         private V8ValueFunction visitBinary;
+        private V8ValueFunction visitBindingPattern;
         private V8ValueFunction visitBlock;
         private V8ValueFunction visitClass;
         private V8ValueFunction visitCompilationUnit;
@@ -259,6 +260,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitMethod;
         private V8ValueFunction visitPackage;
         private V8ValueFunction visitVariable;
+
         public Visitor() {
             properties = List.of(
                     "AnnotatedType",
@@ -268,6 +270,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "Assert",
                     "Assignment",
                     "Binary",
+                    "BindingPattern",
                     "Block",
                     "Class",
                     "CompilationUnit",
@@ -285,6 +288,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitAssert,
                     this::getVisitAssignment,
                     this::getVisitBinary,
+                    this::getVisitBindingPattern,
                     this::getVisitBlock,
                     this::getVisitClass,
                     this::getVisitCompilationUnit,
@@ -302,6 +306,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitAssert,
                     this::setVisitAssignment,
                     this::setVisitBinary,
+                    this::setVisitBindingPattern,
                     this::setVisitBlock,
                     this::setVisitClass,
                     this::setVisitCompilationUnit,
@@ -369,6 +374,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public V8ValueFunction getVisitBinary() {
             return visitBinary;
+        }
+
+        public V8ValueFunction getVisitBindingPattern() {
+            return visitBindingPattern;
         }
 
         public V8ValueFunction getVisitBlock() {
@@ -446,6 +455,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitBinary(V8ValueFunction visitBinary) {
             this.visitBinary = visitBinary;
+        }
+
+        public void setVisitBindingPattern(V8ValueFunction visitBindingPattern) {
+            this.visitBindingPattern = visitBindingPattern;
         }
 
         public void setVisitBlock(V8ValueFunction visitBlock) {

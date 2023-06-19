@@ -16,16 +16,23 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.BindingPatternTree;
 import com.sun.source.tree.TreeVisitor;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 public final class JTBindingPattern
         extends JTPattern<BindingPatternTree, JTBindingPattern>
         implements BindingPatternTree {
+    private static final String PROPERTY_VARIABLE = "variable";
     private JTVariableDecl variable;
 
     public JTBindingPattern() {
@@ -66,6 +73,25 @@ public final class JTBindingPattern
     @Override
     public JTVariableDecl getVariable() {
         return variable;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_VARIABLE, propertyName -> v8Runtime.toV8Value(getVariable()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_VARIABLE,
+                    (propertyName, propertyValue) -> replaceVariableDecl(this::setVariable, propertyValue));
+        }
+        return stringSetterMap;
     }
 
     public JTBindingPattern setVariable(JTVariableDecl variable) {

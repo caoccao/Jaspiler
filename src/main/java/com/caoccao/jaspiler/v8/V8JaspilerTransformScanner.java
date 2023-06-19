@@ -107,6 +107,12 @@ public class V8JaspilerTransformScanner
     }
 
     @Override
+    public V8JaspilerTransformScanner visitBindingPattern(BindingPatternTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitBindingPattern());
+        return super.visitBindingPattern(node, jaspilerTransformContext);
+    }
+
+    @Override
     public V8JaspilerTransformScanner visitBinary(BinaryTree node, JaspilerTransformContext jaspilerTransformContext) {
         forEachPlugin(node, plugin -> plugin.getVisitor().getVisitBinary());
         return super.visitBinary(node, jaspilerTransformContext);
