@@ -241,6 +241,10 @@ interface JTConditional extends JTPolyExpression<JTConditional> {
   trueExpression: JTExpression<?>;
 }
 
+interface JTContinue extends JTStatement<JTContinue> {
+  label: JTName;
+}
+
 interface JTDirective<Tree extends JTDirective<Tree>> extends JTTree<JTDirective> {
 }
 
@@ -393,6 +397,7 @@ interface TransformOptionsPluginVisitor {
   CompilationUnit(node: JTCompilationUnit): void;
   CompoundAssignment(node: JTAssignOp): void;
   ConditionalExpression(node: JTConditional): void;
+  Continue(node: JTContinue): void;
   Identifier(node: JTIdent): void;
   Import(node: JTImport): void;
   Method(node: JTMethodDecl): void;
