@@ -266,6 +266,11 @@ interface JTErroneous extends JTExpression<JTErroneous> {
   errorTree: JTTree<?>;
 }
 
+interface JTExports extends JTDirective<JTExports> {
+  moduleNames: JTExpression<?>;
+  packageName: JTExpression;
+}
+
 interface JTExpression<Tree extends JTExpression<Tree>> extends JTCaseLabel<JTExpression> {
 }
 
@@ -420,6 +425,7 @@ interface TransformOptionsPluginVisitor {
   DoWhileLoop(node: JTDoWhileLoop): void;
   EnhancedForLoop(node: JTEnhancedForLoop): void;
   Erroneous(node: JTErroneous): void;
+  Exports(node: JTExports): void;
   Identifier(node: JTIdent): void;
   Import(node: JTImport): void;
   Method(node: JTMethodDecl): void;
