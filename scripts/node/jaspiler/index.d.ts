@@ -153,6 +153,11 @@ interface JTAnnotatedType extends JTExpression<JTAnnotatedType> {
   underlyingType: JTExpression<?>;
 }
 
+interface JTArrayAccess extends JTExpression<JTArrayAccess> {
+  expression: JTExpression<?>;
+  index: JTExpression<?>;
+}
+
 interface JTBlock extends JTStatement<JTBlock> {
   statements: JTStatement<?>[];
   static: boolean;
