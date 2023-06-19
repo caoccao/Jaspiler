@@ -25,6 +25,11 @@
 
 /// <reference no-default-lib="true"/>
 
+enum JTCaseKind {
+  'STATEMENT',
+  'RULE',
+}
+
 enum JTKind {
   'AND', // BinaryTree
   'AND_ASSIGNMENT', // CompoundAssignmentTree
@@ -200,6 +205,13 @@ interface JTBreak extends JTStatement<JTBreak> {
 interface JTCaseLabel<Tree extends JTCaseLabel<Tree>> extends JTTree<JTCaseLabel> {
 }
 
+interface JTCase extends JTStatement<JTCase> {
+  body: JTTree<?>[];
+  caseKind: JTCaseKind;
+  labels: JTCaseLabel<?>;
+  statements: JTExpression<?>[];
+}
+
 interface JTClassDecl extends JTStatement<JTClassDecl> {
   extendsClause: JTExpression<?>;
   implementsClauses: JTExpression<?>[];
@@ -361,6 +373,7 @@ interface TransformOptionsPluginVisitor {
   BindingPattern(node: JTBindingPattern): void;
   Block(node: JTBlock): void;
   Break(node: JTBreak): void;
+  Case(node: JTCase): void;
   Class(node: JTClassDecl): void;
   CompilationUnit(node: JTCompilationUnit): void;
   CompoundAssignment(node: JTAssignOp): void;

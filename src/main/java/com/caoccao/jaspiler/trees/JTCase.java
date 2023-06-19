@@ -16,19 +16,26 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
+import com.caoccao.javet.values.primitive.V8ValueString;
 import com.sun.source.tree.CaseTree;
 import com.sun.source.tree.TreeVisitor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("preview")
 public final class JTCase
         extends JTStatement<CaseTree, JTCase>
         implements CaseTree {
+    private static final String PROPERTY_BODY = "body";
+    private static final String PROPERTY_CASE_KIND = "caseKind";
+    private static final String PROPERTY_LABELS = "labels";
+    private static final String PROPERTY_STATEMENTS = "statements";
     private final List<JTCaseLabel<?, ?>> labels;
     private final List<JTStatement<?, ?>> statements;
     private JTTree<?, ?> body;
@@ -122,12 +129,48 @@ public final class JTCase
         return caseKind == CaseKind.STATEMENT ? statements : null;
     }
 
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_BODY, propertyName -> v8Runtime.toV8Value(getBody()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_CASE_KIND, propertyName -> v8Runtime.createV8ValueString(getCaseKind().name()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_LABELS, propertyName -> v8Runtime.toV8Value(getLabels()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_STATEMENTS, propertyName -> v8Runtime.toV8Value(getStatements()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_BODY,
+                    (propertyName, propertyValue) -> replaceTree(this::setBody, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_CASE_KIND,
+                    (propertyName, propertyValue) -> setCaseKind(propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_LABELS,
+                    (propertyName, propertyValue) -> replaceCaseLabels(labels, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_STATEMENTS,
+                    (propertyName, propertyValue) -> replaceStatements(statements, propertyValue));
+        }
+        return stringSetterMap;
+    }
+
     public JTCase setBody(JTTree<?, ?> body) {
         if (this.body == body) {
             return this;
         }
         this.body = Objects.requireNonNull(body).setParentTree(this);
         return setActionChange();
+    }
+
+    public boolean setCaseKind(V8Value v8Value) {
+        if (v8Value instanceof V8ValueString v8ValueString) {
+            setCaseKind(CaseKind.valueOf(v8ValueString.getValue()));
+            return true;
+        }
+        return false;
     }
 
     public JTCase setCaseKind(CaseKind caseKind) {

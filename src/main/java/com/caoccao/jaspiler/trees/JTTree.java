@@ -210,6 +210,19 @@ public abstract class JTTree<
         return false;
     }
 
+    protected boolean replaceCaseLabels(List<JTCaseLabel<?, ?>> list, V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof List<?> trees) {
+            list.clear();
+            trees.stream()
+                    .filter(tree -> tree instanceof JTCaseLabel<?, ?>)
+                    .map(tree -> ((JTCaseLabel<?, ?>) tree).setParentTree(this))
+                    .forEach(list::add);
+            setActionChange();
+            return true;
+        }
+        return false;
+    }
+
     protected boolean replaceDirectives(List<JTDirective<?, ?>> list, V8Value v8Value) throws JavetException {
         if (v8Runtime.toObject(v8Value) instanceof List<?> trees) {
             list.clear();

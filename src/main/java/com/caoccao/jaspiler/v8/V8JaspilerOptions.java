@@ -253,6 +253,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitBindingPattern;
         private V8ValueFunction visitBlock;
         private V8ValueFunction visitBreak;
+        private V8ValueFunction visitCase;
         private V8ValueFunction visitClass;
         private V8ValueFunction visitCompilationUnit;
         private V8ValueFunction visitCompoundAssignment;
@@ -261,7 +262,6 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitMethod;
         private V8ValueFunction visitPackage;
         private V8ValueFunction visitVariable;
-
         public Visitor() {
             properties = List.of(
                     "AnnotatedType",
@@ -274,6 +274,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "BindingPattern",
                     "Block",
                     "Break",
+                    "Case",
                     "Class",
                     "CompilationUnit",
                     "CompoundAssignment",
@@ -293,6 +294,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitBindingPattern,
                     this::getVisitBlock,
                     this::getVisitBreak,
+                    this::getVisitCase,
                     this::getVisitClass,
                     this::getVisitCompilationUnit,
                     this::getVisitCompoundAssignment,
@@ -312,6 +314,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitBindingPattern,
                     this::setVisitBlock,
                     this::setVisitBreak,
+                    this::setVisitCase,
                     this::setVisitClass,
                     this::setVisitCompilationUnit,
                     this::setVisitCompoundAssignment,
@@ -390,6 +393,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public V8ValueFunction getVisitBreak() {
             return visitBreak;
+        }
+
+        public V8ValueFunction getVisitCase() {
+            return visitCase;
         }
 
         public V8ValueFunction getVisitClass() {
@@ -475,6 +482,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitBreak(V8ValueFunction visitBreak) {
             this.visitBreak = visitBreak;
+        }
+
+        public void setVisitCase(V8ValueFunction visitCase) {
+            this.visitCase = visitCase;
         }
 
         public void setVisitClass(V8ValueFunction visitClass) {
