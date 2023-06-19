@@ -252,6 +252,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitBlock;
         private V8ValueFunction visitClass;
         private V8ValueFunction visitCompilationUnit;
+        private V8ValueFunction visitCompoundAssignment;
         private V8ValueFunction visitIdentifier;
         private V8ValueFunction visitImport;
         private V8ValueFunction visitMethod;
@@ -268,6 +269,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "Block",
                     "Class",
                     "CompilationUnit",
+                    "CompoundAssignment",
                     "Identifier",
                     "Import",
                     "Method",
@@ -283,6 +285,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitBlock,
                     this::getVisitClass,
                     this::getVisitCompilationUnit,
+                    this::getVisitCompoundAssignment,
                     this::getVisitIdentifier,
                     this::getVisitImport,
                     this::getVisitMethod,
@@ -298,6 +301,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitBlock,
                     this::setVisitClass,
                     this::setVisitCompilationUnit,
+                    this::setVisitCompoundAssignment,
                     this::setVisitIdentifier,
                     this::setVisitImport,
                     this::setVisitMethod,
@@ -371,6 +375,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
             return visitCompilationUnit;
         }
 
+        public V8ValueFunction getVisitCompoundAssignment() {
+            return visitCompoundAssignment;
+        }
+
         public V8ValueFunction getVisitIdentifier() {
             return visitIdentifier;
         }
@@ -438,6 +446,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitCompilationUnit(V8ValueFunction visitCompilationUnit) {
             this.visitCompilationUnit = visitCompilationUnit;
+        }
+
+        public void setVisitCompoundAssignment(V8ValueFunction visitCompoundAssignment) {
+            this.visitCompoundAssignment = visitCompoundAssignment;
         }
 
         public void setVisitIdentifier(V8ValueFunction visitIdentifier) {

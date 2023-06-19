@@ -172,6 +172,12 @@ interface JTAssign extends JTExpression<JTAssign> {
   variable: JTExpression<?>;
 }
 
+interface JTAssignOp extends JTOperatorExpression<JTAssignOp> {
+  expression: JTExpression<?>;
+  kind: JTKind;
+  variable: JTExpression<?>;
+}
+
 interface JTBlock extends JTStatement<JTBlock> {
   statements: JTStatement<?>[];
   static: boolean;
@@ -243,6 +249,9 @@ interface JTModuleDecl extends JTTree<JTModuleDecl> {
 
 interface JTName {
   value: string;
+}
+
+interface JTOperatorExpression<Tree extends JTOperatorExpression<Tree>> extends JTExpression<JTOperatorExpression> {
 }
 
 interface JTPackageDecl extends JTTree<JTPackageDecl> {
@@ -334,6 +343,7 @@ interface TransformOptionsPluginVisitor {
   Block(node: JTBlock): void;
   Class(node: JTClassDecl): void;
   CompilationUnit(node: JTCompilationUnit): void;
+  CompoundAssignment(node: JTAssignOp): void;
   Identifier(node: JTIdent): void;
   Import(node: JTImport): void;
   Method(node: JTMethodDecl): void;

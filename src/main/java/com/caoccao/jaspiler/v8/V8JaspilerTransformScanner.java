@@ -101,6 +101,12 @@ public class V8JaspilerTransformScanner
     }
 
     @Override
+    public V8JaspilerTransformScanner visitCompoundAssignment(CompoundAssignmentTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitCompoundAssignment());
+        return super.visitCompoundAssignment(node, jaspilerTransformContext);
+    }
+
+    @Override
     public V8JaspilerTransformScanner visitAssignment(AssignmentTree node, JaspilerTransformContext jaspilerTransformContext) {
         forEachPlugin(node, plugin -> plugin.getVisitor().getVisitAssignment());
         return super.visitAssignment(node, jaspilerTransformContext);
