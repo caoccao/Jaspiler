@@ -265,6 +265,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitEnhancedForLoop;
         private V8ValueFunction visitErroneous;
         private V8ValueFunction visitExports;
+        private V8ValueFunction visitExpressionStatement;
         private V8ValueFunction visitIdentifier;
         private V8ValueFunction visitImport;
         private V8ValueFunction visitMethod;
@@ -295,6 +296,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "EnhancedForLoop",
                     "Erroneous",
                     "Exports",
+                    "ExpressionStatement",
                     "Identifier",
                     "Import",
                     "Method",
@@ -323,6 +325,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitEnhancedForLoop,
                     this::getVisitErroneous,
                     this::getVisitExports,
+                    this::getVisitExpressionStatement,
                     this::getVisitIdentifier,
                     this::getVisitImport,
                     this::getVisitMethod,
@@ -351,6 +354,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitEnhancedForLoop,
                     this::setVisitErroneous,
                     this::setVisitExports,
+                    this::setVisitExpressionStatement,
                     this::setVisitIdentifier,
                     this::setVisitImport,
                     this::setVisitMethod,
@@ -476,6 +480,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
             return visitExports;
         }
 
+        public V8ValueFunction getVisitExpressionStatement() {
+            return visitExpressionStatement;
+        }
+
         public V8ValueFunction getVisitIdentifier() {
             return visitIdentifier;
         }
@@ -595,6 +603,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitExports(V8ValueFunction visitExports) {
             this.visitExports = visitExports;
+        }
+
+        public void setVisitExpressionStatement(V8ValueFunction visitExpressionStatement) {
+            this.visitExpressionStatement = visitExpressionStatement;
         }
 
         public void setVisitIdentifier(V8ValueFunction visitIdentifier) {

@@ -274,6 +274,10 @@ interface JTExports extends JTDirective<JTExports> {
 interface JTExpression<Tree extends JTExpression<Tree>> extends JTCaseLabel<JTExpression> {
 }
 
+interface JTExpressionStatement extends JTStatement<JTExpressionStatement> {
+  expression: JTExpression<?>;
+}
+
 interface JTFieldAccess extends JTExpression<JTFieldAccess> {
   expression: JTExpression<?>;
   identifier: JTName;
@@ -426,6 +430,7 @@ interface TransformOptionsPluginVisitor {
   EnhancedForLoop(node: JTEnhancedForLoop): void;
   Erroneous(node: JTErroneous): void;
   Exports(node: JTExports): void;
+  ExpressionStatement(node: JTExpressionStatement): void;
   Identifier(node: JTIdent): void;
   Import(node: JTImport): void;
   Method(node: JTMethodDecl): void;
