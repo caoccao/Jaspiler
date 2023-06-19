@@ -143,14 +143,14 @@ enum JTKind {
   'YIELD', // YieldTree
 }
 
-interface JTAnnotation extends JTExpression<JTAnnotation> {
-  arguments: JTExpression<?>[];
-  annotationType: JTTree<?>;
-}
-
 interface JTAnnotatedType extends JTExpression<JTAnnotatedType> {
   annotations: JTAnnotation[];
   underlyingType: JTExpression<?>;
+}
+
+interface JTAnnotation extends JTExpression<JTAnnotation> {
+  arguments: JTExpression<?>[];
+  annotationType: JTTree<?>;
 }
 
 interface JTArrayAccess extends JTExpression<JTArrayAccess> {
@@ -325,6 +325,12 @@ interface TransformOptionsPlugin {
 }
 
 interface TransformOptionsPluginVisitor {
+  AnnotatedType(node: JTAnnotatedType): void;
+  Annotation(node: JTAnnotation): void;
+  ArrayAccess(node: JTArrayAccess): void;
+  ArrayType(node: JTArrayType): void;
+  Assert(node: JTAssert): void;
+  Assignment(node: JTAssign): void;
   Block(node: JTBlock): void;
   Class(node: JTClassDecl): void;
   CompilationUnit(node: JTCompilationUnit): void;
@@ -378,8 +384,8 @@ declare namespace jaspiler {
   function createIdent(name: string): JTIdent;
   function createName(name: string): JTName;
 
-  function newAnnotation(): JTAnnotation;
   function newAnnotatedType(): JTAnnotatedType;
+  function newAnnotation(): JTAnnotation;
   function newArrayAccess(): JTArrayAccess;
   function newArrayType(): JTArrayType;
   function newAssert(): JTAssert;

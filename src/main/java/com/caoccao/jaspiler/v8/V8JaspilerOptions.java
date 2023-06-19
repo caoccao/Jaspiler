@@ -243,6 +243,12 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private final List<String> properties;
         private final List<Supplier<V8ValueFunction>> propertyGetters;
         private final List<Consumer<V8ValueFunction>> propertySetters;
+        private V8ValueFunction visitAnnotatedType;
+        private V8ValueFunction visitAnnotation;
+        private V8ValueFunction visitArrayAccess;
+        private V8ValueFunction visitArrayType;
+        private V8ValueFunction visitAssert;
+        private V8ValueFunction visitAssignment;
         private V8ValueFunction visitBlock;
         private V8ValueFunction visitClass;
         private V8ValueFunction visitCompilationUnit;
@@ -253,6 +259,12 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitVariable;
         public Visitor() {
             properties = List.of(
+                    "AnnotatedType",
+                    "Annotation",
+                    "ArrayAccess",
+                    "ArrayType",
+                    "Assert",
+                    "Assignment",
                     "Block",
                     "Class",
                     "CompilationUnit",
@@ -262,6 +274,12 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "Package",
                     "Variable");
             propertyGetters = List.of(
+                    this::getVisitAnnotatedType,
+                    this::getVisitAnnotation,
+                    this::getVisitArrayAccess,
+                    this::getVisitArrayType,
+                    this::getVisitAssert,
+                    this::getVisitAssignment,
                     this::getVisitBlock,
                     this::getVisitClass,
                     this::getVisitCompilationUnit,
@@ -271,6 +289,12 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitPackage,
                     this::getVisitVariable);
             propertySetters = List.of(
+                    this::setVisitAnnotatedType,
+                    this::setVisitAnnotation,
+                    this::setVisitArrayAccess,
+                    this::setVisitArrayType,
+                    this::setVisitAssert,
+                    this::setVisitAssignment,
                     this::setVisitBlock,
                     this::setVisitClass,
                     this::setVisitCompilationUnit,
@@ -309,6 +333,30 @@ public final class V8JaspilerOptions implements IJavetClosable {
                 JavetResourceUtils.safeClose(v8ValueValues);
             }
             return this;
+        }
+
+        public V8ValueFunction getVisitAnnotatedType() {
+            return visitAnnotatedType;
+        }
+
+        public V8ValueFunction getVisitAnnotation() {
+            return visitAnnotation;
+        }
+
+        public V8ValueFunction getVisitArrayAccess() {
+            return visitArrayAccess;
+        }
+
+        public V8ValueFunction getVisitArrayType() {
+            return visitArrayType;
+        }
+
+        public V8ValueFunction getVisitAssert() {
+            return visitAssert;
+        }
+
+        public V8ValueFunction getVisitAssignment() {
+            return visitAssignment;
         }
 
         public V8ValueFunction getVisitBlock() {
@@ -354,6 +402,30 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         private void reset() {
             propertySetters.forEach(setter -> setter.accept(null));
+        }
+
+        public void setVisitAnnotatedType(V8ValueFunction visitAnnotatedType) {
+            this.visitAnnotatedType = visitAnnotatedType;
+        }
+
+        public void setVisitAnnotation(V8ValueFunction visitAnnotation) {
+            this.visitAnnotation = visitAnnotation;
+        }
+
+        public void setVisitArrayAccess(V8ValueFunction visitArrayAccess) {
+            this.visitArrayAccess = visitArrayAccess;
+        }
+
+        public void setVisitArrayType(V8ValueFunction visitArrayType) {
+            this.visitArrayType = visitArrayType;
+        }
+
+        public void setVisitAssert(V8ValueFunction visitAssert) {
+            this.visitAssert = visitAssert;
+        }
+
+        public void setVisitAssignment(V8ValueFunction visitAssignment) {
+            this.visitAssignment = visitAssignment;
         }
 
         public void setVisitBlock(V8ValueFunction visitBlock) {
