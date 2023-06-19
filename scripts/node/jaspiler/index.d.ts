@@ -148,6 +148,11 @@ interface JTAnnotation extends JTExpression<JTAnnotation> {
   annotationType: JTTree<?>;
 }
 
+interface JTAnnotatedType extends JTExpression<JTAnnotatedType> {
+  annotations: JTAnnotation[];
+  underlyingType: JTExpression<?>;
+}
+
 interface JTBlock extends JTStatement<JTBlock> {
   statements: JTStatement<?>[];
   static: boolean;
@@ -317,31 +322,31 @@ interface TransformOptionStyle {
    *
    * Default: 8
    */
-  continuationIndentSize: number;
+  continuationIndentSize?: number | null | undefined;
   /**
    * Size of the indent
    *
    * Default: 4
    */
-  indentSize: number;
+  indentSize?: number | null | undefined;
   /**
    * Preserve the copyrights or not
    *
    * Default: true
    */
-  preserveCopyrights: boolean;
+  preserveCopyrights?: boolean | null | undefined;
   /**
    * Style type
    *
    * Default: 'standard'
    */
-  type: 'compact' | 'standard';
+  type?: 'compact' | 'standard' | null | undefined;
   /**
    * Wrap if the line length is greater than
    *
    * Default: 120
    */
-  wordWrapColumn: number;
+  wordWrapColumn?: number | null | undefined;
 }
 
 interface TransformResult {
@@ -354,8 +359,8 @@ declare namespace jaspiler {
   function createIdent(name: string): JTIdent;
   function createName(name: string): JTName;
 
-  function newAnnotatedType(): JTAnnotatedType;
   function newAnnotation(): JTAnnotation;
+  function newAnnotatedType(): JTAnnotatedType;
   function newArrayAccess(): JTArrayAccess;
   function newArrayType(): JTArrayType;
   function newAssert(): JTAssert;

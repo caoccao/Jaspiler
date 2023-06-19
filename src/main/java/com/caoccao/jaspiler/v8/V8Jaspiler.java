@@ -58,8 +58,8 @@ public final class V8Jaspiler
 
     static {
         constructorMap = new HashMap<>();
-        constructorMap.put("newAnnotatedType", JTAnnotatedType::new);
         constructorMap.put("newAnnotation", JTAnnotation::new);
+        constructorMap.put("newAnnotatedType", JTAnnotatedType::new);
         constructorMap.put("newArrayAccess", JTArrayAccess::new);
         constructorMap.put("newArrayType", JTArrayType::new);
         constructorMap.put("newAssert", JTAssert::new);
