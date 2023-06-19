@@ -212,6 +212,11 @@ interface JTCase extends JTStatement<JTCase> {
   statements: JTExpression<?>[];
 }
 
+interface JTCatch extends JTTree<JTCatch> {
+  block: JTBlock;
+  parameter: JTVariableDecl;
+}
+
 interface JTClassDecl extends JTStatement<JTClassDecl> {
   extendsClause: JTExpression<?>;
   implementsClauses: JTExpression<?>[];
@@ -374,6 +379,7 @@ interface TransformOptionsPluginVisitor {
   Block(node: JTBlock): void;
   Break(node: JTBreak): void;
   Case(node: JTCase): void;
+  Catch(node: JTCatch): void;
   Class(node: JTClassDecl): void;
   CompilationUnit(node: JTCompilationUnit): void;
   CompoundAssignment(node: JTAssignOp): void;

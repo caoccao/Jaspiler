@@ -137,6 +137,12 @@ public class V8JaspilerTransformScanner
     }
 
     @Override
+    public V8JaspilerTransformScanner visitCatch(CatchTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitCatch());
+        return super.visitCatch(node, jaspilerTransformContext);
+    }
+
+    @Override
     public V8JaspilerTransformScanner visitClass(
             ClassTree node,
             JaspilerTransformContext jaspilerTransformContext) {
