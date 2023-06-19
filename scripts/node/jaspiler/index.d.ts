@@ -278,6 +278,13 @@ interface JTExpressionStatement extends JTStatement<JTExpressionStatement> {
   expression: JTExpression<?>;
 }
 
+interface JTForLoop extends JTStatement<JTForLoop> {
+  condition: JTExpression<?>;
+  initializer: JTStatement<?>[];
+  statement: JTStatement<?>;
+  update: JTExpressionStatement[];
+}
+
 interface JTFieldAccess extends JTExpression<JTFieldAccess> {
   expression: JTExpression<?>;
   identifier: JTName;
@@ -431,6 +438,7 @@ interface TransformOptionsPluginVisitor {
   Erroneous(node: JTErroneous): void;
   Exports(node: JTExports): void;
   ExpressionStatement(node: JTExpressionStatement): void;
+  ForLoop(node: JTForLoop): void;
   Identifier(node: JTIdent): void;
   Import(node: JTImport): void;
   MemberSelect(node: JTFieldAccess): void;

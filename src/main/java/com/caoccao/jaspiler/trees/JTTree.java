@@ -244,6 +244,19 @@ public abstract class JTTree<
         return false;
     }
 
+    protected boolean replaceExpressionStatements(List<JTExpressionStatement> list, V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof List<?> trees) {
+            list.clear();
+            trees.stream()
+                    .filter(tree -> tree instanceof JTExpressionStatement)
+                    .map(tree -> ((JTExpressionStatement) tree).setParentTree(this))
+                    .forEach(list::add);
+            setActionChange();
+            return true;
+        }
+        return false;
+    }
+
     protected boolean replaceExpressions(List<JTExpression<?, ?>> list, V8Value v8Value) throws JavetException {
         if (v8Runtime.toObject(v8Value) instanceof List<?> trees) {
             list.clear();

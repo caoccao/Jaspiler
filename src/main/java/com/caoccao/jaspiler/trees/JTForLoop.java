@@ -16,17 +16,23 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.ForLoopTree;
 import com.sun.source.tree.TreeVisitor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public final class JTForLoop
         extends JTStatement<ForLoopTree, JTForLoop>
         implements ForLoopTree {
+    private static final String PROPERTY_CONDITION = "condition";
+    private static final String PROPERTY_INITIALIZER = "initializer";
+    private static final String PROPERTY_STATEMENT = "statement";
+    private static final String PROPERTY_UPDATE = "update";
     private final List<JTStatement<?, ?>> initializer;
     private final List<JTExpressionStatement> update;
     private JTExpression<?, ?> condition;
@@ -96,5 +102,49 @@ public final class JTForLoop
     @Override
     public List<JTExpressionStatement> getUpdate() {
         return update;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_CONDITION, propertyName -> v8Runtime.toV8Value(getCondition()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_INITIALIZER, propertyName -> v8Runtime.toV8Value(getInitializer()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_STATEMENT, propertyName -> v8Runtime.toV8Value(getStatement()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_UPDATE, propertyName -> v8Runtime.toV8Value(getUpdate()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_CONDITION,
+                    (propertyName, propertyValue) -> replaceExpression(this::setCondition, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_INITIALIZER,
+                    (propertyName, propertyValue) -> replaceStatements(initializer, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_STATEMENT,
+                    (propertyName, propertyValue) -> replaceStatement(this::setStatement, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_UPDATE,
+                    (propertyName, propertyValue) -> replaceExpressionStatements(update, propertyValue));
+        }
+        return stringSetterMap;
+    }
+
+    public JTForLoop setCondition(JTExpression<?, ?> condition) {
+        if (this.condition == condition) {
+            return this;
+        }
+        this.condition = Objects.requireNonNull(condition).setParentTree(this);
+        return setActionChange();
+    }
+
+    public JTForLoop setStatement(JTStatement<?, ?> statement) {
+        if (this.statement == statement) {
+            return this;
+        }
+        this.statement = Objects.requireNonNull(statement).setParentTree(this);
+        return setActionChange();
     }
 }
