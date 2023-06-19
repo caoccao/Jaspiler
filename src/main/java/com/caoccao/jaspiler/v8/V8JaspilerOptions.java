@@ -268,6 +268,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitExpressionStatement;
         private V8ValueFunction visitIdentifier;
         private V8ValueFunction visitImport;
+        private V8ValueFunction visitMemberSelect;
         private V8ValueFunction visitMethod;
         private V8ValueFunction visitPackage;
         private V8ValueFunction visitVariable;
@@ -299,6 +300,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "ExpressionStatement",
                     "Identifier",
                     "Import",
+                    "MemberSelect",
                     "Method",
                     "Package",
                     "Variable");
@@ -328,6 +330,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitExpressionStatement,
                     this::getVisitIdentifier,
                     this::getVisitImport,
+                    this::getVisitMemberSelect,
                     this::getVisitMethod,
                     this::getVisitPackage,
                     this::getVisitVariable);
@@ -357,6 +360,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitExpressionStatement,
                     this::setVisitIdentifier,
                     this::setVisitImport,
+                    this::setVisitMemberSelect,
                     this::setVisitMethod,
                     this::setVisitPackage,
                     this::setVisitVariable);
@@ -492,6 +496,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
             return visitImport;
         }
 
+        public V8ValueFunction getVisitMemberSelect() {
+            return visitMemberSelect;
+        }
+
         public V8ValueFunction getVisitMethod() {
             return visitMethod;
         }
@@ -615,6 +623,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitImport(V8ValueFunction visitImport) {
             this.visitImport = visitImport;
+        }
+
+        public void setVisitMemberSelect(V8ValueFunction visitMemberSelect) {
+            this.visitMemberSelect = visitMemberSelect;
         }
 
         public void setVisitMethod(V8ValueFunction visitMethod) {

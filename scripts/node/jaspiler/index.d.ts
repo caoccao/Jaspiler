@@ -433,6 +433,7 @@ interface TransformOptionsPluginVisitor {
   ExpressionStatement(node: JTExpressionStatement): void;
   Identifier(node: JTIdent): void;
   Import(node: JTImport): void;
+  MemberSelect(node: JTFieldAccess): void;
   Method(node: JTMethodDecl): void;
   Package(node: JTPackageDecl): void;
   Variable(node: JTVariableDecl): void;
