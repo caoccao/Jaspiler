@@ -251,6 +251,11 @@ interface JTDefaultCaseLabel extends JTCaseLabel<JTDefaultCaseLabel> {
 interface JTDirective<Tree extends JTDirective<Tree>> extends JTTree<JTDirective> {
 }
 
+interface JTDoWhileLoop extends JTStatement<JTDoWhileLoop> {
+  condition: JTExpression<?>;
+  statement: JTStatement<?>;
+}
+
 interface JTExpression<Tree extends JTExpression<Tree>> extends JTCaseLabel<JTExpression> {
 }
 
@@ -402,6 +407,7 @@ interface TransformOptionsPluginVisitor {
   ConditionalExpression(node: JTConditional): void;
   Continue(node: JTContinue): void;
   DefaultCaseLabel(node: JTDefaultCaseLabel): void;
+  DoWhileLoop(node: JTDoWhileLoop): void;
   Identifier(node: JTIdent): void;
   Import(node: JTImport): void;
   Method(node: JTMethodDecl): void;

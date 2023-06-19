@@ -184,6 +184,12 @@ public class V8JaspilerTransformScanner
     }
 
     @Override
+    public V8JaspilerTransformScanner visitDoWhileLoop(DoWhileLoopTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitDoWhileLoop());
+        return super.visitDoWhileLoop(node, jaspilerTransformContext);
+    }
+
+    @Override
     public V8JaspilerTransformScanner visitIdentifier(
             IdentifierTree node,
             JaspilerTransformContext jaspilerTransformContext) {

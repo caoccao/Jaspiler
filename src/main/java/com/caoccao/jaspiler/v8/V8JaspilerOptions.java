@@ -261,11 +261,13 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitConditionalExpression;
         private V8ValueFunction visitContinue;
         private V8ValueFunction visitDefaultCaseLabel;
+        private V8ValueFunction visitDoWhileLoop;
         private V8ValueFunction visitIdentifier;
         private V8ValueFunction visitImport;
         private V8ValueFunction visitMethod;
         private V8ValueFunction visitPackage;
         private V8ValueFunction visitVariable;
+
         public Visitor() {
             properties = List.of(
                     "AnnotatedType",
@@ -286,6 +288,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "ConditionalExpression",
                     "Continue",
                     "DefaultCaseLabel",
+                    "DoWhileLoop",
                     "Identifier",
                     "Import",
                     "Method",
@@ -310,6 +313,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitConditionalExpression,
                     this::getVisitContinue,
                     this::getVisitDefaultCaseLabel,
+                    this::getVisitDoWhileLoop,
                     this::getVisitIdentifier,
                     this::getVisitImport,
                     this::getVisitMethod,
@@ -334,6 +338,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitConditionalExpression,
                     this::setVisitContinue,
                     this::setVisitDefaultCaseLabel,
+                    this::setVisitDoWhileLoop,
                     this::setVisitIdentifier,
                     this::setVisitImport,
                     this::setVisitMethod,
@@ -443,6 +448,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
             return visitDefaultCaseLabel;
         }
 
+        public V8ValueFunction getVisitDoWhileLoop() {
+            return visitDoWhileLoop;
+        }
+
         public V8ValueFunction getVisitIdentifier() {
             return visitIdentifier;
         }
@@ -546,6 +555,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitDefaultCaseLabel(V8ValueFunction visitDefaultCaseLabel) {
             this.visitDefaultCaseLabel = visitDefaultCaseLabel;
+        }
+
+        public void setVisitDoWhileLoop(V8ValueFunction visitDoWhileLoop) {
+            this.visitDoWhileLoop = visitDoWhileLoop;
         }
 
         public void setVisitIdentifier(V8ValueFunction visitIdentifier) {

@@ -16,16 +16,24 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.DoWhileLoopTree;
 import com.sun.source.tree.TreeVisitor;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 public final class JTDoWhileLoop
         extends JTStatement<DoWhileLoopTree, JTDoWhileLoop>
         implements DoWhileLoopTree {
+    private static final String PROPERTY_CONDITION = "condition";
+    private static final String PROPERTY_STATEMENT = "statement";
     private JTExpression<?, ?> condition;
     private JTStatement<?, ?> statement;
 
@@ -44,7 +52,6 @@ public final class JTDoWhileLoop
     public <R, D> R accept(TreeVisitor<R, D> visitor, D data) {
         return visitor.visitDoWhileLoop(this, data);
     }
-
 
     @Override
     JTDoWhileLoop analyze() {
@@ -76,6 +83,28 @@ public final class JTDoWhileLoop
     @Override
     public JTStatement<?, ?> getStatement() {
         return statement;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_CONDITION, propertyName -> v8Runtime.toV8Value(getCondition()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_STATEMENT, propertyName -> v8Runtime.toV8Value(getStatement()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_CONDITION,
+                    (propertyName, propertyValue) -> replaceExpression(this::setCondition, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_STATEMENT,
+                    (propertyName, propertyValue) -> replaceStatement(this::setStatement, propertyValue));
+        }
+        return stringSetterMap;
     }
 
     public JTDoWhileLoop setCondition(JTExpression<?, ?> condition) {
