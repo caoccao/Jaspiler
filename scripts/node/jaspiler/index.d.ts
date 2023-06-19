@@ -235,6 +235,12 @@ interface JTCompilationUnit extends JTTree<JTCompilationUnit> {
   typeDecls: JTTree<?>[];
 }
 
+interface JTConditional extends JTPolyExpression<JTConditional> {
+  condition: JTExpression<?>;
+  falseExpression: JTExpression<?>;
+  trueExpression: JTExpression<?>;
+}
+
 interface JTDirective<Tree extends JTDirective<Tree>> extends JTTree<JTDirective> {
 }
 
@@ -291,6 +297,9 @@ interface JTPackageDecl extends JTTree<JTPackageDecl> {
 }
 
 interface JTPattern<Tree extends JTPattern<Tree>> extends JTCaseLabel<JTPattern> {
+}
+
+interface JTPolyExpression<Tree extends JTPolyExpression<Tree>> extends JTExpression<JTPolyExpression> {
 }
 
 interface JTStatement<Tree extends JTStatement<Tree>> extends JTTree<JTStatement> {
@@ -383,6 +392,7 @@ interface TransformOptionsPluginVisitor {
   Class(node: JTClassDecl): void;
   CompilationUnit(node: JTCompilationUnit): void;
   CompoundAssignment(node: JTAssignOp): void;
+  ConditionalExpression(node: JTConditional): void;
   Identifier(node: JTIdent): void;
   Import(node: JTImport): void;
   Method(node: JTMethodDecl): void;

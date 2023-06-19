@@ -18,41 +18,35 @@ package com.caoccao.jaspiler.trees;
 
 import com.sun.source.tree.Tree;
 
+import java.util.Objects;
+
 @SuppressWarnings("unchecked")
 public abstract class JTPolyExpression<
         OriginalTree extends Tree,
         NewTree extends JTExpression<OriginalTree, NewTree>>
         extends JTExpression<OriginalTree, NewTree> {
-    protected boolean poly;
-    protected boolean standalone;
+    protected JTPolyKind polyKind;
 
     JTPolyExpression(OriginalTree originalTree, JTTree<?, ?> parentTree) {
         super(originalTree, parentTree);
+        polyKind = JTPolyKind.STANDALONE;
     }
 
     @Override
     public boolean isPoly() {
-        return poly;
+        return polyKind == JTPolyKind.POLY;
     }
 
     @Override
     public boolean isStandalone() {
-        return standalone;
+        return polyKind == JTPolyKind.STANDALONE;
     }
 
-    public NewTree setPoly(boolean poly) {
-        if (this.poly == poly) {
+    public NewTree setPolyKind(JTPolyKind polyKind) {
+        if (this.polyKind == polyKind) {
             return (NewTree) this;
         }
-        this.poly = poly;
-        return setActionChange();
-    }
-
-    public NewTree setStandalone(boolean standalone) {
-        if (this.standalone == standalone) {
-            return (NewTree) this;
-        }
-        this.standalone = standalone;
+        this.polyKind = Objects.requireNonNull(polyKind);
         return setActionChange();
     }
 }

@@ -137,6 +137,12 @@ public class V8JaspilerTransformScanner
     }
 
     @Override
+    public V8JaspilerTransformScanner visitConditionalExpression(ConditionalExpressionTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitConditionalExpression());
+        return super.visitConditionalExpression(node, jaspilerTransformContext);
+    }
+
+    @Override
     public V8JaspilerTransformScanner visitCatch(CatchTree node, JaspilerTransformContext jaspilerTransformContext) {
         forEachPlugin(node, plugin -> plugin.getVisitor().getVisitCatch());
         return super.visitCatch(node, jaspilerTransformContext);

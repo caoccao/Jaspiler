@@ -16,16 +16,25 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.ConditionalExpressionTree;
 import com.sun.source.tree.TreeVisitor;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 public final class JTConditional
         extends JTPolyExpression<ConditionalExpressionTree, JTConditional>
         implements ConditionalExpressionTree {
+    private static final String PROPERTY_CONDITION = "condition";
+    private static final String PROPERTY_FALSE_EXPRESSION = "falseExpression";
+    private static final String PROPERTY_TRUE_EXPRESSION = "trueExpression";
     private JTExpression<?, ?> condition;
     private JTExpression<?, ?> falseExpression;
     private JTExpression<?, ?> trueExpression;
@@ -84,6 +93,31 @@ public final class JTConditional
     @Override
     public JTExpression<?, ?> getTrueExpression() {
         return trueExpression;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_CONDITION, propertyName -> v8Runtime.toV8Value(getCondition()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_FALSE_EXPRESSION, propertyName -> v8Runtime.toV8Value(getFalseExpression()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_TRUE_EXPRESSION, propertyName -> v8Runtime.toV8Value(getTrueExpression()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_CONDITION,
+                    (propertyName, propertyValue) -> replaceExpression(this::setCondition, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_FALSE_EXPRESSION,
+                    (propertyName, propertyValue) -> replaceExpression(this::setFalseExpression, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_TRUE_EXPRESSION,
+                    (propertyName, propertyValue) -> replaceExpression(this::setTrueExpression, propertyValue));
+        }
+        return stringSetterMap;
     }
 
     public JTConditional setCondition(JTExpression<?, ?> condition) {

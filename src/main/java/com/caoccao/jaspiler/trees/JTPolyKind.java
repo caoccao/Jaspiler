@@ -16,14 +16,13 @@
 
 package com.caoccao.jaspiler.trees;
 
-import com.sun.source.tree.Tree;
-
-public abstract class JTFunctionalExpression<
-        OriginalTree extends Tree,
-        NewTree extends JTExpression<OriginalTree, NewTree>>
-        extends JTPolyExpression<OriginalTree, NewTree> {
-    JTFunctionalExpression(OriginalTree originalTree, JTTree<?, ?> parentTree) {
-        super(originalTree, parentTree);
-        polyKind = JTPolyKind.POLY;
-    }
+public enum JTPolyKind {
+    /**
+     * true poly expression
+     */
+    POLY,
+    /**
+     * poly expression to be treated as a standalone expression
+     */
+    STANDALONE,
 }
