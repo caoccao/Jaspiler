@@ -262,6 +262,10 @@ interface JTEnhancedForLoop extends JTStatement<JTEnhancedForLoop> {
   variable: JTVariableDecl;
 }
 
+interface JTErroneous extends JTExpression<JTErroneous> {
+  errorTree: JTTree<?>;
+}
+
 interface JTExpression<Tree extends JTExpression<Tree>> extends JTCaseLabel<JTExpression> {
 }
 
@@ -415,6 +419,7 @@ interface TransformOptionsPluginVisitor {
   DefaultCaseLabel(node: JTDefaultCaseLabel): void;
   DoWhileLoop(node: JTDoWhileLoop): void;
   EnhancedForLoop(node: JTEnhancedForLoop): void;
+  Erroneous(node: JTErroneous): void;
   Identifier(node: JTIdent): void;
   Import(node: JTImport): void;
   Method(node: JTMethodDecl): void;

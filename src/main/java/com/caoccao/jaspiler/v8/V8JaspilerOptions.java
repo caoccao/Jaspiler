@@ -263,6 +263,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitDefaultCaseLabel;
         private V8ValueFunction visitDoWhileLoop;
         private V8ValueFunction visitEnhancedForLoop;
+        private V8ValueFunction visitErroneous;
         private V8ValueFunction visitIdentifier;
         private V8ValueFunction visitImport;
         private V8ValueFunction visitMethod;
@@ -291,6 +292,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "DefaultCaseLabel",
                     "DoWhileLoop",
                     "EnhancedForLoop",
+                    "Erroneous",
                     "Identifier",
                     "Import",
                     "Method",
@@ -317,6 +319,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitDefaultCaseLabel,
                     this::getVisitDoWhileLoop,
                     this::getVisitEnhancedForLoop,
+                    this::getVisitErroneous,
                     this::getVisitIdentifier,
                     this::getVisitImport,
                     this::getVisitMethod,
@@ -343,6 +346,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitDefaultCaseLabel,
                     this::setVisitDoWhileLoop,
                     this::setVisitEnhancedForLoop,
+                    this::setVisitErroneous,
                     this::setVisitIdentifier,
                     this::setVisitImport,
                     this::setVisitMethod,
@@ -460,6 +464,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
             return visitEnhancedForLoop;
         }
 
+        public V8ValueFunction getVisitErroneous() {
+            return visitErroneous;
+        }
+
         public V8ValueFunction getVisitIdentifier() {
             return visitIdentifier;
         }
@@ -571,6 +579,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitEnhancedForLoop(V8ValueFunction visitEnhancedForLoop) {
             this.visitEnhancedForLoop = visitEnhancedForLoop;
+        }
+
+        public void setVisitErroneous(V8ValueFunction visitErroneous) {
+            this.visitErroneous = visitErroneous;
         }
 
         public void setVisitIdentifier(V8ValueFunction visitIdentifier) {

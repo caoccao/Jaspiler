@@ -16,15 +16,22 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.ErroneousTree;
 import com.sun.source.tree.TreeVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public final class JTErroneous
         extends JTExpression<ErroneousTree, JTErroneous>
         implements ErroneousTree {
+    private static final String PROPERTY_ERROR_TREES = "errorTrees";
     private final List<JTTree<?, ?>> errorTrees;
 
     public JTErroneous() {
@@ -63,5 +70,24 @@ public final class JTErroneous
     @Override
     public Kind getKind() {
         return Kind.ERRONEOUS;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_ERROR_TREES, propertyName -> v8Runtime.toV8Value(getErrorTrees()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_ERROR_TREES,
+                    (propertyName, propertyValue) -> replaceTrees(errorTrees, propertyValue));
+        }
+        return stringSetterMap;
     }
 }

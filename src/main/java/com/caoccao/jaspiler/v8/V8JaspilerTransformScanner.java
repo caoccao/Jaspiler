@@ -196,6 +196,12 @@ public class V8JaspilerTransformScanner
     }
 
     @Override
+    public V8JaspilerTransformScanner visitErroneous(ErroneousTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitErroneous());
+        return super.visitErroneous(node, jaspilerTransformContext);
+    }
+
+    @Override
     public V8JaspilerTransformScanner visitIdentifier(
             IdentifierTree node,
             JaspilerTransformContext jaspilerTransformContext) {
