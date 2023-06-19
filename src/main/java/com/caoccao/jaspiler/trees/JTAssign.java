@@ -16,16 +16,24 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.AssignmentTree;
 import com.sun.source.tree.TreeVisitor;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 public final class JTAssign
         extends JTExpression<AssignmentTree, JTAssign>
         implements AssignmentTree {
+    private static final String PROPERTY_EXPRESSION = "expression";
+    private static final String PROPERTY_VARIABLE = "variable";
     private JTExpression<?, ?> expression;
     private JTExpression<?, ?> variable;
 
@@ -75,6 +83,28 @@ public final class JTAssign
     @Override
     public JTExpression<?, ?> getVariable() {
         return variable;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_EXPRESSION, propertyName -> v8Runtime.toV8Value(getExpression()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_VARIABLE, propertyName -> v8Runtime.toV8Value(getVariable()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_EXPRESSION,
+                    (propertyName, propertyValue) -> replaceExpression(this::setExpression, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_VARIABLE,
+                    (propertyName, propertyValue) -> replaceExpression(this::setVariable, propertyValue));
+        }
+        return stringSetterMap;
     }
 
     public JTAssign setExpression(JTExpression<?, ?> expression) {

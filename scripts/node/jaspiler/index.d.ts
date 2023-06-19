@@ -167,6 +167,11 @@ interface JTAssert extends JTExpression<JTAssert> {
   detail: JTExpression<?>;
 }
 
+interface JTAssign extends JTExpression<JTAssign> {
+  expression: JTExpression<?>;
+  variable: JTExpression<?>;
+}
+
 interface JTBlock extends JTStatement<JTBlock> {
   statements: JTStatement<?>[];
   static: boolean;
