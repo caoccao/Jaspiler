@@ -285,6 +285,11 @@ interface JTForLoop extends JTStatement<JTForLoop> {
   update: JTExpressionStatement[];
 }
 
+interface JTGuardedPattern extends JTPattern<JTGuardedPattern> {
+  expression: JTExpression<?>;
+  pattern: JTPattern<?>;
+}
+
 interface JTFieldAccess extends JTExpression<JTFieldAccess> {
   expression: JTExpression<?>;
   identifier: JTName;
@@ -439,6 +444,7 @@ interface TransformOptionsPluginVisitor {
   Exports(node: JTExports): void;
   ExpressionStatement(node: JTExpressionStatement): void;
   ForLoop(node: JTForLoop): void;
+  GuardedPattern(node: JTGuardedPattern): void;
   Identifier(node: JTIdent): void;
   Import(node: JTImport): void;
   MemberSelect(node: JTFieldAccess): void;

@@ -315,6 +315,14 @@ public abstract class JTTree<
         return false;
     }
 
+    protected boolean replacePattern(Function<JTPattern<?, ?>, NewTree> setter, V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof JTPattern<?, ?> tree) {
+            setter.apply(tree);
+            return true;
+        }
+        return false;
+    }
+
     protected boolean replaceStatement(Function<JTStatement<?, ?>, NewTree> setter, V8Value v8Value) throws JavetException {
         if (v8Runtime.toObject(v8Value) instanceof JTStatement<?, ?> tree) {
             setter.apply(tree);

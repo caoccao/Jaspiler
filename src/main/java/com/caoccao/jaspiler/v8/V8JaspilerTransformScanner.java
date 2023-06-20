@@ -220,6 +220,12 @@ public class V8JaspilerTransformScanner
     }
 
     @Override
+    public V8JaspilerTransformScanner visitGuardedPattern(GuardedPatternTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitGuardedPattern());
+        return super.visitGuardedPattern(node, jaspilerTransformContext);
+    }
+
+    @Override
     public V8JaspilerTransformScanner visitIdentifier(
             IdentifierTree node,
             JaspilerTransformContext jaspilerTransformContext) {
