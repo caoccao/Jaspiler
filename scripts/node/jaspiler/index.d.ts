@@ -520,6 +520,7 @@ interface TransformOptionsPluginVisitor {
   Method(node: JTMethodDecl): void;
   MethodInvocation(node: JTMethodInvocation): void;
   Modifiers(node: JTModifiers): void;
+  Module(node: JTModuleDecl): void;
   Package(node: JTPackageDecl): void;
   Variable(node: JTVariableDecl): void;
 }
