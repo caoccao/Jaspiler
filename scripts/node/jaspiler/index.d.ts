@@ -222,6 +222,10 @@ interface JTCatch extends JTTree<JTCatch> {
   parameter: JTVariableDecl;
 }
 
+interface JTCharacter {
+  readonly value: string;
+}
+
 interface JTClassDecl extends JTStatement<JTClassDecl> {
   extendsClause: JTExpression<?>;
   implementsClauses: JTExpression<?>[];
@@ -283,6 +287,10 @@ interface JTExpressionStatement extends JTStatement<JTExpressionStatement> {
   expression: JTExpression<?>;
 }
 
+interface JTFloat {
+  readonly value: number;
+}
+
 interface JTForLoop extends JTStatement<JTForLoop> {
   condition: JTExpression<?>;
   initializer: JTStatement<?>[];
@@ -335,6 +343,10 @@ interface JTLambda extends JTFunctionalExpression<JTLambda> {
   body: JTTree<?>;
   bodyKind: JTBodyKind;
   parameters: JTVariableDecl[];
+}
+
+interface JTLiteral extends JTExpression<JTLiteral> {
+  value: number | string | boolean | JTFloat | JTCharacter | null;
 }
 
 interface JTMethodDecl extends JTTree<JTMethodDecl> {
@@ -484,6 +496,7 @@ interface TransformOptionsPluginVisitor {
   InstanceOf(node: JTInstanceOf): void;
   LabeledStatement(node: JTLabeledStatement): void;
   LambdaExpression(node: JTLambda): void;
+  Literal(node: JTLiteral): void;
   MemberSelect(node: JTFieldAccess): void;
   Method(node: JTMethodDecl): void;
   Package(node: JTPackageDecl): void;
@@ -529,9 +542,11 @@ interface TransformResult {
 }
 
 declare namespace jaspiler {
-  function createFieldAccess(...strings: string[]): JTFieldAccess;
-  function createIdent(name: string): JTIdent;
-  function createName(name: string): JTName;
+  function createCharacter(value: string): JTCharacter;
+  function createFieldAccess(...values: string[]): JTFieldAccess;
+  function createFloat(value: string): JTFloat;
+  function createIdent(value: string): JTIdent;
+  function createName(value: string): JTName;
 
   function newAnnotatedType(): JTAnnotatedType;
   function newAnnotation(): JTAnnotation;

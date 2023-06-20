@@ -264,6 +264,12 @@ public class V8JaspilerTransformScanner
     }
 
     @Override
+    public V8JaspilerTransformScanner visitLiteral(LiteralTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitLiteral());
+        return super.visitLiteral(node, jaspilerTransformContext);
+    }
+
+    @Override
     public V8JaspilerTransformScanner visitMemberSelect(MemberSelectTree node, JaspilerTransformContext jaspilerTransformContext) {
         forEachPlugin(node, plugin -> plugin.getVisitor().getVisitMemberSelect());
         return super.visitMemberSelect(node, jaspilerTransformContext);

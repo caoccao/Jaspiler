@@ -33,9 +33,13 @@ import com.caoccao.javet.interop.V8Scope;
 import com.caoccao.javet.interop.callback.IJavetDirectCallable;
 import com.caoccao.javet.interop.proxy.IJavetDirectProxyHandler;
 import com.caoccao.javet.values.V8Value;
+import com.caoccao.javet.values.primitive.V8ValueDouble;
+import com.caoccao.javet.values.primitive.V8ValueInteger;
+import com.caoccao.javet.values.primitive.V8ValueLong;
 import com.caoccao.javet.values.primitive.V8ValueString;
 import com.caoccao.javet.values.reference.V8ValueObject;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,7 +52,9 @@ public final class V8Jaspiler
         extends BaseLoggingObject
         implements IJavetDirectProxyHandler<JaspilerCheckedException>, IJavetClosable {
     public static final String NAME = "jaspiler";
+    private static final String FUNCTION_CREATE_CHARACTER = "createCharacter";
     private static final String FUNCTION_CREATE_FIELD_ACCESS = "createFieldAccess";
+    private static final String FUNCTION_CREATE_FLOAT = "createFloat";
     private static final String FUNCTION_CREATE_IDENT = "createIdent";
     private static final String FUNCTION_CREATE_NAME = "createName";
     private static final String FUNCTION_TRANSFORM_SYNC = "transformSync";
@@ -132,7 +138,9 @@ public final class V8Jaspiler
     public V8Jaspiler(V8Runtime v8Runtime) {
         super();
         creatorMap = new HashMap<>();
+        creatorMap.put(FUNCTION_CREATE_CHARACTER, this::createCharacter);
         creatorMap.put(FUNCTION_CREATE_FIELD_ACCESS, this::createFieldAccess);
+        creatorMap.put(FUNCTION_CREATE_FLOAT, this::createFloat);
         creatorMap.put(FUNCTION_CREATE_IDENT, this::createIdent);
         creatorMap.put(FUNCTION_CREATE_NAME, this::createName);
         creatorMap.put(FUNCTION_TRANSFORM_SYNC, this::transformSync);
@@ -146,6 +154,12 @@ public final class V8Jaspiler
         jaspilerCompiler = null;
     }
 
+    public V8Value createCharacter(V8Value... v8Values) throws JavetException, JaspilerArgumentException {
+        validateLength(FUNCTION_CREATE_FLOAT, v8Values, 1);
+        String value = validateString(FUNCTION_CREATE_FLOAT, v8Values, 0);
+        return v8Runtime.toV8Value(new JTCharacter(StringUtils.isEmpty(value) ? '\0' : value.charAt(0)));
+    }
+
     public V8Value createFieldAccess(V8Value... v8Values) throws JavetException, JaspilerArgumentException {
         validateLength(FUNCTION_CREATE_FIELD_ACCESS, v8Values, 1);
         String[] strings = new String[v8Values.length];
@@ -153,6 +167,12 @@ public final class V8Jaspiler
             strings[i] = validateString(FUNCTION_CREATE_FIELD_ACCESS, v8Values, i);
         }
         return v8Runtime.toV8Value(JTTreeFactory.createFieldAccess(strings));
+    }
+
+    public V8Value createFloat(V8Value... v8Values) throws JavetException, JaspilerArgumentException {
+        validateLength(FUNCTION_CREATE_FLOAT, v8Values, 1);
+        Double value = validateDouble(FUNCTION_CREATE_FLOAT, v8Values, 0);
+        return v8Runtime.toV8Value(new JTFloat(value.floatValue()));
     }
 
     public V8Value createIdent(V8Value... v8Values) throws JavetException, JaspilerArgumentException {
@@ -226,6 +246,22 @@ public final class V8Jaspiler
         } catch (IOException e) {
             throw new JaspilerParseException(e.getMessage(), e);
         }
+    }
+
+    private Double validateDouble(
+            String functionName, V8Value[] v8Values, int index)
+            throws JaspilerArgumentException {
+        validateLength(functionName, v8Values, index);
+        V8Value v8Value = v8Values[index];
+        if (v8Value instanceof V8ValueDouble v8ValueDouble) {
+            return v8ValueDouble.getValue();
+        } else if (v8Value instanceof V8ValueInteger v8ValueInteger) {
+            return v8ValueInteger.getValue().doubleValue();
+        } else if (v8Value instanceof V8ValueLong v8ValueLong) {
+            return v8ValueLong.getValue().doubleValue();
+        }
+        throw new JaspilerArgumentException(
+                MessageFormat.format("Argument type mismatches in {0}. Double is expected.", functionName));
     }
 
     private File validateFile(String filePath) throws JaspilerArgumentException {
