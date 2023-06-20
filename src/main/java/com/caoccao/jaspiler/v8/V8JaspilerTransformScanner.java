@@ -294,15 +294,21 @@ public class V8JaspilerTransformScanner
     }
 
     @Override
+    public V8JaspilerTransformScanner visitModifiers(ModifiersTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitModifiers());
+        return super.visitModifiers(node, jaspilerTransformContext);
+    }
+
+    @Override
     public V8JaspilerTransformScanner visitModule(ModuleTree node, JaspilerTransformContext jaspilerTransformContext) {
         forEachPlugin(node, plugin -> plugin.getVisitor().getVisitModule());
         return super.visitModule(node, jaspilerTransformContext);
     }
 
     @Override
-    public V8JaspilerTransformScanner visitModifiers(ModifiersTree node, JaspilerTransformContext jaspilerTransformContext) {
-        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitModifiers());
-        return super.visitModifiers(node, jaspilerTransformContext);
+    public V8JaspilerTransformScanner visitNewArray(NewArrayTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitNewArray());
+        return super.visitNewArray(node, jaspilerTransformContext);
     }
 
     @Override

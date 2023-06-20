@@ -390,6 +390,14 @@ interface JTModuleDecl extends JTTree<JTModuleDecl> {
   directives: JTDirective;
 }
 
+interface JTNewArray extends JTExpression<JTNewArray> {
+  annotations: JTAnnotation[];
+  dimAnnotations: JTAnnotation[][];
+  dimensions: JTExpression<?>[];
+  initializers: JTExpression<?>[];
+  type: JTExpression<?>;
+}
+
 interface JTName {
   value: string;
 }
@@ -521,6 +529,7 @@ interface TransformOptionsPluginVisitor {
   MethodInvocation(node: JTMethodInvocation): void;
   Modifiers(node: JTModifiers): void;
   Module(node: JTModuleDecl): void;
+  NewArray(node: JTNewArray): void;
   Package(node: JTPackageDecl): void;
   Variable(node: JTVariableDecl): void;
 }

@@ -16,6 +16,12 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.exceptions.JavetException;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.NewArrayTree;
 import com.sun.source.tree.TreeVisitor;
 
@@ -24,6 +30,10 @@ import java.util.*;
 public final class JTNewArray
         extends JTExpression<NewArrayTree, JTNewArray>
         implements NewArrayTree, IJTAnnotatable {
+    private static final String PROPERTY_DIMENSIONS = "dimensions";
+    private static final String PROPERTY_DIM_ANNOTATIONS = "dimAnnotations";
+    private static final String PROPERTY_INITIALIZERS = "initializers";
+    private static final String PROPERTY_TYPE = "type";
     private final List<JTAnnotation> annotations;
     private final List<List<JTAnnotation>> dimAnnotations;
     private final List<JTExpression<?, ?>> dimensions;
@@ -108,6 +118,55 @@ public final class JTNewArray
     @Override
     public JTExpression<?, ?> getType() {
         return type;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_ANNOTATIONS, propertyName -> v8Runtime.toV8Value(getAnnotations()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_DIM_ANNOTATIONS, propertyName -> v8Runtime.toV8Value(getDimAnnotations()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_DIMENSIONS, propertyName -> v8Runtime.toV8Value(getDimensions()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_INITIALIZERS, propertyName -> v8Runtime.toV8Value(getInitializers()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_TYPE, propertyName -> v8Runtime.toV8Value(getType()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_ANNOTATIONS,
+                    (propertyName, propertyValue) -> replaceAnnotations(annotations, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_DIM_ANNOTATIONS,
+                    (propertyName, propertyValue) -> setDimAnnotations(propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_DIMENSIONS,
+                    (propertyName, propertyValue) -> replaceExpressions(dimensions, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_INITIALIZERS,
+                    (propertyName, propertyValue) -> replaceExpressions(initializers, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_TYPE,
+                    (propertyName, propertyValue) -> replaceExpression(this::setType, propertyValue));
+        }
+        return stringSetterMap;
+    }
+
+    private boolean setDimAnnotations(V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof List<?> list) {
+            dimAnnotations.clear();
+            list.stream()
+                    .filter(item -> item instanceof List<?>)
+                    .map(item -> (List<?>) item)
+                    .map(trees -> trees.stream()
+                            .filter(tree -> tree instanceof JTAnnotation)
+                            .map(tree -> ((JTAnnotation) tree).setParentTree(this))
+                            .toList())
+                    .forEach(dimAnnotations::add);
+            setActionChange();
+            return true;
+        }
+        return false;
+
     }
 
     public JTNewArray setType(JTExpression<?, ?> type) {
