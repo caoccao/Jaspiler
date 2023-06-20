@@ -16,17 +16,24 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.NewClassTree;
 import com.sun.source.tree.TreeVisitor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public final class JTNewClass
         extends JTPolyExpression<NewClassTree, JTNewClass>
         implements NewClassTree {
+    private static final String PROPERTY_ARGUMENTS = "arguments";
+    private static final String PROPERTY_CLASS_BODY = "classBody";
+    private static final String PROPERTY_ENCLOSING_EXPRESSION = "enclosingExpression";
+    private static final String PROPERTY_IDENTIFIER = "identifier";
+    private static final String PROPERTY_TYPE_ARGUMENTS = "typeArguments";
     private final List<JTExpression<?, ?>> arguments;
     private final List<JTExpression<?, ?>> typeArguments;
     private JTClassDecl classBody;
@@ -105,6 +112,37 @@ public final class JTNewClass
     @Override
     public List<JTExpression<?, ?>> getTypeArguments() {
         return typeArguments;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_ARGUMENTS, propertyName -> v8Runtime.toV8Value(getArguments()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_CLASS_BODY, propertyName -> v8Runtime.toV8Value(getClassBody()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_ENCLOSING_EXPRESSION, propertyName -> v8Runtime.toV8Value(getEnclosingExpression()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_IDENTIFIER, propertyName -> v8Runtime.toV8Value(getIdentifier()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_TYPE_ARGUMENTS, propertyName -> v8Runtime.toV8Value(getTypeArguments()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_ARGUMENTS,
+                    (propertyName, propertyValue) -> replaceExpressions(arguments, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_CLASS_BODY,
+                    (propertyName, propertyValue) -> replaceClassDecl(this::setClassBody, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_ENCLOSING_EXPRESSION,
+                    (propertyName, propertyValue) -> replaceExpression(this::setEnclosingExpression, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_IDENTIFIER,
+                    (propertyName, propertyValue) -> replaceExpression(this::setIdentifier, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_TYPE_ARGUMENTS,
+                    (propertyName, propertyValue) -> replaceExpressions(typeArguments, propertyValue));
+        }
+        return stringSetterMap;
     }
 
     public JTNewClass setClassBody(JTClassDecl classBody) {

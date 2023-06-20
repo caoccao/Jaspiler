@@ -282,9 +282,9 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitModifiers;
         private V8ValueFunction visitModule;
         private V8ValueFunction visitNewArray;
+        private V8ValueFunction visitNewClass;
         private V8ValueFunction visitPackage;
         private V8ValueFunction visitVariable;
-
         public Visitor() {
             properties = List.of(
                     "AnnotatedType",
@@ -326,6 +326,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "Modifiers",
                     "Module",
                     "NewArray",
+                    "NewClass",
                     "Package",
                     "Variable");
             propertyGetters = List.of(
@@ -368,6 +369,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitModifiers,
                     this::getVisitModule,
                     this::getVisitNewArray,
+                    this::getVisitNewClass,
                     this::getVisitPackage,
                     this::getVisitVariable);
             propertySetters = List.of(
@@ -410,6 +412,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitModifiers,
                     this::setVisitModule,
                     this::setVisitNewArray,
+                    this::setVisitNewClass,
                     this::setVisitPackage,
                     this::setVisitVariable);
             reset();
@@ -600,6 +603,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
             return visitNewArray;
         }
 
+        public V8ValueFunction getVisitNewClass() {
+            return visitNewClass;
+        }
+
         public V8ValueFunction getVisitPackage() {
             return visitPackage;
         }
@@ -775,6 +782,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitNewArray(V8ValueFunction visitNewArray) {
             this.visitNewArray = visitNewArray;
+        }
+
+        public void setVisitNewClass(V8ValueFunction visitNewClass) {
+            this.visitNewClass = visitNewClass;
         }
 
         public void setVisitPackage(V8ValueFunction visitPackage) {

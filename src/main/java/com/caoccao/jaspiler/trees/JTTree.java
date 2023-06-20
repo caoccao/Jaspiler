@@ -223,6 +223,14 @@ public abstract class JTTree<
         return false;
     }
 
+    protected boolean replaceClassDecl(Function<JTClassDecl, NewTree> setter, V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof JTClassDecl tree) {
+            setter.apply(tree);
+            return true;
+        }
+        return false;
+    }
+
     protected boolean replaceDirectives(List<JTDirective<?, ?>> list, V8Value v8Value) throws JavetException {
         if (v8Runtime.toObject(v8Value) instanceof List<?> trees) {
             list.clear();

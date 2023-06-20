@@ -398,6 +398,14 @@ interface JTNewArray extends JTExpression<JTNewArray> {
   type: JTExpression<?>;
 }
 
+interface JTNewClass extends JTPolyExpression<JTNewClass> {
+  arguments: JTExpression<?>[];
+  classBody: JTClassDecl;
+  enclosingExpression: JTExpression<?>;
+  identifier: JTExpression<?>;
+  typeArguments: JTExpression<?>[];
+}
+
 interface JTName {
   value: string;
 }
@@ -530,6 +538,7 @@ interface TransformOptionsPluginVisitor {
   Modifiers(node: JTModifiers): void;
   Module(node: JTModuleDecl): void;
   NewArray(node: JTNewArray): void;
+  NewClass(node: JTNewClass): void;
   Package(node: JTPackageDecl): void;
   Variable(node: JTVariableDecl): void;
 }
