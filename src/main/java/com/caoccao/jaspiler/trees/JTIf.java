@@ -16,16 +16,25 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.IfTree;
 import com.sun.source.tree.TreeVisitor;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 public final class JTIf
         extends JTStatement<IfTree, JTIf>
         implements IfTree {
+    private static final String PROPERTY_CONDITION = "condition";
+    private static final String PROPERTY_ELSE_STATEMENT = "elseStatement";
+    private static final String PROPERTY_THEN_STATEMENT = "thenStatement";
     private JTExpression<?, ?> condition;
     private JTStatement<?, ?> elseStatement;
     private JTStatement<?, ?> thenStatement;
@@ -84,6 +93,31 @@ public final class JTIf
     @Override
     public JTStatement<?, ?> getThenStatement() {
         return thenStatement;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_CONDITION, propertyName -> v8Runtime.toV8Value(getCondition()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_ELSE_STATEMENT, propertyName -> v8Runtime.toV8Value(getElseStatement()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_THEN_STATEMENT, propertyName -> v8Runtime.toV8Value(getThenStatement()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_CONDITION,
+                    (propertyName, propertyValue) -> replaceExpression(this::setCondition, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_ELSE_STATEMENT,
+                    (propertyName, propertyValue) -> replaceStatement(this::setElseStatement, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_THEN_STATEMENT,
+                    (propertyName, propertyValue) -> replaceStatement(this::setThenStatement, propertyValue));
+        }
+        return stringSetterMap;
     }
 
     public JTIf setCondition(JTExpression<?, ?> condition) {

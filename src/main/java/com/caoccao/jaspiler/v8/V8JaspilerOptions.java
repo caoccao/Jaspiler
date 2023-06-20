@@ -269,6 +269,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitForLoop;
         private V8ValueFunction visitGuardedPattern;
         private V8ValueFunction visitIdentifier;
+        private V8ValueFunction visitIf;
         private V8ValueFunction visitImport;
         private V8ValueFunction visitMemberSelect;
         private V8ValueFunction visitMethod;
@@ -301,8 +302,9 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "Exports",
                     "ExpressionStatement",
                     "ForLoop",
-                    "Identifier",
                     "GuardedPattern",
+                    "Identifier",
+                    "If",
                     "Import",
                     "MemberSelect",
                     "Method",
@@ -333,8 +335,9 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitExports,
                     this::getVisitExpressionStatement,
                     this::getVisitForLoop,
-                    this::getVisitIdentifier,
                     this::getVisitGuardedPattern,
+                    this::getVisitIdentifier,
+                    this::getVisitIf,
                     this::getVisitImport,
                     this::getVisitMemberSelect,
                     this::getVisitMethod,
@@ -365,8 +368,9 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitExports,
                     this::setVisitExpressionStatement,
                     this::setVisitForLoop,
-                    this::setVisitIdentifier,
                     this::setVisitGuardedPattern,
+                    this::setVisitIdentifier,
+                    this::setVisitIf,
                     this::setVisitImport,
                     this::setVisitMemberSelect,
                     this::setVisitMethod,
@@ -508,6 +512,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
             return visitIdentifier;
         }
 
+        public V8ValueFunction getVisitIf() {
+            return visitIf;
+        }
+
         public V8ValueFunction getVisitImport() {
             return visitImport;
         }
@@ -643,6 +651,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitIdentifier(V8ValueFunction visitIdentifier) {
             this.visitIdentifier = visitIdentifier;
+        }
+
+        public void setVisitIf(V8ValueFunction visitIf) {
+            this.visitIf = visitIf;
         }
 
         public void setVisitImport(V8ValueFunction visitImport) {

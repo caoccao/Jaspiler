@@ -304,6 +304,12 @@ interface JTIdent extends JTExpression<JTIdent> {
   name: JTName;
 }
 
+interface JTIf extends JTStatement<JTIf> {
+  condition: JTExpression<?>;
+  elseStatement: JTStatement<?>;
+  thenStatement: JTStatement<?>;
+}
+
 interface JTMethodDecl extends JTTree<JTMethodDecl> {
   body: JTBlock;
   defaultValue: JTExpression<?>;
@@ -446,6 +452,7 @@ interface TransformOptionsPluginVisitor {
   ForLoop(node: JTForLoop): void;
   GuardedPattern(node: JTGuardedPattern): void;
   Identifier(node: JTIdent): void;
+  If(node: JTIf): void;
   Import(node: JTImport): void;
   MemberSelect(node: JTFieldAccess): void;
   Method(node: JTMethodDecl): void;
