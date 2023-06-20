@@ -272,6 +272,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitIf;
         private V8ValueFunction visitImport;
         private V8ValueFunction visitInstanceOf;
+        private V8ValueFunction visitLabeledStatement;
         private V8ValueFunction visitMemberSelect;
         private V8ValueFunction visitMethod;
         private V8ValueFunction visitPackage;
@@ -308,6 +309,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "If",
                     "Import",
                     "InstanceOf",
+                    "LabeledStatement",
                     "MemberSelect",
                     "Method",
                     "Package",
@@ -342,6 +344,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitIf,
                     this::getVisitImport,
                     this::getVisitInstanceOf,
+                    this::getVisitLabeledStatement,
                     this::getVisitMemberSelect,
                     this::getVisitMethod,
                     this::getVisitPackage,
@@ -376,6 +379,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitIf,
                     this::setVisitImport,
                     this::setVisitInstanceOf,
+                    this::setVisitLabeledStatement,
                     this::setVisitMemberSelect,
                     this::setVisitMethod,
                     this::setVisitPackage,
@@ -528,6 +532,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
             return visitInstanceOf;
         }
 
+        public V8ValueFunction getVisitLabeledStatement() {
+            return visitLabeledStatement;
+        }
+
         public V8ValueFunction getVisitMemberSelect() {
             return visitMemberSelect;
         }
@@ -671,6 +679,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitInstanceOf(V8ValueFunction visitInstanceOf) {
             this.visitInstanceOf = visitInstanceOf;
+        }
+
+        public void setVisitLabeledStatement(V8ValueFunction visitLabeledStatement) {
+            this.visitLabeledStatement = visitLabeledStatement;
         }
 
         public void setVisitMemberSelect(V8ValueFunction visitMemberSelect) {

@@ -315,6 +315,11 @@ interface JTInstanceOf extends JTExpression<JTInstanceOf> {
   pattern: JTTree<?>;
 }
 
+interface JTLabeledStatement extends JTStatement<JTLabeledStatement> {
+  label: JTName;
+  statement: JTStatement<?>;
+}
+
 interface JTMethodDecl extends JTTree<JTMethodDecl> {
   body: JTBlock;
   defaultValue: JTExpression<?>;
@@ -460,6 +465,7 @@ interface TransformOptionsPluginVisitor {
   If(node: JTIf): void;
   Import(node: JTImport): void;
   InstanceOf(node: JTInstanceOf): void;
+  LabeledStatement(node: JTLabeledStatement): void;
   MemberSelect(node: JTFieldAccess): void;
   Method(node: JTMethodDecl): void;
   Package(node: JTPackageDecl): void;
