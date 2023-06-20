@@ -295,19 +295,24 @@ interface JTFieldAccess extends JTExpression<JTFieldAccess> {
   identifier: JTName;
 }
 
+interface JTIdent extends JTExpression<JTIdent> {
+  name: JTName;
+}
+
 interface JTImport extends JTTree<JTImport> {
   qualifiedIdentifier: JTTree<?>;
   staticImport: boolean;
-}
-
-interface JTIdent extends JTExpression<JTIdent> {
-  name: JTName;
 }
 
 interface JTIf extends JTStatement<JTIf> {
   condition: JTExpression<?>;
   elseStatement: JTStatement<?>;
   thenStatement: JTStatement<?>;
+}
+
+interface JTInstanceOf extends JTExpression<JTInstanceOf> {
+  expression: JTExpression<?>;
+  pattern: JTTree<?>;
 }
 
 interface JTMethodDecl extends JTTree<JTMethodDecl> {
@@ -454,6 +459,7 @@ interface TransformOptionsPluginVisitor {
   Identifier(node: JTIdent): void;
   If(node: JTIf): void;
   Import(node: JTImport): void;
+  InstanceOf(node: JTInstanceOf): void;
   MemberSelect(node: JTFieldAccess): void;
   Method(node: JTMethodDecl): void;
   Package(node: JTPackageDecl): void;
