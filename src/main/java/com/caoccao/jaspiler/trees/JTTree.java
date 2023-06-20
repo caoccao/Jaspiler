@@ -283,6 +283,14 @@ public abstract class JTTree<
         return false;
     }
 
+    protected boolean replaceLambda(Function<JTLambda, NewTree> setter, V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof JTLambda tree) {
+            setter.apply(tree);
+            return true;
+        }
+        return false;
+    }
+
     protected boolean replaceModifiers(Function<JTModifiers, NewTree> setter, V8Value v8Value) throws JavetException {
         if (v8Runtime.toObject(v8Value) instanceof JTModifiers tree) {
             setter.apply(tree);

@@ -16,17 +16,23 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
+import com.caoccao.javet.values.primitive.V8ValueString;
 import com.sun.source.tree.LambdaExpressionTree;
 import com.sun.source.tree.TreeVisitor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public final class JTLambda
         extends JTFunctionalExpression<LambdaExpressionTree, JTLambda>
         implements LambdaExpressionTree {
+    private static final String PROPERTY_BODY = "body";
+    private static final String PROPERTY_BODY_KIND = "bodyKind";
+    private static final String PROPERTY_PARAMETERS = "parameters";
     private final List<JTVariableDecl> parameters;
     private JTTree<?, ?> body;
     private BodyKind bodyKind;
@@ -87,12 +93,45 @@ public final class JTLambda
         return parameters;
     }
 
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_BODY, propertyName -> v8Runtime.toV8Value(getBody()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_BODY_KIND, propertyName -> v8Runtime.createV8ValueString(getBodyKind().name()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_PARAMETERS, propertyName -> v8Runtime.toV8Value(getParameters()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_BODY,
+                    (propertyName, propertyValue) -> replaceLambda(this::setBody, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_BODY_KIND,
+                    (propertyName, propertyValue) -> setBodyKind(propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_PARAMETERS,
+                    (propertyName, propertyValue) -> replaceVariableDecls(parameters, propertyValue));
+        }
+        return stringSetterMap;
+    }
+
     public JTLambda setBody(JTTree<?, ?> body) {
         if (this.body == body) {
             return this;
         }
         this.body = Objects.requireNonNull(body).setParentTree(this);
         return setActionChange();
+    }
+
+    private boolean setBodyKind(V8Value v8Value) {
+        if (v8Value instanceof V8ValueString v8ValueString) {
+            setBodyKind(BodyKind.valueOf(v8ValueString.getValue()));
+            return true;
+        }
+        return false;
     }
 
     public JTLambda setBodyKind(BodyKind bodyKind) {

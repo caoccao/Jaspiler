@@ -122,7 +122,7 @@ public final class JTAssignOp
         return setActionChange();
     }
 
-    public boolean setKind(V8Value v8Value) {
+    private boolean setKind(V8Value v8Value) {
         if (v8Value instanceof V8ValueString v8ValueString) {
             setKind(Kind.valueOf(v8ValueString.getValue()));
             return true;

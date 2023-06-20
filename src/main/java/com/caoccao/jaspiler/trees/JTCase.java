@@ -165,7 +165,7 @@ public final class JTCase
         return setActionChange();
     }
 
-    public boolean setCaseKind(V8Value v8Value) {
+    private boolean setCaseKind(V8Value v8Value) {
         if (v8Value instanceof V8ValueString v8ValueString) {
             setCaseKind(CaseKind.valueOf(v8ValueString.getValue()));
             return true;

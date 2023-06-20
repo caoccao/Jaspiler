@@ -25,6 +25,11 @@
 
 /// <reference no-default-lib="true"/>
 
+enum JTBodyKind {
+  'EXPRESSION',
+  'STATEMENT',
+}
+
 enum JTCaseKind {
   'STATEMENT',
   'RULE',
@@ -285,6 +290,12 @@ interface JTForLoop extends JTStatement<JTForLoop> {
   update: JTExpressionStatement[];
 }
 
+interface JTFunctionalExpression<Tree extends JTFunctionalExpression<Tree>> extends JTPolyExpression<JTFunctionalExpression> {
+  body: JTTree<?>;
+  bodyKind: JTBodyKind;
+  parameters: JTVariableDecl[];
+}
+
 interface JTGuardedPattern extends JTPattern<JTGuardedPattern> {
   expression: JTExpression<?>;
   pattern: JTPattern<?>;
@@ -318,6 +329,12 @@ interface JTInstanceOf extends JTExpression<JTInstanceOf> {
 interface JTLabeledStatement extends JTStatement<JTLabeledStatement> {
   label: JTName;
   statement: JTStatement<?>;
+}
+
+interface JTLambda extends JTFunctionalExpression<JTLambda> {
+  body: JTTree<?>;
+  bodyKind: JTBodyKind;
+  parameters: JTVariableDecl[];
 }
 
 interface JTMethodDecl extends JTTree<JTMethodDecl> {
@@ -466,6 +483,7 @@ interface TransformOptionsPluginVisitor {
   Import(node: JTImport): void;
   InstanceOf(node: JTInstanceOf): void;
   LabeledStatement(node: JTLabeledStatement): void;
+  LambdaExpression(node: JTLambda): void;
   MemberSelect(node: JTFieldAccess): void;
   Method(node: JTMethodDecl): void;
   Package(node: JTPackageDecl): void;

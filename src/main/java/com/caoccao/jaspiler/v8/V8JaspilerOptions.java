@@ -273,11 +273,11 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitImport;
         private V8ValueFunction visitInstanceOf;
         private V8ValueFunction visitLabeledStatement;
+        private V8ValueFunction visitLambdaExpression;
         private V8ValueFunction visitMemberSelect;
         private V8ValueFunction visitMethod;
         private V8ValueFunction visitPackage;
         private V8ValueFunction visitVariable;
-
         public Visitor() {
             properties = List.of(
                     "AnnotatedType",
@@ -310,6 +310,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "Import",
                     "InstanceOf",
                     "LabeledStatement",
+                    "LambdaExpression",
                     "MemberSelect",
                     "Method",
                     "Package",
@@ -345,6 +346,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitImport,
                     this::getVisitInstanceOf,
                     this::getVisitLabeledStatement,
+                    this::getVisitLambdaExpression,
                     this::getVisitMemberSelect,
                     this::getVisitMethod,
                     this::getVisitPackage,
@@ -380,6 +382,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitImport,
                     this::setVisitInstanceOf,
                     this::setVisitLabeledStatement,
+                    this::setVisitLambdaExpression,
                     this::setVisitMemberSelect,
                     this::setVisitMethod,
                     this::setVisitPackage,
@@ -536,6 +539,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
             return visitLabeledStatement;
         }
 
+        public V8ValueFunction getVisitLambdaExpression() {
+            return visitLambdaExpression;
+        }
+
         public V8ValueFunction getVisitMemberSelect() {
             return visitMemberSelect;
         }
@@ -683,6 +690,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitLabeledStatement(V8ValueFunction visitLabeledStatement) {
             this.visitLabeledStatement = visitLabeledStatement;
+        }
+
+        public void setVisitLambdaExpression(V8ValueFunction visitLambdaExpression) {
+            this.visitLambdaExpression = visitLambdaExpression;
         }
 
         public void setVisitMemberSelect(V8ValueFunction visitMemberSelect) {

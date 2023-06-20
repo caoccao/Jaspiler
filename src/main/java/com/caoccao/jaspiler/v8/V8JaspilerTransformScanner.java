@@ -258,6 +258,12 @@ public class V8JaspilerTransformScanner
     }
 
     @Override
+    public V8JaspilerTransformScanner visitLambdaExpression(LambdaExpressionTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitLambdaExpression());
+        return super.visitLambdaExpression(node, jaspilerTransformContext);
+    }
+
+    @Override
     public V8JaspilerTransformScanner visitMemberSelect(MemberSelectTree node, JaspilerTransformContext jaspilerTransformContext) {
         forEachPlugin(node, plugin -> plugin.getVisitor().getVisitMemberSelect());
         return super.visitMemberSelect(node, jaspilerTransformContext);
