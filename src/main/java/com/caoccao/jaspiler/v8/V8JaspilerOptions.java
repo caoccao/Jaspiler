@@ -283,6 +283,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitModule;
         private V8ValueFunction visitNewArray;
         private V8ValueFunction visitNewClass;
+        private V8ValueFunction visitOpens;
         private V8ValueFunction visitPackage;
         private V8ValueFunction visitVariable;
         public Visitor() {
@@ -327,6 +328,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "Module",
                     "NewArray",
                     "NewClass",
+                    "Opens",
                     "Package",
                     "Variable");
             propertyGetters = List.of(
@@ -370,6 +372,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitModule,
                     this::getVisitNewArray,
                     this::getVisitNewClass,
+                    this::getVisitOpens,
                     this::getVisitPackage,
                     this::getVisitVariable);
             propertySetters = List.of(
@@ -413,6 +416,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitModule,
                     this::setVisitNewArray,
                     this::setVisitNewClass,
+                    this::setVisitOpens,
                     this::setVisitPackage,
                     this::setVisitVariable);
             reset();
@@ -607,6 +611,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
             return visitNewClass;
         }
 
+        public V8ValueFunction getVisitOpens() {
+            return visitOpens;
+        }
+
         public V8ValueFunction getVisitPackage() {
             return visitPackage;
         }
@@ -786,6 +794,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitNewClass(V8ValueFunction visitNewClass) {
             this.visitNewClass = visitNewClass;
+        }
+
+        public void setVisitOpens(V8ValueFunction visitOpens) {
+            this.visitOpens = visitOpens;
         }
 
         public void setVisitPackage(V8ValueFunction visitPackage) {

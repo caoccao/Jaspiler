@@ -406,6 +406,11 @@ interface JTNewClass extends JTPolyExpression<JTNewClass> {
   typeArguments: JTExpression<?>[];
 }
 
+interface JTOpens extends JTDirective<JTOpens> {
+  moduleNames: JTExpression<?>[];
+  packageName: JTExpression<?>;
+}
+
 interface JTName {
   value: string;
 }
@@ -539,6 +544,7 @@ interface TransformOptionsPluginVisitor {
   Module(node: JTModuleDecl): void;
   NewArray(node: JTNewArray): void;
   NewClass(node: JTNewClass): void;
+  Opens(node: JTOpens): void;
   Package(node: JTPackageDecl): void;
   Variable(node: JTVariableDecl): void;
 }

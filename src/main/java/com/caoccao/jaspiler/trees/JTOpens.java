@@ -16,17 +16,21 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.OpensTree;
 import com.sun.source.tree.TreeVisitor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public final class JTOpens
         extends JTDirective<OpensTree, JTOpens>
         implements OpensTree {
+    private static final String PROPERTY_MODULE_NAMES = "moduleNames";
+    private static final String PROPERTY_PACKAGE_NAME = "packageName";
     private final List<JTExpression<?, ?>> moduleNames;
     private JTExpression<?, ?> packageName;
 
@@ -77,6 +81,28 @@ public final class JTOpens
     @Override
     public JTExpression<?, ?> getPackageName() {
         return packageName;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_MODULE_NAMES, propertyName -> v8Runtime.toV8Value(getModuleNames()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_PACKAGE_NAME, propertyName -> v8Runtime.toV8Value(getPackageName()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_MODULE_NAMES,
+                    (propertyName, propertyValue) -> replaceExpressions(moduleNames, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_PACKAGE_NAME,
+                    (propertyName, propertyValue) -> replaceExpression(this::setPackageName, propertyValue));
+        }
+        return stringSetterMap;
     }
 
     public JTOpens setPackageName(JTExpression<?, ?> packageName) {
