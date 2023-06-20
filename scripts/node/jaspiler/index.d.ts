@@ -153,6 +153,11 @@ enum JTKind {
   'YIELD', // YieldTree
 }
 
+enum JTReferenceMode {
+  INVOKE, // Method references
+  NEW, // Constructor references
+}
+
 interface JTAnnotatedType extends JTExpression<JTAnnotatedType> {
   annotations: JTAnnotation[];
   underlyingType: JTExpression<?>;
@@ -349,6 +354,13 @@ interface JTLiteral extends JTExpression<JTLiteral> {
   value: number | string | boolean | JTFloat | JTCharacter | null;
 }
 
+interface JTMemberReference extends JTFunctionalExpression<JTMemberReference> {
+  mode: JTReferenceMode;
+  name: JTName;
+  qualifiedExpression: JTExpression<?>;
+  typeArguments: JTExpression<?>[];
+}
+
 interface JTMethodDecl extends JTTree<JTMethodDecl> {
   body: JTBlock;
   defaultValue: JTExpression<?>;
@@ -497,6 +509,7 @@ interface TransformOptionsPluginVisitor {
   LabeledStatement(node: JTLabeledStatement): void;
   LambdaExpression(node: JTLambda): void;
   Literal(node: JTLiteral): void;
+  MemberReference(node: JTMemberReference): void;
   MemberSelect(node: JTFieldAccess): void;
   Method(node: JTMethodDecl): void;
   Package(node: JTPackageDecl): void;

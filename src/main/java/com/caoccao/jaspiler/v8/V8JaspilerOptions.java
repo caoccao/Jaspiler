@@ -275,6 +275,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitLabeledStatement;
         private V8ValueFunction visitLambdaExpression;
         private V8ValueFunction visitLiteral;
+        private V8ValueFunction visitMemberReference;
         private V8ValueFunction visitMemberSelect;
         private V8ValueFunction visitMethod;
         private V8ValueFunction visitPackage;
@@ -314,6 +315,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "LabeledStatement",
                     "LambdaExpression",
                     "Literal",
+                    "MemberReference",
                     "MemberSelect",
                     "Method",
                     "Package",
@@ -351,6 +353,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitLabeledStatement,
                     this::getVisitLambdaExpression,
                     this::getVisitLiteral,
+                    this::getVisitMemberReference,
                     this::getVisitMemberSelect,
                     this::getVisitMethod,
                     this::getVisitPackage,
@@ -388,6 +391,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitLabeledStatement,
                     this::setVisitLambdaExpression,
                     this::setVisitLiteral,
+                    this::setVisitMemberReference,
                     this::setVisitMemberSelect,
                     this::setVisitMethod,
                     this::setVisitPackage,
@@ -552,6 +556,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
             return visitLiteral;
         }
 
+        public V8ValueFunction getVisitMemberReference() {
+            return visitMemberReference;
+        }
+
         public V8ValueFunction getVisitMemberSelect() {
             return visitMemberSelect;
         }
@@ -707,6 +715,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitLiteral(V8ValueFunction visitLiteral) {
             this.visitLiteral = visitLiteral;
+        }
+
+        public void setVisitMemberReference(V8ValueFunction visitMemberReference) {
+            this.visitMemberReference = visitMemberReference;
         }
 
         public void setVisitMemberSelect(V8ValueFunction visitMemberSelect) {

@@ -16,17 +16,24 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
+import com.caoccao.javet.values.primitive.V8ValueString;
 import com.sun.source.tree.MemberReferenceTree;
 import com.sun.source.tree.TreeVisitor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public final class JTMemberReference
         extends JTFunctionalExpression<MemberReferenceTree, JTMemberReference>
         implements MemberReferenceTree {
+    private static final String PROPERTY_MODE = "mode";
+    private static final String PROPERTY_NAME = "name";
+    private static final String PROPERTY_QUALIFIED_EXPRESSION = "qualifiedExpression";
+    private static final String PROPERTY_TYPE_ARGUMENTS = "typeArguments";
     private final List<JTExpression<?, ?>> typeArguments;
     private ReferenceMode mode;
     private JTName name;
@@ -93,6 +100,42 @@ public final class JTMemberReference
     @Override
     public List<JTExpression<?, ?>> getTypeArguments() {
         return typeArguments;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_MODE, propertyName -> v8Runtime.createV8ValueString(getMode().name()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_NAME, propertyName -> v8Runtime.toV8Value(getName()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_QUALIFIED_EXPRESSION, propertyName -> v8Runtime.toV8Value(getQualifierExpression()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_TYPE_ARGUMENTS, propertyName -> v8Runtime.toV8Value(getTypeArguments()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_MODE,
+                    (propertyName, propertyValue) -> setMode(propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_NAME,
+                    (propertyName, propertyValue) -> replaceName(this::setName, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_QUALIFIED_EXPRESSION,
+                    (propertyName, propertyValue) -> replaceExpression(this::setQualifiedExpression, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_TYPE_ARGUMENTS,
+                    (propertyName, propertyValue) -> replaceExpressions(typeArguments, propertyValue));
+        }
+        return stringSetterMap;
+    }
+
+    private boolean setMode(V8Value v8Value) {
+        if (v8Value instanceof V8ValueString v8ValueString) {
+            setMode(ReferenceMode.valueOf(v8ValueString.getValue()));
+            return true;
+        }
+        return false;
     }
 
     public JTMemberReference setMode(ReferenceMode mode) {

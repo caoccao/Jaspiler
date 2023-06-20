@@ -19,7 +19,7 @@
 const assert = require('chai').assert;
 const path = require('path');
 const process = require('process');
-const { JTBodyKind, JTCaseKind, JTKind } = require('./jaspiler/jaspiler');
+const { JTKind } = require('./jaspiler/jaspiler');
 
 const workingDirectory = process.cwd();
 const pathMockAllInOnePublicClass = path.join(
