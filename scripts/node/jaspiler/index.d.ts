@@ -373,6 +373,12 @@ interface JTMethodDecl extends JTTree<JTMethodDecl> {
   typeParameters: JTTypeParameter[];
 }
 
+interface JTMethodInvocation extends JTPolyExpression<JTMethodInvocation> {
+  arguments: JTExpression<?>[];
+  methodSelect: JTExpression<?>;
+  typeArguments: JTExpression[];
+}
+
 interface JTModifiers extends JTTree<JTModifiers> {
   annotations: JTAnnotation[];
   flags: string[];
@@ -512,6 +518,7 @@ interface TransformOptionsPluginVisitor {
   MemberReference(node: JTMemberReference): void;
   MemberSelect(node: JTFieldAccess): void;
   Method(node: JTMethodDecl): void;
+  MethodInvocation(node: JTMethodInvocation): void;
   Package(node: JTPackageDecl): void;
   Variable(node: JTVariableDecl): void;
 }

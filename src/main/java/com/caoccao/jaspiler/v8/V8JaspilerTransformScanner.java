@@ -288,6 +288,12 @@ public class V8JaspilerTransformScanner
     }
 
     @Override
+    public V8JaspilerTransformScanner visitMethodInvocation(MethodInvocationTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitMethodInvocation());
+        return super.visitMethodInvocation(node, jaspilerTransformContext);
+    }
+
+    @Override
     public V8JaspilerTransformScanner visitPackage(PackageTree node, JaspilerTransformContext jaspilerTransformContext) {
         forEachPlugin(node, plugin -> plugin.getVisitor().getVisitPackage());
         return super.visitPackage(node, jaspilerTransformContext);

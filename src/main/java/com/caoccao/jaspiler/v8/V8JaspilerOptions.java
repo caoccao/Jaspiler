@@ -278,6 +278,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitMemberReference;
         private V8ValueFunction visitMemberSelect;
         private V8ValueFunction visitMethod;
+        private V8ValueFunction visitMethodInvocation;
         private V8ValueFunction visitPackage;
         private V8ValueFunction visitVariable;
 
@@ -318,6 +319,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "MemberReference",
                     "MemberSelect",
                     "Method",
+                    "MethodInvocation",
                     "Package",
                     "Variable");
             propertyGetters = List.of(
@@ -356,6 +358,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitMemberReference,
                     this::getVisitMemberSelect,
                     this::getVisitMethod,
+                    this::getVisitMethodInvocation,
                     this::getVisitPackage,
                     this::getVisitVariable);
             propertySetters = List.of(
@@ -394,6 +397,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitMemberReference,
                     this::setVisitMemberSelect,
                     this::setVisitMethod,
+                    this::setVisitMethodInvocation,
                     this::setVisitPackage,
                     this::setVisitVariable);
             reset();
@@ -568,6 +572,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
             return visitMethod;
         }
 
+        public V8ValueFunction getVisitMethodInvocation() {
+            return visitMethodInvocation;
+        }
+
         public V8ValueFunction getVisitPackage() {
             return visitPackage;
         }
@@ -727,6 +735,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitMethod(V8ValueFunction visitMethod) {
             this.visitMethod = visitMethod;
+        }
+
+        public void setVisitMethodInvocation(V8ValueFunction visitMethodInvocation) {
+            this.visitMethodInvocation = visitMethodInvocation;
         }
 
         public void setVisitPackage(V8ValueFunction visitPackage) {
