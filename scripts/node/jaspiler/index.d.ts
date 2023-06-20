@@ -519,6 +519,7 @@ interface TransformOptionsPluginVisitor {
   MemberSelect(node: JTFieldAccess): void;
   Method(node: JTMethodDecl): void;
   MethodInvocation(node: JTMethodInvocation): void;
+  Modifiers(node: JTModifiers): void;
   Package(node: JTPackageDecl): void;
   Variable(node: JTVariableDecl): void;
 }
