@@ -16,16 +16,23 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.TreeVisitor;
 import com.sun.source.tree.UnionTypeTree;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public final class JTTypeUnion
         extends JTExpression<UnionTypeTree, JTTypeUnion>
         implements UnionTypeTree {
+    private static final String PROPERTY_TYPE_ALTERNATIVES = "typeAlternatives";
     private final List<JTExpression<?, ?>> typeAlternatives;
 
     public JTTypeUnion() {
@@ -67,5 +74,24 @@ public final class JTTypeUnion
     @Override
     public List<JTExpression<?, ?>> getTypeAlternatives() {
         return typeAlternatives;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_TYPE_ALTERNATIVES, propertyName -> v8Runtime.toV8Value(getTypeAlternatives()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_TYPE_ALTERNATIVES,
+                    (propertyName, propertyValue) -> replaceExpressions(typeAlternatives, propertyValue));
+        }
+        return stringSetterMap;
     }
 }

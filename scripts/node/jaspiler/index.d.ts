@@ -547,6 +547,10 @@ interface JTTypeParameter extends JTTree<JTTypeParameter> {
   name: JTName;
 }
 
+interface JTTypeUnion extends JTExpression<JTTypeUnion> {
+  typeAlternatives: JTExpression<?>;
+}
+
 interface JTVariableDecl extends JTStatement<JTVariableDecl> {
   initializer: JTExpression<?>;
   modifiers: JTModifier;
@@ -657,6 +661,7 @@ interface TransformOptionsPluginVisitor {
   Try(node: JTTry): void;
   TypeCast(node: JTTypeCast): void;
   TypeParameter(node: JTTypeParameter): void;
+  UnionType(node: JTTypeUnion): void;
   Variable(node: JTVariableDecl): void;
 }
 
