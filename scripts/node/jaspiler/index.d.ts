@@ -574,6 +574,11 @@ interface JTWhileLoop extends JTStatement<JTWhileLoop> {
   statement: JTStatement<?>;
 }
 
+interface JTWildcard extends JTExpression<JTWildcard> {
+  bound: JTTree<?>;
+  kind: JTKind.EXTENDS_WILDCARD | JTKind.SUPER_WILDCARD | JTKind.UNBOUNDED_WILDCARD;
+}
+
 interface TransformOptions {
   /**
    * Include the AST in the returned object
@@ -681,6 +686,7 @@ interface TransformOptionsPluginVisitor {
   Uses(node: JTUses): void;
   Variable(node: JTVariableDecl): void;
   WhileLoop(node: JTWhileLoop): void;
+  Wildcard(node: JTWildcard): void;
 }
 
 interface TransformOptionStyle {

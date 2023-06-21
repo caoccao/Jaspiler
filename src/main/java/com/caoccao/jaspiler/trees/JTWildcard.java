@@ -16,17 +16,25 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.exceptions.JaspilerNotSupportedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.TreeVisitor;
 import com.sun.source.tree.WildcardTree;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 public final class JTWildcard
         extends JTExpression<WildcardTree, JTWildcard>
         implements WildcardTree {
+    private static final String PROPERTY_BOUND = "bound";
+    private static final String PROPERTY_KIND = "kind";
     private JTTree<?, ?> bound;
     private Kind kind;
 
@@ -70,6 +78,27 @@ public final class JTWildcard
     @Override
     public Kind getKind() {
         return kind;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_BOUND, propertyName -> v8Runtime.toV8Value(getBound()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_BOUND,
+                    (propertyName, propertyValue) -> replaceTree(this::setBound, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_KIND,
+                    (propertyName, propertyValue) -> replaceKind(this::setKind, propertyValue));
+        }
+        return stringSetterMap;
     }
 
     public JTWildcard setBound(JTTree<?, ?> bound) {
