@@ -22,7 +22,6 @@ import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
-import com.caoccao.javet.values.primitive.V8ValueString;
 import com.sun.source.tree.CompoundAssignmentTree;
 import com.sun.source.tree.TreeVisitor;
 
@@ -107,7 +106,7 @@ public final class JTAssignOp
             V8Register.putStringSetter(stringSetterMap, PROPERTY_EXPRESSION,
                     (propertyName, propertyValue) -> replaceExpression(this::setExpression, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_KIND,
-                    (propertyName, propertyValue) -> setKind(propertyValue));
+                    (propertyName, propertyValue) -> replaceKind(this::setKind, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_VARIABLE,
                     (propertyName, propertyValue) -> replaceExpression(this::setVariable, propertyValue));
         }
@@ -120,14 +119,6 @@ public final class JTAssignOp
         }
         this.expression = Objects.requireNonNull(expression).setParentTree(this);
         return setActionChange();
-    }
-
-    private boolean setKind(V8Value v8Value) {
-        if (v8Value instanceof V8ValueString v8ValueString) {
-            setKind(Kind.valueOf(v8ValueString.getValue()));
-            return true;
-        }
-        return false;
     }
 
     public JTAssignOp setKind(Kind kind) {

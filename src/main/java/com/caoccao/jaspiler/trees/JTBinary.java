@@ -22,7 +22,6 @@ import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
-import com.caoccao.javet.values.primitive.V8ValueString;
 import com.sun.source.tree.BinaryTree;
 import com.sun.source.tree.TreeVisitor;
 
@@ -108,19 +107,11 @@ public final class JTBinary
             V8Register.putStringSetter(stringSetterMap, PROPERTY_LEFT_OPERAND,
                     (propertyName, propertyValue) -> replaceExpression(this::setLeftOperand, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_KIND,
-                    (propertyName, propertyValue) -> setKind(propertyValue));
+                    (propertyName, propertyValue) -> replaceKind(this::setKind, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_RIGHT_OPERAND,
                     (propertyName, propertyValue) -> replaceExpression(this::setRightOperand, propertyValue));
         }
         return stringSetterMap;
-    }
-
-    private boolean setKind(V8Value v8Value) {
-        if (v8Value instanceof V8ValueString v8ValueString) {
-            setKind(Kind.valueOf(v8ValueString.getValue()));
-            return true;
-        }
-        return false;
     }
 
     public JTBinary setKind(Kind kind) {

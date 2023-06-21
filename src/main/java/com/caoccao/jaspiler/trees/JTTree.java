@@ -327,6 +327,14 @@ public abstract class JTTree<
         return false;
     }
 
+    protected boolean replaceKind(Function<Kind, NewTree> setter, V8Value v8Value) {
+        if (v8Value instanceof V8ValueString v8ValueString) {
+            setter.apply(Kind.valueOf(v8ValueString.getValue()));
+            return true;
+        }
+        return false;
+    }
+
     protected boolean replaceLambda(Function<JTLambda, NewTree> setter, V8Value v8Value) throws JavetException {
         if (v8Runtime.toObject(v8Value) instanceof JTLambda tree) {
             setter.apply(tree);

@@ -301,6 +301,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitTry;
         private V8ValueFunction visitTypeCast;
         private V8ValueFunction visitTypeParameter;
+        private V8ValueFunction visitUnary;
         private V8ValueFunction visitUnionType;
         private V8ValueFunction visitVariable;
 
@@ -364,6 +365,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "Try",
                     "TypeCast",
                     "TypeParameter",
+                    "Unary",
                     "UnionType",
                     "Variable");
             propertyGetters = List.of(
@@ -425,6 +427,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitTry,
                     this::getVisitTypeCast,
                     this::getVisitTypeParameter,
+                    this::getVisitUnary,
                     this::getVisitUnionType,
                     this::getVisitVariable);
             propertySetters = List.of(
@@ -486,6 +489,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitTry,
                     this::setVisitTypeCast,
                     this::setVisitTypeParameter,
+                    this::setVisitUnary,
                     this::setVisitUnionType,
                     this::setVisitVariable);
             reset();
@@ -752,6 +756,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
             return visitTypeParameter;
         }
 
+        public V8ValueFunction getVisitUnary() {
+            return visitUnary;
+        }
+
         public V8ValueFunction getVisitUnionType() {
             return visitUnionType;
         }
@@ -1003,6 +1011,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitTypeParameter(V8ValueFunction visitTypeParameter) {
             this.visitTypeParameter = visitTypeParameter;
+        }
+
+        public void setVisitUnary(V8ValueFunction visitUnary) {
+            this.visitUnary = visitUnary;
         }
 
         public void setVisitUnionType(V8ValueFunction visitUnionType) {

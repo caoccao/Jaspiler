@@ -214,12 +214,12 @@ interface JTAssign extends JTExpression<JTAssign> {
 
 interface JTAssignOp extends JTOperatorExpression<JTAssignOp> {
   expression: JTExpression<?>;
-  kind: JTKind;
+  kind: JTKind.AND_ASSIGNMENT | JTKind.DIVIDE_ASSIGNMENT | JTKind.LEFT_SHIFT_ASSIGNMENT | JTKind.MINUS_ASSIGNMENT | JTKind.MULTIPLY_ASSIGNMENT | JTKind.OR_ASSIGNMENT | JTKind.PLUS_ASSIGNMENT | JTKind.REMAINDER_ASSIGNMENT | JTKind.RIGHT_SHIFT_ASSIGNMENT | JTKind.UNSIGNED_RIGHT_SHIFT_ASSIGNMENT | JTKind.XOR_ASSIGNMENT;
   variable: JTExpression<?>;
 }
 
 interface JTBinary extends JTOperatorExpression<JTBinary> {
-  kind: JTKind;
+  kind: JTKind.AND | JTKind.CONDITIONAL_AND | JTKind.CONDITIONAL_OR | JTKind.DIVIDE | JTKind.EQUAL_TO | JTKind.GREATER_THAN | JTKind.GREATER_THAN_EQUAL | JTKind.LEFT_SHIFT | JTKind.LESS_THAN | JTKind.LESS_THAN_EQUAL | JTKind.MINUS | JTKind.MULTIPLY | JTKind.NOT_EQUAL_TO | JTKind.OR | JTKind.PLUS | JTKind.REMAINDER | JTKind.RIGHT_SHIFT | JTKind.UNSIGNED_RIGHT_SHIFT | JTKind.XOR;
   leftOperand: JTExpression<?>;
   rightOperand: JTExpression<?>;
 }
@@ -259,6 +259,7 @@ interface JTCharacter {
 interface JTClassDecl extends JTStatement<JTClassDecl> {
   extendsClause: JTExpression<?>;
   implementsClauses: JTExpression<?>[];
+  kind: JTKind.ANNOTATED_TYPE | JTKind.CLASS | JTKind.ENUM | JTKind.INTERFACE | JTKind.RECORD;
   members: JTTree<?>[];
   modifiers: JTModifiers;
   permitsClauses: JTExpression<?>[];
@@ -551,6 +552,11 @@ interface JTTypeUnion extends JTExpression<JTTypeUnion> {
   typeAlternatives: JTExpression<?>;
 }
 
+interface JTUnary extends JTOperatorExpression<JTUnary> {
+  expression: JTExpression<?>;
+  kind: JTKind.BITWISE_COMPLEMENT | JTKind.LOGICAL_COMPLEMENT | JTKind.POSTFIX_DECREMENT | JTKind.POSTFIX_INCREMENT | JTKind.PREFIX_DECREMENT | JTKind.PREFIX_INCREMENT | JTKind.UNARY_MINUS | JTKind.UNARY_PLUS;
+}
+
 interface JTVariableDecl extends JTStatement<JTVariableDecl> {
   initializer: JTExpression<?>;
   modifiers: JTModifier;
@@ -661,6 +667,7 @@ interface TransformOptionsPluginVisitor {
   Try(node: JTTry): void;
   TypeCast(node: JTTypeCast): void;
   TypeParameter(node: JTTypeParameter): void;
+  Unary(node: JTUnary): void;
   UnionType(node: JTTypeUnion): void;
   Variable(node: JTVariableDecl): void;
 }

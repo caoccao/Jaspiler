@@ -35,6 +35,7 @@ public final class JTClassDecl
         implements ClassTree {
     private static final String PROPERTY_EXTENDS_CLAUSE = "extendsClause";
     private static final String PROPERTY_IMPLEMENTS_CLAUSES = "implementsClauses";
+    private static final String PROPERTY_KIND = "kind";
     private static final String PROPERTY_MEMBERS = "members";
     private static final String PROPERTY_MODIFIERS = "modifiers";
     private static final String PROPERTY_PERMITS_CLAUSES = "permitsClauses";
@@ -168,6 +169,8 @@ public final class JTClassDecl
                     (propertyName, propertyValue) -> replaceExpression(this::setExtendsClause, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_IMPLEMENTS_CLAUSES,
                     (propertyName, propertyValue) -> replaceExpressions(implementsClauses, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_KIND,
+                    (propertyName, propertyValue) -> replaceKind(this::setKind, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_MEMBERS,
                     (propertyName, propertyValue) -> replaceTrees(members, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_MODIFIERS,
