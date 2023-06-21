@@ -31,7 +31,7 @@ public final class JTSwitch
         implements SwitchTree {
     private static final String PROPERTY_CASES = "cases";
     private static final String PROPERTY_EXPRESSION = "expression";
-    private final List<JTCase> caseStatements;
+    private final List<JTCase> cases;
     private JTExpression<?, ?> expression;
 
     public JTSwitch() {
@@ -41,7 +41,7 @@ public final class JTSwitch
 
     JTSwitch(SwitchTree switchTree, JTTree<?, ?> parentTree) {
         super(switchTree, parentTree);
-        caseStatements = new ArrayList<>();
+        cases = new ArrayList<>();
         expression = null;
     }
 
@@ -55,7 +55,7 @@ public final class JTSwitch
         super.analyze();
         expression = JTTreeFactory.create(getOriginalTree().getExpression(), this);
         JTTreeFactory.createAndAdd(
-                getOriginalTree().getCases(), this, JTCase::new, caseStatements::add);
+                getOriginalTree().getCases(), this, JTCase::new, cases::add);
         return this;
     }
 
@@ -63,14 +63,14 @@ public final class JTSwitch
     List<JTTree<?, ?>> getAllNodes() {
         var nodes = super.getAllNodes();
         Optional.ofNullable(expression).ifPresent(nodes::add);
-        caseStatements.stream().filter(Objects::nonNull).forEach(nodes::add);
+        cases.stream().filter(Objects::nonNull).forEach(nodes::add);
         nodes.forEach(node -> node.setParentTree(this));
         return nodes;
     }
 
     @Override
     public List<JTCase> getCases() {
-        return caseStatements;
+        return cases;
     }
 
     @Override
@@ -98,7 +98,7 @@ public final class JTSwitch
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
             V8Register.putStringSetter(stringSetterMap, PROPERTY_CASES,
-                    (propertyName, propertyValue) -> replaceCases(caseStatements, propertyValue));
+                    (propertyName, propertyValue) -> replaceCases(cases, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_EXPRESSION,
                     (propertyName, propertyValue) -> replaceExpression(this::setExpression, propertyValue));
         }
