@@ -16,16 +16,24 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.TreeVisitor;
 import com.sun.source.tree.TypeCastTree;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 public final class JTTypeCast
         extends JTExpression<TypeCastTree, JTTypeCast>
         implements TypeCastTree {
+    private static final String PROPERTY_EXPRESSION = "expression";
+    private static final String PROPERTY_TYPE = "type";
     private JTExpression<?, ?> expression;
     private JTTree<?, ?> type;
 
@@ -75,6 +83,28 @@ public final class JTTypeCast
     @Override
     public JTTree<?, ?> getType() {
         return type;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_EXPRESSION, propertyName -> v8Runtime.toV8Value(getExpression()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_TYPE, propertyName -> v8Runtime.toV8Value(getType()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_EXPRESSION,
+                    (propertyName, propertyValue) -> replaceExpression(this::setExpression, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_TYPE,
+                    (propertyName, propertyValue) -> replaceTree(this::setType, propertyValue));
+        }
+        return stringSetterMap;
     }
 
     public JTTypeCast setExpression(JTExpression<?, ?> expression) {

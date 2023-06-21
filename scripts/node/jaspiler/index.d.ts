@@ -532,6 +532,11 @@ interface JTTypeApply extends JTExpression<JTTypeApply> {
   typeArguments: JTExpression<?>[];
 }
 
+interface JTTypeCast extends JTExpression<JTTypeCast> {
+  expression: JTExpression<?>;
+  type: JTTree<?>;
+}
+
 interface JTTypeParameter extends JTTree<JTTypeParameter> {
   annotations: JTAnnotation[];
   bound: JTExpression<?>;
@@ -645,6 +650,7 @@ interface TransformOptionsPluginVisitor {
   Synchronized(node: JTSynchronized): void;
   Throw(node: JTThrow): void;
   Try(node: JTTry): void;
+  TypeCast(node: JTTypeCast): void;
   Variable(node: JTVariableDecl): void;
 }
 
