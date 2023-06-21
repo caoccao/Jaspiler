@@ -24,12 +24,16 @@ import com.caoccao.jaspiler.mock.MockIgnorePublicClass;
 import com.caoccao.jaspiler.mock.MockPublicAnnotation;
 import com.caoccao.jaspiler.visiters.BaseJaspilerTransformScanner;
 import com.sun.source.tree.ClassTree;
+import com.sun.source.tree.CompilationUnitTree;
+import com.sun.source.tree.MethodTree;
+import com.sun.source.tree.VariableTree;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
 import javax.lang.model.element.Modifier;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -38,6 +42,48 @@ public class TestJTClassDecl extends BaseTestSuite {
     @Test
     public void testIgnore() throws Exception {
         class TestIgnoreTransformScanner extends BaseJaspilerTransformScanner<TestIgnoreTransformScanner> {
+            @Override
+            public TestIgnoreTransformScanner visitCompilationUnit(
+                    CompilationUnitTree node, JaspilerTransformContext jaspilerTransformContext) {
+                var jtCompilationUnit = (JTCompilationUnit) node;
+                if (jtCompilationUnit.getTypeDecls().stream()
+                        .anyMatch(typeDecl -> {
+                            if (typeDecl instanceof JTClassDecl jtClassDecl) {
+                                return Optional.ofNullable(jtClassDecl.getModifiers())
+                                        .filter(modifiers -> modifiers.getFlags().contains(Modifier.PUBLIC))
+                                        .map(IJTAnnotatable::containsIgnore)
+                                        .orElse(false);
+                            }
+                            return false;
+                        })) {
+                    jtCompilationUnit.setActionIgnore();
+                }
+                return super.visitCompilationUnit(node, jaspilerTransformContext);
+            }
+
+            @Override
+            public TestIgnoreTransformScanner visitMethod(
+                    MethodTree node, JaspilerTransformContext jaspilerTransformContext) {
+                var jtMethodDecl = (JTMethodDecl) node;
+                if (Optional.ofNullable(jtMethodDecl.getModifiers())
+                        .map(IJTAnnotatable::containsIgnore)
+                        .orElse(false)) {
+                    jtMethodDecl.setActionIgnore();
+                }
+                return super.visitMethod(node, jaspilerTransformContext);
+            }
+
+            @Override
+            public TestIgnoreTransformScanner visitVariable(
+                    VariableTree node, JaspilerTransformContext jaspilerTransformContext) {
+                var jtVariableDecl = (JTVariableDecl) node;
+                if (Optional.ofNullable(jtVariableDecl.getModifiers())
+                        .map(IJTAnnotatable::containsIgnore)
+                        .orElse(false)) {
+                    jtVariableDecl.setActionIgnore();
+                }
+                return super.visitVariable(node, jaspilerTransformContext);
+            }
         }
         String code = transform(new TestIgnoreTransformScanner(), MockIgnorePublicClass.class);
         assertTrue(StringUtils.isEmpty(code));

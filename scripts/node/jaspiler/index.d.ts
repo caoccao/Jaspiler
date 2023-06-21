@@ -26,131 +26,148 @@
 /// <reference no-default-lib="true"/>
 
 enum JTBodyKind {
-  'EXPRESSION',
-  'STATEMENT',
+  EXPRESSION,
+  STATEMENT,
 }
 
 enum JTCaseKind {
-  'STATEMENT',
-  'RULE',
+  STATEMENT,
+  RULE,
 }
 
 enum JTKind {
-  'AND', // BinaryTree
-  'AND_ASSIGNMENT', // CompoundAssignmentTree
-  'ANNOTATED_TYPE', // AnnotatedTypeTree
-  'ANNOTATION', // AnnotationTree
-  'ANNOTATION_TYPE', // ClassTree
-  'ARRAY_ACCESS', // ArrayAccessTree
-  'ARRAY_TYPE', // ArrayTypeTree
-  'ASSERT', // AssertTree
-  'ASSIGNMENT', // AssignmentTree
-  'BINDING_PATTERN', // BindingPatternTree
-  'BITWISE_COMPLEMENT', // UnaryTree
-  'BLOCK', // BlockTree
-  'BOOLEAN_LITERAL', // LiteralTree
-  'BREAK', // BreakTree
-  'CASE', // CaseTree
-  'CATCH', // CatchTree
-  'CHAR_LITERAL', // LiteralTree
-  'CLASS', // ClassTree
-  'COMPILATION_UNIT', // CompilationUnitTree
-  'CONDITIONAL_AND', // BinaryTree
-  'CONDITIONAL_EXPRESSION', // ConditionalExpressionTree
-  'CONDITIONAL_OR', // BinaryTree
-  'CONTINUE', // ContinueTree
-  'DEFAULT_CASE_LABEL', // DefaultCaseLabelTree
-  'DIVIDE', // BinaryTree
-  'DIVIDE_ASSIGNMENT', // CompoundAssignmentTree
-  'DO_WHILE_LOOP', // DoWhileLoopTree
-  'DOUBLE_LITERAL', // LiteralTree
-  'EMPTY_STATEMENT', // EmptyStatementTree
-  'ENHANCED_FOR_LOOP', // EnhancedForLoopTree
-  'ENUM', // ClassTree
-  'EQUAL_TO', // BinaryTree
-  'ERRONEOUS', // ErroneousTree
-  'EXPORTS', // ExportsTree
-  'EXPRESSION_STATEMENT', // ExpressionStatementTree
-  'EXTENDS_WILDCARD', // WildcardTree
-  'FLOAT_LITERAL', // LiteralTree
-  'FOR_LOOP', // ForLoopTree
-  'GREATER_THAN', // BinaryTree
-  'GREATER_THAN_EQUAL', // BinaryTree
-  'GUARDED_PATTERN', // GuardedPatternTree
-  'IDENTIFIER', // IdentifierTree
-  'IF', // IfTree
-  'IMPORT', // ImportTree
-  'INSTANCE_OF', // InstanceOfTree
-  'INT_LITERAL', // LiteralTree
-  'INTERFACE', // ClassTree
-  'INTERSECTION_TYPE', // IntersectionTypeTree
-  'LABELED_STATEMENT', // LabeledStatementTree
-  'LAMBDA_EXPRESSION', // LambdaExpressionTree
-  'LEFT_SHIFT', // BinaryTree
-  'LEFT_SHIFT_ASSIGNMENT', // CompoundAssignmentTree
-  'LESS_THAN', // BinaryTree
-  'LESS_THAN_EQUAL', // BinaryTree
-  'LOGICAL_COMPLEMENT', // UnaryTree
-  'LONG_LITERAL', // LiteralTree
-  'MEMBER_REFERENCE', // MemberReferenceTree
-  'MEMBER_SELECT', // MemberSelectTree
-  'METHOD', // MethodTree
-  'METHOD_INVOCATION', // MethodInvocationTree
-  'MINUS', // BinaryTree
-  'MINUS_ASSIGNMENT', // CompoundAssignmentTree
-  'MODIFIERS', // ModifiersTree
-  'MODULE', // ModuleTree
-  'MULTIPLY', // BinaryTree
-  'MULTIPLY_ASSIGNMENT', // CompoundAssignmentTree
-  'NEW_ARRAY', // NewArrayTree
-  'NEW_CLASS', // NewClassTree
-  'NOT_EQUAL_TO', // BinaryTree
-  'NULL_LITERAL', // LiteralTree
-  'OPENS', // OpensTree
-  'OR', // BinaryTree
-  'OR_ASSIGNMENT', // CompoundAssignmentTree
-  'OTHER', // null
-  'PACKAGE', // PackageTree
-  'PARAMETERIZED_TYPE', // ParameterizedTypeTree
-  'PARENTHESIZED', // ParenthesizedTree
-  'PARENTHESIZED_PATTERN', // ParenthesizedPatternTree
-  'PLUS', // BinaryTree
-  'PLUS_ASSIGNMENT', // CompoundAssignmentTree
-  'POSTFIX_DECREMENT', // UnaryTree
-  'POSTFIX_INCREMENT', // UnaryTree
-  'PREFIX_DECREMENT', // UnaryTree
-  'PREFIX_INCREMENT', // UnaryTree
-  'PRIMITIVE_TYPE', // PrimitiveTypeTree
-  'PROVIDES', // ProvidesTree
-  'RECORD', // ClassTree
-  'REMAINDER', // BinaryTree
-  'REMAINDER_ASSIGNMENT', // CompoundAssignmentTree
-  'REQUIRES', // RequiresTree
-  'RETURN', // ReturnTree
-  'RIGHT_SHIFT', // BinaryTree
-  'RIGHT_SHIFT_ASSIGNMENT', // CompoundAssignmentTree
-  'STRING_LITERAL', // LiteralTree
-  'SUPER_WILDCARD', // WildcardTree
-  'SWITCH', // SwitchTree
-  'SWITCH_EXPRESSION', // SwitchExpressionTree
-  'SYNCHRONIZED', // SynchronizedTree
-  'THROW', // ThrowTree
-  'TRY', // TryTree
-  'TYPE_ANNOTATION', // AnnotationTree
-  'TYPE_CAST', // TypeCastTree
-  'TYPE_PARAMETER', // TypeParameterTree
-  'UNARY_MINUS', // UnaryTree
-  'UNARY_PLUS', // UnaryTree
-  'UNBOUNDED_WILDCARD', // WildcardTree
-  'UNION_TYPE', // UnionTypeTree
-  'UNSIGNED_RIGHT_SHIFT', // BinaryTree
-  'UNSIGNED_RIGHT_SHIFT_ASSIGNMENT', // CompoundAssignmentTree
-  'USES', // UsesTree
-  'VARIABLE', // VariableTree
-  'WHILE_LOOP', // WhileLoopTree
-  'XOR', // BinaryTree
-  'XOR_ASSIGNMENT', // CompoundAssignmentTree
-  'YIELD', // YieldTree
+  AND, // BinaryTree
+  AND_ASSIGNMENT, // CompoundAssignmentTree
+  ANNOTATED_TYPE, // AnnotatedTypeTree
+  ANNOTATION, // AnnotationTree
+  ANNOTATION_TYPE, // ClassTree
+  ARRAY_ACCESS, // ArrayAccessTree
+  ARRAY_TYPE, // ArrayTypeTree
+  ASSERT, // AssertTree
+  ASSIGNMENT, // AssignmentTree
+  BINDING_PATTERN, // BindingPatternTree
+  BITWISE_COMPLEMENT, // UnaryTree
+  BLOCK, // BlockTree
+  BOOLEAN_LITERAL, // LiteralTree
+  BREAK, // BreakTree
+  CASE, // CaseTree
+  CATCH, // CatchTree
+  CHAR_LITERAL, // LiteralTree
+  CLASS, // ClassTree
+  COMPILATION_UNIT, // CompilationUnitTree
+  CONDITIONAL_AND, // BinaryTree
+  CONDITIONAL_EXPRESSION, // ConditionalExpressionTree
+  CONDITIONAL_OR, // BinaryTree
+  CONTINUE, // ContinueTree
+  DEFAULT_CASE_LABEL, // DefaultCaseLabelTree
+  DIVIDE, // BinaryTree
+  DIVIDE_ASSIGNMENT, // CompoundAssignmentTree
+  DO_WHILE_LOOP, // DoWhileLoopTree
+  DOUBLE_LITERAL, // LiteralTree
+  EMPTY_STATEMENT, // EmptyStatementTree
+  ENHANCED_FOR_LOOP, // EnhancedForLoopTree
+  ENUM, // ClassTree
+  EQUAL_TO, // BinaryTree
+  ERRONEOUS, // ErroneousTree
+  EXPORTS, // ExportsTree
+  EXPRESSION_STATEMENT, // ExpressionStatementTree
+  EXTENDS_WILDCARD, // WildcardTree
+  FLOAT_LITERAL, // LiteralTree
+  FOR_LOOP, // ForLoopTree
+  GREATER_THAN, // BinaryTree
+  GREATER_THAN_EQUAL, // BinaryTree
+  GUARDED_PATTERN, // GuardedPatternTree
+  IDENTIFIER, // IdentifierTree
+  IF, // IfTree
+  IMPORT, // ImportTree
+  INSTANCE_OF, // InstanceOfTree
+  INT_LITERAL, // LiteralTree
+  INTERFACE, // ClassTree
+  INTERSECTION_TYPE, // IntersectionTypeTree
+  LABELED_STATEMENT, // LabeledStatementTree
+  LAMBDA_EXPRESSION, // LambdaExpressionTree
+  LEFT_SHIFT, // BinaryTree
+  LEFT_SHIFT_ASSIGNMENT, // CompoundAssignmentTree
+  LESS_THAN, // BinaryTree
+  LESS_THAN_EQUAL, // BinaryTree
+  LOGICAL_COMPLEMENT, // UnaryTree
+  LONG_LITERAL, // LiteralTree
+  MEMBER_REFERENCE, // MemberReferenceTree
+  MEMBER_SELECT, // MemberSelectTree
+  METHOD, // MethodTree
+  METHOD_INVOCATION, // MethodInvocationTree
+  MINUS, // BinaryTree
+  MINUS_ASSIGNMENT, // CompoundAssignmentTree
+  MODIFIERS, // ModifiersTree
+  MODULE, // ModuleTree
+  MULTIPLY, // BinaryTree
+  MULTIPLY_ASSIGNMENT, // CompoundAssignmentTree
+  NEW_ARRAY, // NewArrayTree
+  NEW_CLASS, // NewClassTree
+  NOT_EQUAL_TO, // BinaryTree
+  NULL_LITERAL, // LiteralTree
+  OPENS, // OpensTree
+  OR, // BinaryTree
+  OR_ASSIGNMENT, // CompoundAssignmentTree
+  OTHER, // null
+  PACKAGE, // PackageTree
+  PARAMETERIZED_TYPE, // ParameterizedTypeTree
+  PARENTHESIZED, // ParenthesizedTree
+  PARENTHESIZED_PATTERN, // ParenthesizedPatternTree
+  PLUS, // BinaryTree
+  PLUS_ASSIGNMENT, // CompoundAssignmentTree
+  POSTFIX_DECREMENT, // UnaryTree
+  POSTFIX_INCREMENT, // UnaryTree
+  PREFIX_DECREMENT, // UnaryTree
+  PREFIX_INCREMENT, // UnaryTree
+  PRIMITIVE_TYPE, // PrimitiveTypeTree
+  PROVIDES, // ProvidesTree
+  RECORD, // ClassTree
+  REMAINDER, // BinaryTree
+  REMAINDER_ASSIGNMENT, // CompoundAssignmentTree
+  REQUIRES, // RequiresTree
+  RETURN, // ReturnTree
+  RIGHT_SHIFT, // BinaryTree
+  RIGHT_SHIFT_ASSIGNMENT, // CompoundAssignmentTree
+  STRING_LITERAL, // LiteralTree
+  SUPER_WILDCARD, // WildcardTree
+  SWITCH, // SwitchTree
+  SWITCH_EXPRESSION, // SwitchExpressionTree
+  SYNCHRONIZED, // SynchronizedTree
+  THROW, // ThrowTree
+  TRY, // TryTree
+  TYPE_ANNOTATION, // AnnotationTree
+  TYPE_CAST, // TypeCastTree
+  TYPE_PARAMETER, // TypeParameterTree
+  UNARY_MINUS, // UnaryTree
+  UNARY_PLUS, // UnaryTree
+  UNBOUNDED_WILDCARD, // WildcardTree
+  UNION_TYPE, // UnionTypeTree
+  UNSIGNED_RIGHT_SHIFT, // BinaryTree
+  UNSIGNED_RIGHT_SHIFT_ASSIGNMENT, // CompoundAssignmentTree
+  USES, // UsesTree
+  VARIABLE, // VariableTree
+  WHILE_LOOP, // WhileLoopTree
+  XOR, // BinaryTree
+  XOR_ASSIGNMENT, // CompoundAssignmentTree
+  YIELD, // YieldTree
+}
+
+enum JTModifier {
+  PUBLIC = 'public',
+  PROTECTED = 'protected',
+  PRIVATE = 'private',
+  ABSTRACT = 'abstract',
+  DEFAULT = 'default',
+  STATIC = 'static',
+  SEALED = 'sealed',
+  NON_SEALED = 'non-sealed',
+  FINAL = 'final',
+  TRANSIENT = 'transient',
+  VOLATILE = 'volatile',
+  SYNCHRONIZED = 'synchronized',
+  NATIVE = 'native',
+  STRICTFP = 'strictfp',
 }
 
 enum JTReferenceMode {
@@ -410,7 +427,7 @@ interface JTMethodInvocation extends JTPolyExpression<JTMethodInvocation> {
 
 interface JTModifiers extends JTTree<JTModifiers> {
   annotations: JTAnnotation[];
-  flags: string[];
+  flags: JTModifier[];
 }
 
 interface JTModuleDecl extends JTTree<JTModuleDecl> {
@@ -563,7 +580,7 @@ interface JTUses extends JTDirective<JTUses> {
 
 interface JTVariableDecl extends JTStatement<JTVariableDecl> {
   initializer: JTExpression<?>;
-  modifiers: JTModifier;
+  modifiers: JTModifiers;
   name: JTName;
   nameExpression: JTExpression<?>;
   type: JTExpression<?>;

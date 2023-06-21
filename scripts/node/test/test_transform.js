@@ -19,7 +19,7 @@
 const assert = require('chai').assert;
 const path = require('path');
 const process = require('process');
-const { JTKind } = require('./jaspiler/jaspiler');
+const { JTKind, PluginContractIgnore } = require('./jaspiler/jaspiler');
 
 const workingDirectory = process.cwd();
 const pathMockAllInOnePublicClass = path.join(
@@ -31,6 +31,8 @@ const pathMockForScan = path.join(
 const pathMockPublicAnnotation = path.join(
   workingDirectory,
   '../../../src/test/java/com/caoccao/jaspiler/mock/MockPublicAnnotation.java');
+
+// AST
 
 function testAstForFile() {
   const result = jaspiler.transformSync(pathMockPublicAnnotation, { ast: true });
@@ -76,6 +78,67 @@ function testAstForString() {
   // Assert ast
   const ast = result.ast;
   assert.equal(JTKind.COMPILATION_UNIT, ast.kind);
+}
+
+// Contract.Ignore
+
+function testContractIgnoreCompilationUnit() {
+  const result = jaspiler.transformSync(
+    `package a.b.c;
+    @JaspilerContract.Ignore
+    public class A {
+    }
+    `,
+    { plugins: [PluginContractIgnore], ast: true, fileName: 'A', sourceType: 'string' });
+  // Assert { ast, code }
+  assert.isObject(result);
+  assert.isTrue(result.ast.isActionIgnore());
+  assert.isUndefined(result.code);
+}
+
+function testContractIgnoreClass() {
+  const result = jaspiler.transformSync(
+    `package a.b.c;
+    @JaspilerContract.Ignore
+    class A {
+    }
+    `,
+    { plugins: [PluginContractIgnore], ast: true, fileName: 'A', sourceType: 'string' });
+  // Assert { ast, code }
+  assert.isObject(result);
+  assert.isFalse(result.ast.isActionIgnore());
+  assert.include(result.code, 'package a.b.c;');
+  assert.notInclude(result.code, 'class A');
+}
+
+function testContractIgnoreMethod() {
+  const result = jaspiler.transformSync(
+    `package a.b.c;
+    public class A {
+        @JaspilerContract.Ignore
+        public void test() {}
+    }
+    `,
+    { plugins: [PluginContractIgnore], ast: true, fileName: 'A', sourceType: 'string' });
+  // Assert { ast, code }
+  assert.isObject(result);
+  assert.include(result.code, 'public class A {');
+  assert.notInclude(result.code, 'public void test()');
+}
+
+function testContractIgnoreVariable() {
+  const result = jaspiler.transformSync(
+    `package a.b.c;
+    public class A {
+        @JaspilerContract.Ignore
+        private int a;
+    }
+    `,
+    { plugins: [PluginContractIgnore], ast: true, fileName: 'A', sourceType: 'string' });
+  // Assert { ast, code }
+  assert.isObject(result);
+  assert.include(result.code, 'public class A {');
+  assert.notInclude(result.code, 'private int a;');
 }
 
 // Package
@@ -409,17 +472,23 @@ function testScan() {
     'JTClassDecl', 'JTModifiers', 'JTMethodDecl', 'JTArrayType', 'JTNewArray',
     'JTPrimitiveType', 'JTBlock', 'JTAnnotation', 'JTLiteral', 'JTVariableDecl',
     'JTExpressionStatement', 'JTForLoop', 'JTBinary', 'JTUnary', 'JTReturn',
-    'JTNewClass','JTIf',
-    'JTSwitch','JTCase','JTBreak',
-    'JTMethodInvocation', 'JTWhileLoop', 'JTDoWhileLoop','JTParens']);
+    'JTNewClass', 'JTIf',
+    'JTSwitch', 'JTCase', 'JTBreak',
+    'JTMethodInvocation', 'JTWhileLoop', 'JTDoWhileLoop', 'JTParens']);
   const unexpectedClassSimpleNames =
     [...classSimpleNameSet].filter(name => !expectedClassSimpleNameSet.has(name));
   assert.equal(0, unexpectedClassSimpleNames.length,
     'Unexpected [\'' + unexpectedClassSimpleNames.join('\',\'') + '\']');
 }
 
+// AST
 testAstForFile();
 testAstForString();
+// Contract.Ignore
+testContractIgnoreCompilationUnit();
+testContractIgnoreClass();
+testContractIgnoreMethod();
+testContractIgnoreVariable();
 // Package
 testIgnorePackage();
 testReplacePackage();

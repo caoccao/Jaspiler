@@ -24,12 +24,12 @@ import java.util.List;
 public interface IJTAnnotatable {
     String PROPERTY_ANNOTATIONS = "annotations";
 
-    default boolean contains(String annotationString) {
-        if (StringUtils.isAllBlank(annotationString)) {
+    default boolean contains(String annotationTypeString) {
+        if (StringUtils.isAllBlank(annotationTypeString)) {
             return false;
         }
         return getAnnotations().stream()
-                .anyMatch(annotation -> annotationString.equals(annotation.toString()));
+                .anyMatch(annotation -> annotationTypeString.equals(annotation.getAnnotationType().toString()));
     }
 
     default boolean containsIgnore() {

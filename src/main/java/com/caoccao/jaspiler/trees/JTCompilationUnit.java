@@ -249,17 +249,6 @@ public final class JTCompilationUnit
     @Override
     public boolean save(IStyleWriter<?> writer) {
         if (isActionChange()) {
-            /*
-             * If the public type is annotated with {@link JaspilerContract.Ignore},
-             * the whole file will be ignored.
-             */
-            boolean ignore = typeDecls.stream()
-                    .filter(typeDecl -> typeDecl instanceof JTClassDecl)
-                    .anyMatch(IJTTree::isActionIgnore);
-            if (ignore) {
-                setActionIgnore();
-                return false;
-            }
             if (writer.getOptions().isPreserveCopyrights()
                     && getOriginalPosition().isValid()
                     && getOriginalPosition().startPosition() > 0) {
@@ -279,6 +268,8 @@ public final class JTCompilationUnit
                     trees -> writer.appendLineSeparator(),
                     trees -> writer.appendLineSeparator());
             Optional.ofNullable(moduleTree).ifPresent(tree -> writer.append(tree).appendLineSeparator());
+        } else if (isActionIgnore()) {
+            return false;
         } else {
             writer.append(getOriginalCode());
         }

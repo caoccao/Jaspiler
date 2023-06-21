@@ -70,9 +70,6 @@ public final class JTModuleDecl
         name = JTTreeFactory.create(getOriginalTree().getName(), this);
         JTTreeFactory.createAndAdd(
                 getOriginalTree().getDirectives(), this, (JTDirective<?, ?> o) -> directives.add(o));
-        if (containsIgnore()) {
-            setActionIgnore();
-        }
         return this;
     }
 

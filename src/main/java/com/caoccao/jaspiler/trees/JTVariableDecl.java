@@ -73,9 +73,6 @@ public final class JTVariableDecl
         nameExpression = JTTreeFactory.create(getOriginalTree().getNameExpression(), this);
         initializer = JTTreeFactory.create(getOriginalTree().getInitializer(), this);
         name = JTTreeFactory.createName(getOriginalTree().getName());
-        if (Optional.ofNullable(modifiers).filter(IJTAnnotatable::containsIgnore).isPresent()) {
-            setActionIgnore();
-        }
         return this;
     }
 

@@ -92,9 +92,6 @@ public final class JTMethodDecl
                 getOriginalTree().getBody(), this, JTBlock::new);
         defaultValue = JTTreeFactory.create(getOriginalTree().getDefaultValue(), this);
         name = JTTreeFactory.createName(getOriginalTree().getName());
-        if (Optional.ofNullable(modifiers).filter(IJTAnnotatable::containsIgnore).isPresent()) {
-            setActionIgnore();
-        }
         return this;
     }
 
