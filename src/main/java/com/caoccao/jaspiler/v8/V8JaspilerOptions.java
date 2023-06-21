@@ -262,6 +262,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitContinue;
         private V8ValueFunction visitDefaultCaseLabel;
         private V8ValueFunction visitDoWhileLoop;
+        private V8ValueFunction visitEmptyStatement;
         private V8ValueFunction visitEnhancedForLoop;
         private V8ValueFunction visitErroneous;
         private V8ValueFunction visitExports;
@@ -315,6 +316,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "Continue",
                     "DefaultCaseLabel",
                     "DoWhileLoop",
+                    "EmptyStatement",
                     "EnhancedForLoop",
                     "Erroneous",
                     "Exports",
@@ -366,6 +368,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitContinue,
                     this::getVisitDefaultCaseLabel,
                     this::getVisitDoWhileLoop,
+                    this::getVisitEmptyStatement,
                     this::getVisitEnhancedForLoop,
                     this::getVisitErroneous,
                     this::getVisitExports,
@@ -417,6 +420,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitContinue,
                     this::setVisitDefaultCaseLabel,
                     this::setVisitDoWhileLoop,
+                    this::setVisitEmptyStatement,
                     this::setVisitEnhancedForLoop,
                     this::setVisitErroneous,
                     this::setVisitExports,
@@ -554,6 +558,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public V8ValueFunction getVisitDoWhileLoop() {
             return visitDoWhileLoop;
+        }
+
+        public V8ValueFunction getVisitEmptyStatement() {
+            return visitEmptyStatement;
         }
 
         public V8ValueFunction getVisitEnhancedForLoop() {
@@ -767,6 +775,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitDoWhileLoop(V8ValueFunction visitDoWhileLoop) {
             this.visitDoWhileLoop = visitDoWhileLoop;
+        }
+
+        public void setVisitEmptyStatement(V8ValueFunction visitEmptyStatement) {
+            this.visitEmptyStatement = visitEmptyStatement;
         }
 
         public void setVisitEnhancedForLoop(V8ValueFunction visitEnhancedForLoop) {

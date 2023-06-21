@@ -295,6 +295,9 @@ interface JTDoWhileLoop extends JTStatement<JTDoWhileLoop> {
   statement: JTStatement<?>;
 }
 
+interface JTSkip extends JTStatement<JTSkip> {
+}
+
 interface JTEnhancedForLoop extends JTStatement<JTEnhancedForLoop> {
   expression: JTExpression<?>;
   statement: JTStatement<?>;
@@ -580,6 +583,7 @@ interface TransformOptionsPluginVisitor {
   Continue(node: JTContinue): void;
   DefaultCaseLabel(node: JTDefaultCaseLabel): void;
   DoWhileLoop(node: JTDoWhileLoop): void;
+  EmptyStatement(node: JTSkip): void;
   EnhancedForLoop(node: JTEnhancedForLoop): void;
   Erroneous(node: JTErroneous): void;
   Exports(node: JTExports): void;
