@@ -16,16 +16,23 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.TreeVisitor;
 import com.sun.source.tree.UsesTree;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 public final class JTUses
         extends JTDirective<UsesTree, JTUses>
         implements UsesTree {
+    private static final String PROPERTY_SERVICE_NAME = "serviceName";
     private JTExpression<?, ?> serviceName;
 
     public JTUses() {
@@ -66,6 +73,25 @@ public final class JTUses
     @Override
     public JTExpression<?, ?> getServiceName() {
         return serviceName;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_SERVICE_NAME, propertyName -> v8Runtime.toV8Value(getServiceName()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_SERVICE_NAME,
+                    (propertyName, propertyValue) -> replaceExpression(this::setServiceName, propertyValue));
+        }
+        return stringSetterMap;
     }
 
     public JTUses setServiceName(JTExpression<?, ?> serviceName) {

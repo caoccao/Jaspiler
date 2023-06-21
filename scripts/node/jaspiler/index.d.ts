@@ -557,6 +557,10 @@ interface JTUnary extends JTOperatorExpression<JTUnary> {
   kind: JTKind.BITWISE_COMPLEMENT | JTKind.LOGICAL_COMPLEMENT | JTKind.POSTFIX_DECREMENT | JTKind.POSTFIX_INCREMENT | JTKind.PREFIX_DECREMENT | JTKind.PREFIX_INCREMENT | JTKind.UNARY_MINUS | JTKind.UNARY_PLUS;
 }
 
+interface JTUses extends JTDirective<JTUses> {
+  serviceName: JTExpression<?>;
+}
+
 interface JTVariableDecl extends JTStatement<JTVariableDecl> {
   initializer: JTExpression<?>;
   modifiers: JTModifier;
@@ -669,6 +673,7 @@ interface TransformOptionsPluginVisitor {
   TypeParameter(node: JTTypeParameter): void;
   Unary(node: JTUnary): void;
   UnionType(node: JTTypeUnion): void;
+  Uses(node: JTUses): void;
   Variable(node: JTVariableDecl): void;
 }
 

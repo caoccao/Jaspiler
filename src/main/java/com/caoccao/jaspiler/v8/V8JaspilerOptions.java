@@ -303,6 +303,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitTypeParameter;
         private V8ValueFunction visitUnary;
         private V8ValueFunction visitUnionType;
+        private V8ValueFunction visitUses;
         private V8ValueFunction visitVariable;
 
         public Visitor() {
@@ -367,6 +368,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "TypeParameter",
                     "Unary",
                     "UnionType",
+                    "Uses",
                     "Variable");
             propertyGetters = List.of(
                     this::getVisitAnnotatedType,
@@ -429,6 +431,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitTypeParameter,
                     this::getVisitUnary,
                     this::getVisitUnionType,
+                    this::getVisitUses,
                     this::getVisitVariable);
             propertySetters = List.of(
                     this::setVisitAnnotatedType,
@@ -491,6 +494,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitTypeParameter,
                     this::setVisitUnary,
                     this::setVisitUnionType,
+                    this::setVisitUses,
                     this::setVisitVariable);
             reset();
         }
@@ -764,6 +768,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
             return visitUnionType;
         }
 
+        public V8ValueFunction getVisitUses() {
+            return visitUses;
+        }
+
         public V8ValueFunction getVisitVariable() {
             return visitVariable;
         }
@@ -1019,6 +1027,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitUnionType(V8ValueFunction visitUnionType) {
             this.visitUnionType = visitUnionType;
+        }
+
+        public void setVisitUses(V8ValueFunction visitUses) {
+            this.visitUses = visitUses;
         }
 
         public void setVisitVariable(V8ValueFunction visitVariable) {
