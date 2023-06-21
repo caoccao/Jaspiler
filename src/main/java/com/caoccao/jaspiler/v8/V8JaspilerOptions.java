@@ -291,6 +291,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitPrimitiveType;
         private V8ValueFunction visitProvides;
         private V8ValueFunction visitRequires;
+        private V8ValueFunction visitReturn;
         private V8ValueFunction visitVariable;
 
         public Visitor() {
@@ -343,6 +344,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "PrimitiveType",
                     "Provides",
                     "Requires",
+                    "Return",
                     "Variable");
             propertyGetters = List.of(
                     this::getVisitAnnotatedType,
@@ -393,6 +395,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitPrimitiveType,
                     this::getVisitProvides,
                     this::getVisitRequires,
+                    this::getVisitReturn,
                     this::getVisitVariable);
             propertySetters = List.of(
                     this::setVisitAnnotatedType,
@@ -443,6 +446,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitPrimitiveType,
                     this::setVisitProvides,
                     this::setVisitRequires,
+                    this::setVisitReturn,
                     this::setVisitVariable);
             reset();
         }
@@ -668,6 +672,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
             return visitRequires;
         }
 
+        public V8ValueFunction getVisitReturn() {
+            return visitReturn;
+        }
+
         public V8ValueFunction getVisitVariable() {
             return visitVariable;
         }
@@ -875,6 +883,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitRequires(V8ValueFunction visitRequires) {
             this.visitRequires = visitRequires;
+        }
+
+        public void setVisitReturn(V8ValueFunction visitReturn) {
+            this.visitReturn = visitReturn;
         }
 
         public void setVisitVariable(V8ValueFunction visitVariable) {

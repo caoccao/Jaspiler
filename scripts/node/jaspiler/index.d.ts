@@ -477,6 +477,10 @@ interface JTRequires extends JTDirective<JTRequires> {
   transitive: boolean;
 }
 
+interface JTReturn extends JTStatement<JTReturn> {
+  expression: JTExpression<?>;
+}
+
 interface JTStatement<Tree extends JTStatement<Tree>> extends JTTree<JTStatement> {
 }
 
@@ -605,6 +609,7 @@ interface TransformOptionsPluginVisitor {
   PrimitiveType(node: JTPrimitiveType): void;
   Provides(node: JTProvides): void;
   Requires(node: JTRequires): void;
+  Return(node: JTReturn): void;
   Variable(node: JTVariableDecl): void;
 }
 
