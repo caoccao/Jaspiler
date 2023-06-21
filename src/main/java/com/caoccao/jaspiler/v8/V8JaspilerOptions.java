@@ -300,7 +300,9 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitThrow;
         private V8ValueFunction visitTry;
         private V8ValueFunction visitTypeCast;
+        private V8ValueFunction visitTypeParameter;
         private V8ValueFunction visitVariable;
+
         public Visitor() {
             properties = List.of(
                     "AnnotatedType",
@@ -360,6 +362,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "Throw",
                     "Try",
                     "TypeCast",
+                    "TypeParameter",
                     "Variable");
             propertyGetters = List.of(
                     this::getVisitAnnotatedType,
@@ -419,6 +422,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitThrow,
                     this::getVisitTry,
                     this::getVisitTypeCast,
+                    this::getVisitTypeParameter,
                     this::getVisitVariable);
             propertySetters = List.of(
                     this::setVisitAnnotatedType,
@@ -478,6 +482,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitThrow,
                     this::setVisitTry,
                     this::setVisitTypeCast,
+                    this::setVisitTypeParameter,
                     this::setVisitVariable);
             reset();
         }
@@ -739,6 +744,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
             return visitTypeCast;
         }
 
+        public V8ValueFunction getVisitTypeParameter() {
+            return visitTypeParameter;
+        }
+
         public V8ValueFunction getVisitVariable() {
             return visitVariable;
         }
@@ -982,6 +991,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitTypeCast(V8ValueFunction visitTypeCast) {
             this.visitTypeCast = visitTypeCast;
+        }
+
+        public void setVisitTypeParameter(V8ValueFunction visitTypeParameter) {
+            this.visitTypeParameter = visitTypeParameter;
         }
 
         public void setVisitVariable(V8ValueFunction visitVariable) {

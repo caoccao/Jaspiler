@@ -656,6 +656,7 @@ interface TransformOptionsPluginVisitor {
   Throw(node: JTThrow): void;
   Try(node: JTTry): void;
   TypeCast(node: JTTypeCast): void;
+  TypeParameter(node: JTTypeParameter): void;
   Variable(node: JTVariableDecl): void;
 }
 
