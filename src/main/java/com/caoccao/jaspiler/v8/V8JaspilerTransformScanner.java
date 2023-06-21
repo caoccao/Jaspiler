@@ -318,6 +318,12 @@ public class V8JaspilerTransformScanner
     }
 
     @Override
+    public V8JaspilerTransformScanner visitParenthesized(ParenthesizedTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitParenthesized());
+        return super.visitParenthesized(node, jaspilerTransformContext);
+    }
+
+    @Override
     public V8JaspilerTransformScanner visitOpens(OpensTree node, JaspilerTransformContext jaspilerTransformContext) {
         forEachPlugin(node, plugin -> plugin.getVisitor().getVisitOpens());
         return super.visitOpens(node, jaspilerTransformContext);

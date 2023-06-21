@@ -423,6 +423,10 @@ interface JTPackageDecl extends JTTree<JTPackageDecl> {
   packageName: JTExpression<?>;
 }
 
+interface JTParens extends JTExpression<JTParens> {
+  expression: JTExpression<?>;
+}
+
 interface JTPattern<Tree extends JTPattern<Tree>> extends JTCaseLabel<JTPattern> {
 }
 
@@ -546,6 +550,7 @@ interface TransformOptionsPluginVisitor {
   NewClass(node: JTNewClass): void;
   Opens(node: JTOpens): void;
   Package(node: JTPackageDecl): void;
+  Parenthesized(node: JTParens): void;
   Variable(node: JTVariableDecl): void;
 }
 

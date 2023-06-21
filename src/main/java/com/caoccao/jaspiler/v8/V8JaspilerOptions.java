@@ -285,7 +285,9 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitNewClass;
         private V8ValueFunction visitOpens;
         private V8ValueFunction visitPackage;
+        private V8ValueFunction visitParenthesized;
         private V8ValueFunction visitVariable;
+
         public Visitor() {
             properties = List.of(
                     "AnnotatedType",
@@ -330,6 +332,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "NewClass",
                     "Opens",
                     "Package",
+                    "Parenthesized",
                     "Variable");
             propertyGetters = List.of(
                     this::getVisitAnnotatedType,
@@ -374,6 +377,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitNewClass,
                     this::getVisitOpens,
                     this::getVisitPackage,
+                    this::getVisitParenthesized,
                     this::getVisitVariable);
             propertySetters = List.of(
                     this::setVisitAnnotatedType,
@@ -418,6 +422,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitNewClass,
                     this::setVisitOpens,
                     this::setVisitPackage,
+                    this::setVisitParenthesized,
                     this::setVisitVariable);
             reset();
         }
@@ -619,6 +624,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
             return visitPackage;
         }
 
+        public V8ValueFunction getVisitParenthesized() {
+            return visitParenthesized;
+        }
+
         public V8ValueFunction getVisitVariable() {
             return visitVariable;
         }
@@ -802,6 +811,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitPackage(V8ValueFunction visitPackage) {
             this.visitPackage = visitPackage;
+        }
+
+        public void setVisitParenthesized(V8ValueFunction visitParenthesized) {
+            this.visitParenthesized = visitParenthesized;
         }
 
         public void setVisitVariable(V8ValueFunction visitVariable) {
