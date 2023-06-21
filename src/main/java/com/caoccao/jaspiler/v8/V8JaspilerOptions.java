@@ -297,6 +297,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitSwitchExpression;
         private V8ValueFunction visitSynchronized;
         private V8ValueFunction visitThrow;
+        private V8ValueFunction visitTry;
         private V8ValueFunction visitVariable;
 
         public Visitor() {
@@ -355,6 +356,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "SwitchExpression",
                     "Synchronized",
                     "Throw",
+                    "Try",
                     "Variable");
             propertyGetters = List.of(
                     this::getVisitAnnotatedType,
@@ -411,6 +413,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitSwitchExpression,
                     this::getVisitSynchronized,
                     this::getVisitThrow,
+                    this::getVisitTry,
                     this::getVisitVariable);
             propertySetters = List.of(
                     this::setVisitAnnotatedType,
@@ -467,6 +470,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitSwitchExpression,
                     this::setVisitSynchronized,
                     this::setVisitThrow,
+                    this::setVisitTry,
                     this::setVisitVariable);
             reset();
         }
@@ -716,6 +720,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
             return visitThrow;
         }
 
+        public V8ValueFunction getVisitTry() {
+            return visitTry;
+        }
+
         public V8ValueFunction getVisitVariable() {
             return visitVariable;
         }
@@ -947,6 +955,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitThrow(V8ValueFunction visitThrow) {
             this.visitThrow = visitThrow;
+        }
+
+        public void setVisitTry(V8ValueFunction visitTry) {
+            this.visitTry = visitTry;
         }
 
         public void setVisitVariable(V8ValueFunction visitVariable) {

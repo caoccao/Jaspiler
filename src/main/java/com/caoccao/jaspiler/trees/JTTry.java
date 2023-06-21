@@ -16,17 +16,23 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.TreeVisitor;
 import com.sun.source.tree.TryTree;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public final class JTTry
         extends JTStatement<TryTree, JTTry>
         implements TryTree {
+    private static final String PROPERTY_BLOCK = "block";
+    private static final String PROPERTY_CATCHES = "catches";
+    private static final String PROPERTY_FINALLY_BLOCK = "finallyBlock";
+    private static final String PROPERTY_RESOURCES = "resources";
     private final List<JTCatch> catches;
     private final List<JTTree<?, ?>> resources;
     private JTBlock block;
@@ -97,6 +103,34 @@ public final class JTTry
     @Override
     public List<JTTree<?, ?>> getResources() {
         return resources;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_BLOCK, propertyName -> v8Runtime.toV8Value(getBlock()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_CATCHES, propertyName -> v8Runtime.toV8Value(getCatches()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_FINALLY_BLOCK, propertyName -> v8Runtime.toV8Value(getFinallyBlock()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_RESOURCES, propertyName -> v8Runtime.toV8Value(getResources()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_BLOCK,
+                    (propertyName, propertyValue) -> replaceBlock(this::setBlock, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_CATCHES,
+                    (propertyName, propertyValue) -> replaceCatches(catches, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_FINALLY_BLOCK,
+                    (propertyName, propertyValue) -> replaceBlock(this::setFinallyBlock, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_RESOURCES,
+                    (propertyName, propertyValue) -> replaceTrees(resources, propertyValue));
+        }
+        return stringSetterMap;
     }
 
     public JTTry setBlock(JTBlock block) {

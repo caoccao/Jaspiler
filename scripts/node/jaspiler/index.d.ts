@@ -506,6 +506,13 @@ interface JTThrow extends JTStatement<JTThrow> {
   expression: JTExpression<?>;
 }
 
+interface JTTry extends JTStatement<JTTry> {
+  block: JTBlock;
+  catches: JTCatch<?>[];
+  finallyBlock: JTBlock;
+  resources: JTTree<?>[];
+}
+
 interface JTTree<Tree extends JTTree<Tree>> {
   readonly className: string;
   readonly classSimpleName: string;
@@ -637,6 +644,7 @@ interface TransformOptionsPluginVisitor {
   SwitchExpression(node: JTSwitchExpression): void;
   Synchronized(node: JTSynchronized): void;
   Throw(node: JTThrow): void;
+  Try(node: JTTry): void;
   Variable(node: JTVariableDecl): void;
 }
 
