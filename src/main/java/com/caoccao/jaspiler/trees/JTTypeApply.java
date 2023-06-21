@@ -16,18 +16,22 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.ParameterizedTypeTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.tree.TreeVisitor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public final class JTTypeApply
         extends JTExpression<ParameterizedTypeTree, JTTypeApply>
         implements ParameterizedTypeTree {
+    private static final String PROPERTY_TYPE = "type";
+    private static final String PROPERTY_TYPE_ARGUMENTS = "typeArguments";
     private final List<JTExpression<?, ?>> typeArguments;
     private JTExpression<?, ?> type;
 
@@ -78,6 +82,28 @@ public final class JTTypeApply
     @Override
     public List<JTExpression<?, ?>> getTypeArguments() {
         return typeArguments;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_TYPE, propertyName -> v8Runtime.toV8Value(getType()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_TYPE_ARGUMENTS, propertyName -> v8Runtime.toV8Value(getTypeArguments()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_TYPE,
+                    (propertyName, propertyValue) -> replaceExpression(this::setType, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_TYPE_ARGUMENTS,
+                    (propertyName, propertyValue) -> replaceExpressions(typeArguments, propertyValue));
+        }
+        return stringSetterMap;
     }
 
     public JTTypeApply setType(JTExpression<?, ?> type) {

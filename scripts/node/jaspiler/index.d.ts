@@ -454,6 +454,11 @@ interface JTTree<Tree extends JTTree<Tree>> {
   toString(): string;
 }
 
+interface JTTypeApply extends JTExpression<JTTypeApply> {
+  type: JTExpression<?>;
+  typeArguments: JTExpression<?>[];
+}
+
 interface JTTypeParameter extends JTTree<JTTypeParameter> {
   annotations: JTAnnotation[];
   bound: JTExpression<?>;
@@ -554,6 +559,7 @@ interface TransformOptionsPluginVisitor {
   NewClass(node: JTNewClass): void;
   Opens(node: JTOpens): void;
   Package(node: JTPackageDecl): void;
+  ParameterizedType(node: JTTypeApply): void;
   Parenthesized(node: JTParens): void;
   ParenthesizedPattern(node: JTParenthesizedPattern): void;
   Variable(node: JTVariableDecl): void;

@@ -330,6 +330,12 @@ public class V8JaspilerTransformScanner
     }
 
     @Override
+    public V8JaspilerTransformScanner visitParameterizedType(ParameterizedTypeTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitParameterizedType());
+        return super.visitParameterizedType(node, jaspilerTransformContext);
+    }
+
+    @Override
     public V8JaspilerTransformScanner visitParenthesized(ParenthesizedTree node, JaspilerTransformContext jaspilerTransformContext) {
         forEachPlugin(node, plugin -> plugin.getVisitor().getVisitParenthesized());
         return super.visitParenthesized(node, jaspilerTransformContext);
