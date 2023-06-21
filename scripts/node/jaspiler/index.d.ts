@@ -427,6 +427,10 @@ interface JTParens extends JTExpression<JTParens> {
   expression: JTExpression<?>;
 }
 
+interface JTParenthesizedPattern extends JTPattern<JTParenthesizedPattern> {
+  pattern: JTPattern<?>;
+}
+
 interface JTPattern<Tree extends JTPattern<Tree>> extends JTCaseLabel<JTPattern> {
 }
 
@@ -551,6 +555,7 @@ interface TransformOptionsPluginVisitor {
   Opens(node: JTOpens): void;
   Package(node: JTPackageDecl): void;
   Parenthesized(node: JTParens): void;
+  ParenthesizedPattern(node: JTParenthesizedPattern): void;
   Variable(node: JTVariableDecl): void;
 }
 
