@@ -134,7 +134,7 @@ public final class JTTreeFactory {
                     case PARENTHESIZED_PATTERN ->
                             r = (R) create((ParenthesizedPatternTree) tree, parentTree, JTParenthesizedPattern::new);
                     case PRIMITIVE_TYPE ->
-                            r = (R) create((PrimitiveTypeTree) tree, parentTree, JTPrimitiveTypeTree::new);
+                            r = (R) create((PrimitiveTypeTree) tree, parentTree, JTPrimitiveType::new);
                     case PROVIDES -> r = (R) create((ProvidesTree) tree, parentTree, JTProvides::new);
                     case RETURN -> r = (R) create((ReturnTree) tree, parentTree, JTReturn::new);
                     case REQUIRES -> r = (R) create((RequiresTree) tree, parentTree, JTRequires::new);

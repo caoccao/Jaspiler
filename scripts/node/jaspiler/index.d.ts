@@ -158,6 +158,31 @@ enum JTReferenceMode {
   NEW, // Constructor references
 }
 
+enum JTTypeKind {
+  BOOLEAN,
+  BYTE,
+  SHORT,
+  INT,
+  LONG,
+  CHAR,
+  FLOAT,
+  DOUBLE,
+  VOID,
+  NONE,
+  NULL,
+  ARRAY,
+  DECLARED,
+  ERROR,
+  TYPEVAR,
+  WILDCARD,
+  PACKAGE,
+  EXECUTABLE,
+  OTHER,
+  UNION,
+  INTERSECTION,
+  MODULE,
+}
+
 interface JTAnnotatedType extends JTExpression<JTAnnotatedType> {
   annotations: JTAnnotation[];
   underlyingType: JTExpression<?>;
@@ -437,6 +462,10 @@ interface JTPattern<Tree extends JTPattern<Tree>> extends JTCaseLabel<JTPattern>
 interface JTPolyExpression<Tree extends JTPolyExpression<Tree>> extends JTExpression<JTPolyExpression> {
 }
 
+interface JTPrimitiveType extends JTExpression<JTPrimitiveType> {
+  primitiveTypeKind: JTTypeKind;
+}
+
 interface JTStatement<Tree extends JTStatement<Tree>> extends JTTree<JTStatement> {
 }
 
@@ -562,6 +591,7 @@ interface TransformOptionsPluginVisitor {
   ParameterizedType(node: JTTypeApply): void;
   Parenthesized(node: JTParens): void;
   ParenthesizedPattern(node: JTParenthesizedPattern): void;
+  PrimitiveType(node: JTPrimitiveType): void;
   Variable(node: JTVariableDecl): void;
 }
 
@@ -653,7 +683,7 @@ declare namespace jaspiler {
   function newPackageDecl(): JTPackageDecl;
   function newParens(): JTParens;
   function newParenthesizedPattern(): JTParenthesizedPattern;
-  function newPrimitiveTypeTree(): JTPrimitiveTypeTree;
+  function newPrimitiveType(): JTPrimitiveType;
   function newProvides(): JTProvides;
   function newRequires(): JTRequires;
   function newReturn(): JTReturn;

@@ -16,24 +16,32 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.exceptions.JaspilerNotSupportedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
+import com.caoccao.javet.values.primitive.V8ValueString;
 import com.sun.source.tree.PrimitiveTypeTree;
 import com.sun.source.tree.TreeVisitor;
 
 import javax.lang.model.type.TypeKind;
+import java.util.Map;
 import java.util.Objects;
 
-public final class JTPrimitiveTypeTree
-        extends JTExpression<PrimitiveTypeTree, JTPrimitiveTypeTree>
+public final class JTPrimitiveType
+        extends JTExpression<PrimitiveTypeTree, JTPrimitiveType>
         implements PrimitiveTypeTree {
+    private static final String PROPERTY_PRIMITIVE_TYPE_KIND = "primitiveTypeKind";
     private TypeKind primitiveTypeKind;
 
-    public JTPrimitiveTypeTree() {
+    public JTPrimitiveType() {
         this(null, null);
         setActionChange();
     }
 
-    JTPrimitiveTypeTree(PrimitiveTypeTree primitiveTypeTree, JTTree<?, ?> parentTree) {
+    JTPrimitiveType(PrimitiveTypeTree primitiveTypeTree, JTTree<?, ?> parentTree) {
         super(primitiveTypeTree, parentTree);
         primitiveTypeKind = null;
     }
@@ -44,7 +52,7 @@ public final class JTPrimitiveTypeTree
     }
 
     @Override
-    JTPrimitiveTypeTree analyze() {
+    JTPrimitiveType analyze() {
         super.analyze();
         primitiveTypeKind = getOriginalTree().getPrimitiveTypeKind();
         return this;
@@ -60,7 +68,34 @@ public final class JTPrimitiveTypeTree
         return primitiveTypeKind;
     }
 
-    public JTPrimitiveTypeTree setPrimitiveTypeKind(TypeKind primitiveTypeKind) {
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_PRIMITIVE_TYPE_KIND, propertyName -> v8Runtime.createV8ValueString(getPrimitiveTypeKind().name()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_PRIMITIVE_TYPE_KIND,
+                    (propertyName, propertyValue) -> setPrimitiveTypeKind(propertyValue));
+        }
+        return stringSetterMap;
+    }
+
+    private boolean setPrimitiveTypeKind(V8Value v8Value) {
+        if (v8Value instanceof V8ValueString v8ValueString) {
+            setPrimitiveTypeKind(TypeKind.valueOf(v8ValueString.getValue()));
+            return true;
+        }
+        return false;
+    }
+
+    public JTPrimitiveType setPrimitiveTypeKind(TypeKind primitiveTypeKind) {
         if (this.primitiveTypeKind == primitiveTypeKind) {
             return this;
         }

@@ -107,7 +107,7 @@ public final class V8Jaspiler
         constructorMap.put("newPackageDecl", JTPackageDecl::new);
         constructorMap.put("newParens", JTParens::new);
         constructorMap.put("newParenthesizedPattern", JTParenthesizedPattern::new);
-        constructorMap.put("newPrimitiveTypeTree", JTPrimitiveTypeTree::new);
+        constructorMap.put("newPrimitiveType", JTPrimitiveType::new);
         constructorMap.put("newProvides", JTProvides::new);
         constructorMap.put("newRequires", JTRequires::new);
         constructorMap.put("newReturn", JTReturn::new);

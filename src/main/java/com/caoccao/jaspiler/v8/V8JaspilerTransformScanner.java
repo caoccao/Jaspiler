@@ -348,6 +348,12 @@ public class V8JaspilerTransformScanner
     }
 
     @Override
+    public V8JaspilerTransformScanner visitPrimitiveType(PrimitiveTypeTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitPrimitiveType());
+        return super.visitPrimitiveType(node, jaspilerTransformContext);
+    }
+
+    @Override
     public V8JaspilerTransformScanner visitVariable(VariableTree node, JaspilerTransformContext jaspilerTransformContext) {
         forEachPlugin(node, plugin -> plugin.getVisitor().getVisitVariable());
         return super.visitVariable(node, jaspilerTransformContext);

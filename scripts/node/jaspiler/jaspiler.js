@@ -20,7 +20,7 @@
  *   and add the following line to your JS files.
  *   You will get the intellisense in VS Code.
  *
- *   const { JTBodyKind, JTCaseKind, JTKind, JTReferenceMode } = require('./jaspiler/jaspiler');
+ *   const { JTBodyKind, JTCaseKind, JTKind, JTReferenceMode, JTTypeKind } = require('./jaspiler/jaspiler');
  */
 
 module.exports = Object.freeze({
@@ -152,5 +152,29 @@ module.exports = Object.freeze({
   JTReferenceMode: Object.freeze({
     INVOKE: 'INVOKE',
     NEW: 'NEW',
+  }),
+  JTTypeKind: Object.freeze({
+    BOOLEAN: 'BOOLEAN',
+    BYTE: 'BYTE',
+    SHORT: 'SHORT',
+    INT: 'INT',
+    LONG: 'LONG',
+    CHAR: 'CHAR',
+    FLOAT: 'FLOAT',
+    DOUBLE: 'DOUBLE',
+    VOID: 'VOID',
+    NONE: 'NONE',
+    NULL: 'NULL',
+    ARRAY: 'ARRAY',
+    DECLARED: 'DECLARED',
+    ERROR: 'ERROR',
+    TYPEVAR: 'TYPEVAR',
+    WILDCARD: 'WILDCARD',
+    PACKAGE: 'PACKAGE',
+    EXECUTABLE: 'EXECUTABLE',
+    OTHER: 'OTHER',
+    UNION: 'UNION',
+    INTERSECTION: 'INTERSECTION',
+    MODULE: 'MODULE',
   }),
 });

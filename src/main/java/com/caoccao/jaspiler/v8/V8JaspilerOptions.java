@@ -288,7 +288,9 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitParameterizedType;
         private V8ValueFunction visitParenthesized;
         private V8ValueFunction visitParenthesizedPattern;
+        private V8ValueFunction visitPrimitiveType;
         private V8ValueFunction visitVariable;
+
         public Visitor() {
             properties = List.of(
                     "AnnotatedType",
@@ -336,6 +338,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "ParameterizedType",
                     "Parenthesized",
                     "ParenthesizedPattern",
+                    "PrimitiveType",
                     "Variable");
             propertyGetters = List.of(
                     this::getVisitAnnotatedType,
@@ -383,6 +386,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitParameterizedType,
                     this::getVisitParenthesized,
                     this::getVisitParenthesizedPattern,
+                    this::getVisitPrimitiveType,
                     this::getVisitVariable);
             propertySetters = List.of(
                     this::setVisitAnnotatedType,
@@ -430,6 +434,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitParameterizedType,
                     this::setVisitParenthesized,
                     this::setVisitParenthesizedPattern,
+                    this::setVisitPrimitiveType,
                     this::setVisitVariable);
             reset();
         }
@@ -643,6 +648,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
             return visitParenthesizedPattern;
         }
 
+        public V8ValueFunction getVisitPrimitiveType() {
+            return visitPrimitiveType;
+        }
+
         public V8ValueFunction getVisitVariable() {
             return visitVariable;
         }
@@ -838,6 +847,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitParenthesizedPattern(V8ValueFunction visitParenthesizedPattern) {
             this.visitParenthesizedPattern = visitParenthesizedPattern;
+        }
+
+        public void setVisitPrimitiveType(V8ValueFunction visitPrimitiveType) {
+            this.visitPrimitiveType = visitPrimitiveType;
         }
 
         public void setVisitVariable(V8ValueFunction visitVariable) {
