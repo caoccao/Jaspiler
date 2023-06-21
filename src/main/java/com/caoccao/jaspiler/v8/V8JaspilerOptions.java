@@ -290,6 +290,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitParenthesizedPattern;
         private V8ValueFunction visitPrimitiveType;
         private V8ValueFunction visitProvides;
+        private V8ValueFunction visitRequires;
         private V8ValueFunction visitVariable;
 
         public Visitor() {
@@ -341,6 +342,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "ParenthesizedPattern",
                     "PrimitiveType",
                     "Provides",
+                    "Requires",
                     "Variable");
             propertyGetters = List.of(
                     this::getVisitAnnotatedType,
@@ -390,6 +392,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitParenthesizedPattern,
                     this::getVisitPrimitiveType,
                     this::getVisitProvides,
+                    this::getVisitRequires,
                     this::getVisitVariable);
             propertySetters = List.of(
                     this::setVisitAnnotatedType,
@@ -439,6 +442,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitParenthesizedPattern,
                     this::setVisitPrimitiveType,
                     this::setVisitProvides,
+                    this::setVisitRequires,
                     this::setVisitVariable);
             reset();
         }
@@ -660,6 +664,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
             return visitProvides;
         }
 
+        public V8ValueFunction getVisitRequires() {
+            return visitRequires;
+        }
+
         public V8ValueFunction getVisitVariable() {
             return visitVariable;
         }
@@ -863,6 +871,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitProvides(V8ValueFunction visitProvides) {
             this.visitProvides = visitProvides;
+        }
+
+        public void setVisitRequires(V8ValueFunction visitRequires) {
+            this.visitRequires = visitRequires;
         }
 
         public void setVisitVariable(V8ValueFunction visitVariable) {

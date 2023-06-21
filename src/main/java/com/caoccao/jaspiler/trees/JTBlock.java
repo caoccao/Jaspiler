@@ -24,7 +24,6 @@ import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
-import com.caoccao.javet.values.primitive.V8ValueBoolean;
 import com.sun.source.tree.BlockTree;
 import com.sun.source.tree.TreeVisitor;
 
@@ -105,7 +104,7 @@ public final class JTBlock
             V8Register.putStringSetter(stringSetterMap, PROPERTY_STATEMENTS,
                     (propertyName, propertyValue) -> replaceStatements(statements, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_STATIC,
-                    (propertyName, propertyValue) -> setStatic(propertyValue));
+                    (propertyName, propertyValue) -> replaceBoolean(this::setStatic, propertyValue));
         }
         return stringSetterMap;
     }
@@ -127,14 +126,6 @@ public final class JTBlock
             return true;
         }
         return super.save(writer);
-    }
-
-    private boolean setStatic(V8Value v8Value) {
-        if (v8Value instanceof V8ValueBoolean v8ValueBoolean) {
-            setStatic(v8ValueBoolean.getValue());
-            return true;
-        }
-        return false;
     }
 
     public JTBlock setStatic(boolean staticBlock) {

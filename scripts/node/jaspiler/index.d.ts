@@ -471,6 +471,12 @@ interface JTProvides extends JTDirective<JTProvides> {
   serviceName: JTExpression<?>;
 }
 
+interface JTRequires extends JTDirective<JTRequires> {
+  moduleName: JTExpression<?>;
+  static: boolean;
+  transitive: boolean;
+}
+
 interface JTStatement<Tree extends JTStatement<Tree>> extends JTTree<JTStatement> {
 }
 
@@ -598,6 +604,7 @@ interface TransformOptionsPluginVisitor {
   ParenthesizedPattern(node: JTParenthesizedPattern): void;
   PrimitiveType(node: JTPrimitiveType): void;
   Provides(node: JTProvides): void;
+  Requires(node: JTRequires): void;
   Variable(node: JTVariableDecl): void;
 }
 

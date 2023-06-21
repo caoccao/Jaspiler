@@ -107,7 +107,7 @@ public final class JTImport
             V8Register.putStringSetter(stringSetterMap, PROPERTY_QUALIFIED_IDENTIFIER,
                     (propertyName, propertyValue) -> replaceTree(this::setQualifiedIdentifier, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_STATIC_IMPORT,
-                    (propertyName, propertyValue) -> setStaticImport(propertyValue));
+                    (propertyName, propertyValue) -> replaceBoolean(this::setStaticImport, propertyValue));
         }
         return stringSetterMap;
     }
@@ -131,14 +131,6 @@ public final class JTImport
         }
         this.qualifiedIdentifier = Objects.requireNonNull(qualifiedIdentifier).setParentTree(this);
         return setActionChange();
-    }
-
-    private boolean setStaticImport(V8Value v8Value) throws JavetException {
-        if (v8Value instanceof V8ValueBoolean v8ValueBoolean) {
-            setStaticImport(v8ValueBoolean.getValue());
-            return true;
-        }
-        return false;
     }
 
     public JTImport setStaticImport(boolean staticImport) {

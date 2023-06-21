@@ -360,6 +360,12 @@ public class V8JaspilerTransformScanner
     }
 
     @Override
+    public V8JaspilerTransformScanner visitRequires(RequiresTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitRequires());
+        return super.visitRequires(node, jaspilerTransformContext);
+    }
+
+    @Override
     public V8JaspilerTransformScanner visitVariable(VariableTree node, JaspilerTransformContext jaspilerTransformContext) {
         forEachPlugin(node, plugin -> plugin.getVisitor().getVisitVariable());
         return super.visitVariable(node, jaspilerTransformContext);

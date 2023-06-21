@@ -29,6 +29,8 @@ import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.interop.V8Runtime;
 import com.caoccao.javet.values.V8Value;
+import com.caoccao.javet.values.primitive.V8ValueBoolean;
+import com.caoccao.javet.values.primitive.V8ValueString;
 import com.caoccao.javet.values.reference.V8ValueSymbol;
 import com.caoccao.javet.values.reference.builtin.V8ValueBuiltInSymbol;
 import com.sun.source.tree.Tree;
@@ -210,6 +212,14 @@ public abstract class JTTree<
         return false;
     }
 
+    protected boolean replaceBoolean(Function<Boolean, NewTree> setter, V8Value v8Value) {
+        if (v8Value instanceof V8ValueBoolean v8ValueBoolean) {
+            setter.apply(v8ValueBoolean.getValue());
+            return true;
+        }
+        return false;
+    }
+
     protected boolean replaceCaseLabels(List<JTCaseLabel<?, ?>> list, V8Value v8Value) throws JavetException {
         if (v8Runtime.toObject(v8Value) instanceof List<?> trees) {
             list.clear();
@@ -355,6 +365,14 @@ public abstract class JTTree<
                     .map(tree -> ((JTStatement<?, ?>) tree).setParentTree(this))
                     .forEach(list::add);
             setActionChange();
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean replaceString(Function<String, NewTree> setter, V8Value v8Value) {
+        if (v8Value instanceof V8ValueString v8ValueString) {
+            setter.apply(v8ValueString.getValue());
             return true;
         }
         return false;
