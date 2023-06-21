@@ -502,6 +502,10 @@ interface JTSynchronized extends JTStatement<JTSynchronized> {
 interface JTStatement<Tree extends JTStatement<Tree>> extends JTTree<JTStatement> {
 }
 
+interface JTThrow extends JTStatement<JTThrow> {
+  expression: JTExpression<?>;
+}
+
 interface JTTree<Tree extends JTTree<Tree>> {
   readonly className: string;
   readonly classSimpleName: string;
@@ -632,6 +636,7 @@ interface TransformOptionsPluginVisitor {
   Switch(node: JTSwitch): void;
   SwitchExpression(node: JTSwitchExpression): void;
   Synchronized(node: JTSynchronized): void;
+  Throw(node: JTThrow): void;
   Variable(node: JTVariableDecl): void;
 }
 

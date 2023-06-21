@@ -296,6 +296,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitSwitch;
         private V8ValueFunction visitSwitchExpression;
         private V8ValueFunction visitSynchronized;
+        private V8ValueFunction visitThrow;
         private V8ValueFunction visitVariable;
 
         public Visitor() {
@@ -353,6 +354,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "Switch",
                     "SwitchExpression",
                     "Synchronized",
+                    "Throw",
                     "Variable");
             propertyGetters = List.of(
                     this::getVisitAnnotatedType,
@@ -408,6 +410,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitSwitch,
                     this::getVisitSwitchExpression,
                     this::getVisitSynchronized,
+                    this::getVisitThrow,
                     this::getVisitVariable);
             propertySetters = List.of(
                     this::setVisitAnnotatedType,
@@ -463,6 +466,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitSwitch,
                     this::setVisitSwitchExpression,
                     this::setVisitSynchronized,
+                    this::setVisitThrow,
                     this::setVisitVariable);
             reset();
         }
@@ -708,6 +712,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
             return visitSynchronized;
         }
 
+        public V8ValueFunction getVisitThrow() {
+            return visitThrow;
+        }
+
         public V8ValueFunction getVisitVariable() {
             return visitVariable;
         }
@@ -935,6 +943,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitSynchronized(V8ValueFunction visitSynchronized) {
             this.visitSynchronized = visitSynchronized;
+        }
+
+        public void setVisitThrow(V8ValueFunction visitThrow) {
+            this.visitThrow = visitThrow;
         }
 
         public void setVisitVariable(V8ValueFunction visitVariable) {
