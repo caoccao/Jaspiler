@@ -670,6 +670,7 @@ interface TransformOptionsPluginVisitor {
   NewArray(node: JTNewArray): void;
   NewClass(node: JTNewClass): void;
   Opens(node: JTOpens): void;
+  Other(node: JTTree): void;
   Package(node: JTPackageDecl): void;
   ParameterizedType(node: JTTypeApply): void;
   Parenthesized(node: JTParens): void;
@@ -678,6 +679,7 @@ interface TransformOptionsPluginVisitor {
   Provides(node: JTProvides): void;
   Requires(node: JTRequires): void;
   Return(node: JTReturn): void;
+  Scan(node: JTTree): void;
   Switch(node: JTSwitch): void;
   SwitchExpression(node: JTSwitchExpression): void;
   Synchronized(node: JTSynchronized): void;

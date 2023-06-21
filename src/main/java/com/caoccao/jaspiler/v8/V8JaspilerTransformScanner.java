@@ -72,6 +72,12 @@ public class V8JaspilerTransformScanner
     }
 
     @Override
+    public V8JaspilerTransformScanner scan(Tree tree, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(tree, plugin -> plugin.getVisitor().getScan());
+        return super.scan(tree, jaspilerTransformContext);
+    }
+
+    @Override
     public V8JaspilerTransformScanner visitAnnotatedType(AnnotatedTypeTree node, JaspilerTransformContext jaspilerTransformContext) {
         forEachPlugin(node, plugin -> plugin.getVisitor().getVisitAnnotatedType());
         return super.visitAnnotatedType(node, jaspilerTransformContext);
@@ -333,6 +339,12 @@ public class V8JaspilerTransformScanner
     public V8JaspilerTransformScanner visitOpens(OpensTree node, JaspilerTransformContext jaspilerTransformContext) {
         forEachPlugin(node, plugin -> plugin.getVisitor().getVisitOpens());
         return super.visitOpens(node, jaspilerTransformContext);
+    }
+
+    @Override
+    public V8JaspilerTransformScanner visitOther(Tree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitOther());
+        return super.visitOther(node, jaspilerTransformContext);
     }
 
     @Override

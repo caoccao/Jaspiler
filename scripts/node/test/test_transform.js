@@ -25,6 +25,9 @@ const workingDirectory = process.cwd();
 const pathMockAllInOnePublicClass = path.join(
   workingDirectory,
   '../../../src/test/java/com/caoccao/jaspiler/mock/MockAllInOnePublicClass.java');
+const pathMockForScan = path.join(
+  workingDirectory,
+  '../../../src/test/java/com/caoccao/jaspiler/mock/MockForScan.java');
 const pathMockPublicAnnotation = path.join(
   workingDirectory,
   '../../../src/test/java/com/caoccao/jaspiler/mock/MockPublicAnnotation.java');
@@ -35,9 +38,9 @@ function testAstForFile() {
   assert.isObject(result);
   assert.isObject(result.ast);
   const expectedLine = 'public @interface MockPublicAnnotation {';
-  assert.include(result.code, expectedLine, 'The code string should be generated.');
-  assert.include(result.ast.toString(), expectedLine, 'The ast.toString() should work.');
-  assert.include('' + result.ast, expectedLine, 'The ast[Symbol.toPrimitive]() should work.');
+  assert.include(result.code, expectedLine, 'The code string should be generated');
+  assert.include(result.ast.toString(), expectedLine, 'The ast.toString() should work');
+  assert.include('' + result.ast, expectedLine, 'The ast[Symbol.toPrimitive]() should work');
   // Assert ast
   const ast = result.ast;
   assert.equal(JTKind.COMPILATION_UNIT, ast.kind);
@@ -55,8 +58,8 @@ function testAstForFile() {
   const typeDecls = ast.typeDecls;
   assert.isArray(typeDecls);
   assert.equal(1, typeDecls.length);
-  assert.include(typeDecls[0].toString(), expectedLine, 'The typeDecls[0].toString() should work.');
-  assert.equal(pathMockPublicAnnotation, ast.sourceFile, 'The source file should match.');
+  assert.include(typeDecls[0].toString(), expectedLine, 'The typeDecls[0].toString() should work');
+  assert.equal(pathMockPublicAnnotation, ast.sourceFile, 'The source file should match');
 }
 
 function testAstForString() {
@@ -145,7 +148,7 @@ function testImports() {
       visitor: {
         CompilationUnit(node) {
           assert.equal(JTKind.COMPILATION_UNIT, node.kind);
-          assert.equal(pathMockPublicAnnotation, node.sourceFile, 'The source file should match.');
+          assert.equal(pathMockPublicAnnotation, node.sourceFile, 'The source file should match');
           const imports = node.imports;
           assert.equal(2, imports.length);
           imports.push(imports.shift());
@@ -349,7 +352,7 @@ function testMethod() {
 // Block
 function testBlock() {
   const values = [];
-  const result = jaspiler.transformSync(pathMockAllInOnePublicClass, {
+  jaspiler.transformSync(pathMockAllInOnePublicClass, {
     plugins: [{
       visitor: {
         Block(node) {
@@ -368,6 +371,51 @@ function testBlock() {
     }],
   });
   assert.equal(2, values.length);
+}
+
+// Other
+
+function testOther() {
+  let count = 0;
+  jaspiler.transformSync(pathMockForScan, {
+    plugins: [{
+      visitor: {
+        Other(node) {
+          count++;
+        },
+      },
+    }],
+  });
+  assert.equal(0, count, 'There should not be other nodes');
+}
+
+// Scan
+
+function testScan() {
+  const classSimpleNameSet = new Set();
+  jaspiler.transformSync(pathMockForScan, {
+    plugins: [{
+      visitor: {
+        Scan(node) {
+          if (node) {
+            classSimpleNameSet.add(node.classSimpleName);
+          }
+        },
+      },
+    }],
+  });
+  const expectedClassSimpleNameSet = new Set([
+    'JTCompilationUnit', 'JTPackageDecl', 'JTFieldAccess', 'JTIdent', 'JTImport',
+    'JTClassDecl', 'JTModifiers', 'JTMethodDecl', 'JTArrayType', 'JTNewArray',
+    'JTPrimitiveType', 'JTBlock', 'JTAnnotation', 'JTLiteral', 'JTVariableDecl',
+    'JTExpressionStatement', 'JTForLoop', 'JTBinary', 'JTUnary', 'JTReturn',
+    'JTNewClass','JTIf',
+    'JTSwitch','JTCase','JTBreak',
+    'JTMethodInvocation', 'JTWhileLoop', 'JTDoWhileLoop','JTParens']);
+  const unexpectedClassSimpleNames =
+    [...classSimpleNameSet].filter(name => !expectedClassSimpleNameSet.has(name));
+  assert.equal(0, unexpectedClassSimpleNames.length,
+    'Unexpected [\'' + unexpectedClassSimpleNames.join('\',\'') + '\']');
 }
 
 testAstForFile();
@@ -390,3 +438,7 @@ testVariable();
 testMethod();
 // Block
 testBlock();
+// Other
+testOther();
+// Scan
+testScan();

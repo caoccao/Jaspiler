@@ -243,6 +243,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private final List<String> properties;
         private final List<Supplier<V8ValueFunction>> propertyGetters;
         private final List<Consumer<V8ValueFunction>> propertySetters;
+        private V8ValueFunction scan;
         private V8ValueFunction visitAnnotatedType;
         private V8ValueFunction visitAnnotation;
         private V8ValueFunction visitArrayAccess;
@@ -286,6 +287,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitNewArray;
         private V8ValueFunction visitNewClass;
         private V8ValueFunction visitOpens;
+        private V8ValueFunction visitOther;
         private V8ValueFunction visitPackage;
         private V8ValueFunction visitParameterizedType;
         private V8ValueFunction visitParenthesized;
@@ -311,6 +313,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public Visitor() {
             properties = List.of(
+                    "Scan",
                     "AnnotatedType",
                     "Annotation",
                     "ArrayAccess",
@@ -354,6 +357,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "NewArray",
                     "NewClass",
                     "Opens",
+                    "Other",
                     "Package",
                     "ParameterizedType",
                     "Parenthesized",
@@ -377,6 +381,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "Wildcard",
                     "Yield");
             propertyGetters = List.of(
+                    this::getScan,
                     this::getVisitAnnotatedType,
                     this::getVisitAnnotation,
                     this::getVisitArrayAccess,
@@ -420,6 +425,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitNewArray,
                     this::getVisitNewClass,
                     this::getVisitOpens,
+                    this::getVisitOther,
                     this::getVisitPackage,
                     this::getVisitParameterizedType,
                     this::getVisitParenthesized,
@@ -443,6 +449,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitWildcard,
                     this::getVisitYield);
             propertySetters = List.of(
+                    this::setScan,
                     this::setVisitAnnotatedType,
                     this::setVisitAnnotation,
                     this::setVisitArrayAccess,
@@ -486,6 +493,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitNewArray,
                     this::setVisitNewClass,
                     this::setVisitOpens,
+                    this::setVisitOther,
                     this::setVisitPackage,
                     this::setVisitParameterizedType,
                     this::setVisitParenthesized,
@@ -538,6 +546,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
                 JavetResourceUtils.safeClose(v8ValueValues);
             }
             return this;
+        }
+
+        public V8ValueFunction getScan() {
+            return scan;
         }
 
         public V8ValueFunction getVisitAnnotatedType() {
@@ -712,6 +724,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
             return visitOpens;
         }
 
+        public V8ValueFunction getVisitOther() {
+            return visitOther;
+        }
+
         public V8ValueFunction getVisitPackage() {
             return visitPackage;
         }
@@ -811,6 +827,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         private void reset() {
             propertySetters.forEach(setter -> setter.accept(null));
+        }
+
+        public void setScan(V8ValueFunction scan) {
+            this.scan = scan;
         }
 
         public void setVisitAnnotatedType(V8ValueFunction visitAnnotatedType) {
@@ -983,6 +1003,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitOpens(V8ValueFunction visitOpens) {
             this.visitOpens = visitOpens;
+        }
+
+        public void setVisitOther(V8ValueFunction visitOther) {
+            this.visitOther = visitOther;
         }
 
         public void setVisitPackage(V8ValueFunction visitPackage) {
