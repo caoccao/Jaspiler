@@ -289,6 +289,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitParenthesized;
         private V8ValueFunction visitParenthesizedPattern;
         private V8ValueFunction visitPrimitiveType;
+        private V8ValueFunction visitProvides;
         private V8ValueFunction visitVariable;
 
         public Visitor() {
@@ -339,6 +340,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "Parenthesized",
                     "ParenthesizedPattern",
                     "PrimitiveType",
+                    "Provides",
                     "Variable");
             propertyGetters = List.of(
                     this::getVisitAnnotatedType,
@@ -387,6 +389,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitParenthesized,
                     this::getVisitParenthesizedPattern,
                     this::getVisitPrimitiveType,
+                    this::getVisitProvides,
                     this::getVisitVariable);
             propertySetters = List.of(
                     this::setVisitAnnotatedType,
@@ -435,6 +438,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitParenthesized,
                     this::setVisitParenthesizedPattern,
                     this::setVisitPrimitiveType,
+                    this::setVisitProvides,
                     this::setVisitVariable);
             reset();
         }
@@ -652,6 +656,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
             return visitPrimitiveType;
         }
 
+        public V8ValueFunction getVisitProvides() {
+            return visitProvides;
+        }
+
         public V8ValueFunction getVisitVariable() {
             return visitVariable;
         }
@@ -851,6 +859,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitPrimitiveType(V8ValueFunction visitPrimitiveType) {
             this.visitPrimitiveType = visitPrimitiveType;
+        }
+
+        public void setVisitProvides(V8ValueFunction visitProvides) {
+            this.visitProvides = visitProvides;
         }
 
         public void setVisitVariable(V8ValueFunction visitVariable) {

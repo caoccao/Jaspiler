@@ -466,6 +466,11 @@ interface JTPrimitiveType extends JTExpression<JTPrimitiveType> {
   primitiveTypeKind: JTTypeKind;
 }
 
+interface JTProvides extends JTDirective<JTProvides> {
+  implementationNames: JTExpression<?>[];
+  serviceName: JTExpression<?>;
+}
+
 interface JTStatement<Tree extends JTStatement<Tree>> extends JTTree<JTStatement> {
 }
 
@@ -592,6 +597,7 @@ interface TransformOptionsPluginVisitor {
   Parenthesized(node: JTParens): void;
   ParenthesizedPattern(node: JTParenthesizedPattern): void;
   PrimitiveType(node: JTPrimitiveType): void;
+  Provides(node: JTProvides): void;
   Variable(node: JTVariableDecl): void;
 }
 

@@ -16,17 +16,21 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.ProvidesTree;
 import com.sun.source.tree.TreeVisitor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public final class JTProvides
         extends JTDirective<ProvidesTree, JTProvides>
         implements ProvidesTree {
+    private static final String PROPERTY_IMPLEMENTATION_NAMES = "implementationNames";
+    private static final String PROPERTY_SERVICE_NAME = "serviceName";
     private final List<JTExpression<?, ?>> implementationNames;
     private JTExpression<?, ?> serviceName;
 
@@ -77,6 +81,28 @@ public final class JTProvides
     @Override
     public JTExpression<?, ?> getServiceName() {
         return serviceName;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_IMPLEMENTATION_NAMES, propertyName -> v8Runtime.toV8Value(getImplementationNames()));
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_SERVICE_NAME, propertyName -> v8Runtime.toV8Value(getServiceName()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_IMPLEMENTATION_NAMES,
+                    (propertyName, propertyValue) -> replaceExpressions(implementationNames, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_SERVICE_NAME,
+                    (propertyName, propertyValue) -> replaceExpression(this::setServiceName, propertyValue));
+        }
+        return stringSetterMap;
     }
 
     public JTProvides setServiceName(JTExpression<?, ?> serviceName) {
