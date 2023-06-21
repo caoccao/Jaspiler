@@ -258,6 +258,12 @@ public class V8JaspilerTransformScanner
     }
 
     @Override
+    public V8JaspilerTransformScanner visitIntersectionType(IntersectionTypeTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitIntersectionType());
+        return super.visitIntersectionType(node, jaspilerTransformContext);
+    }
+
+    @Override
     public V8JaspilerTransformScanner visitLabeledStatement(LabeledStatementTree node, JaspilerTransformContext jaspilerTransformContext) {
         forEachPlugin(node, plugin -> plugin.getVisitor().getVisitLabeledStatement());
         return super.visitLabeledStatement(node, jaspilerTransformContext);

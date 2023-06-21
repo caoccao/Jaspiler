@@ -537,6 +537,10 @@ interface JTTypeCast extends JTExpression<JTTypeCast> {
   type: JTTree<?>;
 }
 
+interface JTTypeIntersection extends JTExpression<JTTypeIntersection> {
+  bounds: JTExpression<?>;
+}
+
 interface JTTypeParameter extends JTTree<JTTypeParameter> {
   annotations: JTAnnotation[];
   bound: JTExpression<?>;
@@ -625,6 +629,7 @@ interface TransformOptionsPluginVisitor {
   If(node: JTIf): void;
   Import(node: JTImport): void;
   InstanceOf(node: JTInstanceOf): void;
+  IntersectionType(node: JTTypeIntersection): void;
   LabeledStatement(node: JTLabeledStatement): void;
   LambdaExpression(node: JTLambda): void;
   Literal(node: JTLiteral): void;

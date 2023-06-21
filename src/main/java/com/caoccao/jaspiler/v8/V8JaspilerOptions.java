@@ -273,6 +273,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitIf;
         private V8ValueFunction visitImport;
         private V8ValueFunction visitInstanceOf;
+        private V8ValueFunction visitIntersectionType;
         private V8ValueFunction visitLabeledStatement;
         private V8ValueFunction visitLambdaExpression;
         private V8ValueFunction visitLiteral;
@@ -300,7 +301,6 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitTry;
         private V8ValueFunction visitTypeCast;
         private V8ValueFunction visitVariable;
-
         public Visitor() {
             properties = List.of(
                     "AnnotatedType",
@@ -333,6 +333,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "If",
                     "Import",
                     "InstanceOf",
+                    "IntersectionType",
                     "LabeledStatement",
                     "LambdaExpression",
                     "Literal",
@@ -391,6 +392,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitIf,
                     this::getVisitImport,
                     this::getVisitInstanceOf,
+                    this::getVisitIntersectionType,
                     this::getVisitLabeledStatement,
                     this::getVisitLambdaExpression,
                     this::getVisitLiteral,
@@ -449,6 +451,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitIf,
                     this::setVisitImport,
                     this::setVisitInstanceOf,
+                    this::setVisitIntersectionType,
                     this::setVisitLabeledStatement,
                     this::setVisitLambdaExpression,
                     this::setVisitLiteral,
@@ -626,6 +629,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public V8ValueFunction getVisitInstanceOf() {
             return visitInstanceOf;
+        }
+
+        public V8ValueFunction getVisitIntersectionType() {
+            return visitIntersectionType;
         }
 
         public V8ValueFunction getVisitLabeledStatement() {
@@ -867,6 +874,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitInstanceOf(V8ValueFunction visitInstanceOf) {
             this.visitInstanceOf = visitInstanceOf;
+        }
+
+        public void setVisitIntersectionType(V8ValueFunction visitIntersectionType) {
+            this.visitIntersectionType = visitIntersectionType;
         }
 
         public void setVisitLabeledStatement(V8ValueFunction visitLabeledStatement) {

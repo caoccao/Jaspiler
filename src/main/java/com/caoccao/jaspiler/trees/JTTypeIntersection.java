@@ -16,16 +16,23 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.IntersectionTypeTree;
 import com.sun.source.tree.TreeVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public final class JTTypeIntersection
         extends JTExpression<IntersectionTypeTree, JTTypeIntersection>
         implements IntersectionTypeTree {
+    private static final String PROPERTY_BOUNDS = "bounds";
     private final List<JTExpression<?, ?>> bounds;
 
     public JTTypeIntersection() {
@@ -67,5 +74,24 @@ public final class JTTypeIntersection
     @Override
     public Kind getKind() {
         return Kind.INTERSECTION_TYPE;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_BOUNDS, propertyName -> v8Runtime.toV8Value(getBounds()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_BOUNDS,
+                    (propertyName, propertyValue) -> replaceExpressions(bounds, propertyValue));
+        }
+        return stringSetterMap;
     }
 }
