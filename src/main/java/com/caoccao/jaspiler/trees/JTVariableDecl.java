@@ -136,10 +136,10 @@ public final class JTVariableDecl
     public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_MODIFIERS,
-                    (propertyName, propertyValue) -> replaceModifiers(this::setModifiers, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_INITIALIZER,
                     (propertyName, propertyValue) -> replaceExpression(this::setInitializer, propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_MODIFIERS,
+                    (propertyName, propertyValue) -> replaceModifiers(this::setModifiers, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_NAME,
                     (propertyName, propertyValue) -> replaceName(this::setName, propertyValue));
             V8Register.putStringSetter(stringSetterMap, PROPERTY_NAME_EXPRESSION,

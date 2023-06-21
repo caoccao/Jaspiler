@@ -569,6 +569,11 @@ interface JTVariableDecl extends JTStatement<JTVariableDecl> {
   type: JTExpression<?>;
 }
 
+interface JTWhileLoop extends JTStatement<JTWhileLoop> {
+  condition: JTExpression<?>;
+  statement: JTStatement<?>;
+}
+
 interface TransformOptions {
   /**
    * Include the AST in the returned object
@@ -675,6 +680,7 @@ interface TransformOptionsPluginVisitor {
   UnionType(node: JTTypeUnion): void;
   Uses(node: JTUses): void;
   Variable(node: JTVariableDecl): void;
+  WhileLoop(node: JTWhileLoop): void;
 }
 
 interface TransformOptionStyle {

@@ -448,4 +448,10 @@ public class V8JaspilerTransformScanner
         forEachPlugin(node, plugin -> plugin.getVisitor().getVisitVariable());
         return super.visitVariable(node, jaspilerTransformContext);
     }
+
+    @Override
+    public V8JaspilerTransformScanner visitWhileLoop(WhileLoopTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitWhileLoop());
+        return super.visitWhileLoop(node, jaspilerTransformContext);
+    }
 }
