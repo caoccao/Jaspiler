@@ -293,6 +293,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitProvides;
         private V8ValueFunction visitRequires;
         private V8ValueFunction visitReturn;
+        private V8ValueFunction visitSwitch;
         private V8ValueFunction visitVariable;
 
         public Visitor() {
@@ -347,6 +348,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "Provides",
                     "Requires",
                     "Return",
+                    "Switch",
                     "Variable");
             propertyGetters = List.of(
                     this::getVisitAnnotatedType,
@@ -399,6 +401,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitProvides,
                     this::getVisitRequires,
                     this::getVisitReturn,
+                    this::getVisitSwitch,
                     this::getVisitVariable);
             propertySetters = List.of(
                     this::setVisitAnnotatedType,
@@ -451,6 +454,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitProvides,
                     this::setVisitRequires,
                     this::setVisitReturn,
+                    this::setVisitSwitch,
                     this::setVisitVariable);
             reset();
         }
@@ -684,6 +688,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
             return visitReturn;
         }
 
+        public V8ValueFunction getVisitSwitch() {
+            return visitSwitch;
+        }
+
         public V8ValueFunction getVisitVariable() {
             return visitVariable;
         }
@@ -899,6 +907,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitReturn(V8ValueFunction visitReturn) {
             this.visitReturn = visitReturn;
+        }
+
+        public void setVisitSwitch(V8ValueFunction visitSwitch) {
+            this.visitSwitch = visitSwitch;
         }
 
         public void setVisitVariable(V8ValueFunction visitVariable) {

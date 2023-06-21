@@ -233,6 +233,19 @@ public abstract class JTTree<
         return false;
     }
 
+    protected boolean replaceCases(List<JTCase> list, V8Value v8Value) throws JavetException {
+        if (v8Runtime.toObject(v8Value) instanceof List<?> trees) {
+            list.clear();
+            trees.stream()
+                    .filter(tree -> tree instanceof JTCase)
+                    .map(tree -> ((JTCase) tree).setParentTree(this))
+                    .forEach(list::add);
+            setActionChange();
+            return true;
+        }
+        return false;
+    }
+
     protected boolean replaceClassDecl(Function<JTClassDecl, NewTree> setter, V8Value v8Value) throws JavetException {
         if (v8Runtime.toObject(v8Value) instanceof JTClassDecl tree) {
             setter.apply(tree);

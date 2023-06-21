@@ -484,6 +484,11 @@ interface JTReturn extends JTStatement<JTReturn> {
   expression: JTExpression<?>;
 }
 
+interface JTSwitch extends JTStatement<JTSwitch> {
+  cases: JTCase[];
+  expression: JTExpression<?>;
+}
+
 interface JTStatement<Tree extends JTStatement<Tree>> extends JTTree<JTStatement> {
 }
 
@@ -614,6 +619,7 @@ interface TransformOptionsPluginVisitor {
   Provides(node: JTProvides): void;
   Requires(node: JTRequires): void;
   Return(node: JTReturn): void;
+  Switch(node: JTSwitch): void;
   Variable(node: JTVariableDecl): void;
 }
 
