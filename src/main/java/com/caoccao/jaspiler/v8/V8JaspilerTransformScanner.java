@@ -390,6 +390,12 @@ public class V8JaspilerTransformScanner
     }
 
     @Override
+    public V8JaspilerTransformScanner visitSynchronized(SynchronizedTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitSynchronized());
+        return super.visitSynchronized(node, jaspilerTransformContext);
+    }
+
+    @Override
     public V8JaspilerTransformScanner visitVariable(VariableTree node, JaspilerTransformContext jaspilerTransformContext) {
         forEachPlugin(node, plugin -> plugin.getVisitor().getVisitVariable());
         return super.visitVariable(node, jaspilerTransformContext);

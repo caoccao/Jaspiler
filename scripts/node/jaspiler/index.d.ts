@@ -494,6 +494,11 @@ interface JTSwitchExpression extends JTPolyExpression<JTSwitchExpression> {
   expression: JTExpression<?>;
 }
 
+interface JTSynchronized extends JTStatement<JTSynchronized> {
+  block: JTBlock;
+  expression: JTExpression<?>;
+}
+
 interface JTStatement<Tree extends JTStatement<Tree>> extends JTTree<JTStatement> {
 }
 
@@ -626,6 +631,7 @@ interface TransformOptionsPluginVisitor {
   Return(node: JTReturn): void;
   Switch(node: JTSwitch): void;
   SwitchExpression(node: JTSwitchExpression): void;
+  Synchronized(node: JTSynchronized): void;
   Variable(node: JTVariableDecl): void;
 }
 
