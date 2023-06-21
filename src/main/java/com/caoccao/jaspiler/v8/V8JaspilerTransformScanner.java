@@ -460,4 +460,10 @@ public class V8JaspilerTransformScanner
         forEachPlugin(node, plugin -> plugin.getVisitor().getVisitWildcard());
         return super.visitWildcard(node, jaspilerTransformContext);
     }
+
+    @Override
+    public V8JaspilerTransformScanner visitYield(YieldTree node, JaspilerTransformContext jaspilerTransformContext) {
+        forEachPlugin(node, plugin -> plugin.getVisitor().getVisitYield());
+        return super.visitYield(node, jaspilerTransformContext);
+    }
 }

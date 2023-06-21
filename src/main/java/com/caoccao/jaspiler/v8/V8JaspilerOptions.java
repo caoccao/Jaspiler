@@ -307,6 +307,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
         private V8ValueFunction visitVariable;
         private V8ValueFunction visitWhileLoop;
         private V8ValueFunction visitWildcard;
+        private V8ValueFunction visitYield;
 
         public Visitor() {
             properties = List.of(
@@ -373,7 +374,8 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     "Uses",
                     "Variable",
                     "WhileLoop",
-                    "Wildcard");
+                    "Wildcard",
+                    "Yield");
             propertyGetters = List.of(
                     this::getVisitAnnotatedType,
                     this::getVisitAnnotation,
@@ -438,7 +440,8 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::getVisitUses,
                     this::getVisitVariable,
                     this::getVisitWhileLoop,
-                    this::getVisitWildcard);
+                    this::getVisitWildcard,
+                    this::getVisitYield);
             propertySetters = List.of(
                     this::setVisitAnnotatedType,
                     this::setVisitAnnotation,
@@ -503,7 +506,8 @@ public final class V8JaspilerOptions implements IJavetClosable {
                     this::setVisitUses,
                     this::setVisitVariable,
                     this::setVisitWhileLoop,
-                    this::setVisitWildcard);
+                    this::setVisitWildcard,
+                    this::setVisitYield);
             reset();
         }
 
@@ -792,6 +796,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
             return visitWildcard;
         }
 
+        public V8ValueFunction getVisitYield() {
+            return visitYield;
+        }
+
         @Override
         public boolean isClosed() {
             return propertyGetters.stream().map(Supplier::get).allMatch(Objects::isNull);
@@ -1059,6 +1067,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
         public void setVisitWildcard(V8ValueFunction visitWildcard) {
             this.visitWildcard = visitWildcard;
+        }
+
+        public void setVisitYield(V8ValueFunction visitYield) {
+            this.visitYield = visitYield;
         }
     }
 }

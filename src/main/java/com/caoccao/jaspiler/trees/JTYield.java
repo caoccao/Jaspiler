@@ -16,16 +16,23 @@
 
 package com.caoccao.jaspiler.trees;
 
+import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.utils.V8Register;
+import com.caoccao.javet.interfaces.IJavetBiFunction;
+import com.caoccao.javet.interfaces.IJavetUniFunction;
+import com.caoccao.javet.values.V8Value;
 import com.sun.source.tree.TreeVisitor;
 import com.sun.source.tree.YieldTree;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 public final class JTYield
         extends JTStatement<YieldTree, JTYield>
         implements YieldTree {
+    private static final String PROPERTY_VALUE = "value";
     private JTExpression<?, ?> value;
 
     public JTYield() {
@@ -66,6 +73,25 @@ public final class JTYield
     @Override
     public JTExpression<?, ?> getValue() {
         return value;
+    }
+
+    @Override
+    public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
+        if (stringGetterMap == null) {
+            super.proxyGetStringGetterMap();
+            V8Register.putStringGetter(stringGetterMap, PROPERTY_VALUE, propertyName -> v8Runtime.toV8Value(getValue()));
+        }
+        return stringGetterMap;
+    }
+
+    @Override
+    public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
+        if (stringSetterMap == null) {
+            super.proxyGetStringSetterMap();
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_VALUE,
+                    (propertyName, propertyValue) -> replaceExpression(this::setValue, propertyValue));
+        }
+        return stringSetterMap;
     }
 
     public JTYield setValue(JTExpression<?, ?> value) {

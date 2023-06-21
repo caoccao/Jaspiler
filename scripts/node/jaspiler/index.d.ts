@@ -579,6 +579,10 @@ interface JTWildcard extends JTExpression<JTWildcard> {
   kind: JTKind.EXTENDS_WILDCARD | JTKind.SUPER_WILDCARD | JTKind.UNBOUNDED_WILDCARD;
 }
 
+interface JTYield extends JTStatement<JTYield> {
+  value: JTExpression<?>;
+}
+
 interface TransformOptions {
   /**
    * Include the AST in the returned object
@@ -687,6 +691,7 @@ interface TransformOptionsPluginVisitor {
   Variable(node: JTVariableDecl): void;
   WhileLoop(node: JTWhileLoop): void;
   Wildcard(node: JTWildcard): void;
+  Yield(node: JTYield): void;
 }
 
 interface TransformOptionStyle {
