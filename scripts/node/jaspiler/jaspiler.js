@@ -24,6 +24,8 @@
  *   const { PluginContractIgnore } = require('./jaspiler/jaspiler');
  */
 
+const vm = require('vm');
+
 const JTBodyKind = Object.freeze({
   EXPRESSION: 'EXPRESSION',
   STATEMENT: 'STATEMENT',
@@ -199,10 +201,21 @@ const JTTypeKind = Object.freeze({
   MODULE: 'MODULE',
 });
 
-function hasAnnotationIgnored(annotations) {
+function canBeIgnoredByAnnotations(annotations, context) {
   if (annotations) {
-    const ignoreAnnotation = annotations.find(annotation => annotation.annotationType.toString() == 'JaspilerContract.Ignore');
-    if (ignoreAnnotation) {
+    const annotation = annotations.find(annotation => annotation.annotationType.toString() == 'JaspilerContract.Ignore');
+    if (annotation) {
+      const args = annotation.arguments;
+      for (let i = 0; i < args.length; ++i) {
+        const arg = args[i];
+        if (arg.kind == JTKind.ASSIGNMENT && arg.variable.toString() == 'condition') {
+          const expression = arg.expression;
+          if (expression.kind == JTKind.STRING_LITERAL) {
+            const script = new vm.Script(arg.expression.value);
+            return script.runInContext(context);
+          }
+        }
+      }
       return true;
     }
   }
@@ -211,17 +224,17 @@ function hasAnnotationIgnored(annotations) {
 
 const PluginContractIgnore = Object.freeze({
   visitor: Object.freeze({
-    AnnotatedType(node) {
-      if (hasAnnotationIgnored(node.annotations)) {
+    AnnotatedType(node, context) {
+      if (canBeIgnoredByAnnotations(node.annotations, context)) {
         node.setActionIgnore();
       }
     },
-    CompilationUnit(node) {
+    CompilationUnit(node, context) {
       const typeDeclIgnored = node.typeDecls.find(typeDecl => {
         if (typeDecl.classSimpleName == 'JTClassDecl') {
           const modifiers = typeDecl.modifiers;
           if (modifiers && modifiers.flags.includes(JTModifier.PUBLIC)) {
-            return hasAnnotationIgnored(modifiers.annotations);
+            return canBeIgnoredByAnnotations(modifiers.annotations, context);
           }
         }
         return false;
@@ -230,38 +243,38 @@ const PluginContractIgnore = Object.freeze({
         node.setActionIgnore();
       }
     },
-    Class(node) {
-      if (hasAnnotationIgnored(node.modifiers?.annotations)) {
+    Class(node, context) {
+      if (canBeIgnoredByAnnotations(node.modifiers?.annotations, context)) {
         node.setActionIgnore();
       }
     },
-    Method(node) {
-      if (hasAnnotationIgnored(node.modifiers?.annotations)) {
+    Method(node, context) {
+      if (canBeIgnoredByAnnotations(node.modifiers?.annotations, context)) {
         node.setActionIgnore();
       }
     },
-    Module(node) {
-      if (hasAnnotationIgnored(node.annotations)) {
+    Module(node, context) {
+      if (canBeIgnoredByAnnotations(node.annotations, context)) {
         node.setActionIgnore();
       }
     },
-    NewArray(node) {
-      if (hasAnnotationIgnored(node.annotations)) {
+    NewArray(node, context) {
+      if (canBeIgnoredByAnnotations(node.annotations, context)) {
         node.setActionIgnore();
       }
     },
-    Package(node) {
-      if (hasAnnotationIgnored(node.annotations)) {
+    Package(node, context) {
+      if (canBeIgnoredByAnnotations(node.annotations, context)) {
         node.setActionIgnore();
       }
     },
-    TypeParameter(node) {
-      if (hasAnnotationIgnored(node.annotations)) {
+    TypeParameter(node, context) {
+      if (canBeIgnoredByAnnotations(node.annotations, context)) {
         node.setActionIgnore();
       }
     },
-    Variable(node) {
-      if (hasAnnotationIgnored(node.modifiers?.annotations)) {
+    Variable(node, context) {
+      if (canBeIgnoredByAnnotations(node.modifiers?.annotations, context)) {
         node.setActionIgnore();
       }
     },

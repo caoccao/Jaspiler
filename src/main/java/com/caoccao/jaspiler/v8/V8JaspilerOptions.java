@@ -41,6 +41,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
     private static final String DEFAULT_FILE_NAME = "Dummy";
     private static final String PROPERTY_AST = "ast";
     private static final String PROPERTY_CODE = "code";
+    private static final String PROPERTY_CONTEXT = "context";
     private static final String PROPERTY_CONTINUATION_INDENT_SIZE = "continuationIndentSize";
     private static final String PROPERTY_FILE_NAME = "fileName";
     private static final String PROPERTY_INDENT_SIZE = "indentSize";
@@ -52,6 +53,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
     private final List<Plugin> plugins;
     private boolean ast;
     private boolean code;
+    private V8ValueObject context;
     private String fileName;
     private SourceType sourceType;
     private StyleOptions styleOptions;
@@ -59,6 +61,7 @@ public final class V8JaspilerOptions implements IJavetClosable {
     public V8JaspilerOptions() {
         ast = false;
         code = true;
+        context = null;
         fileName = null;
         plugins = new ArrayList<>();
         sourceType = SourceType.File;
@@ -67,13 +70,16 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
     @Override
     public void close() {
+        JavetResourceUtils.safeClose(context);
         JavetResourceUtils.safeClose(plugins);
+        context = null;
         plugins.clear();
     }
 
     public V8JaspilerOptions deserialize(V8ValueObject v8ValueObject) throws JavetException {
         deserializeAst(v8ValueObject);
         deserializeCode(v8ValueObject);
+        deserializeContext(v8ValueObject);
         deserializePlugins(v8ValueObject);
         deserializeSourceTypeAndFileName(v8ValueObject);
         deserializeStyle(v8ValueObject);
@@ -92,6 +98,14 @@ public final class V8JaspilerOptions implements IJavetClosable {
         try (V8Value v8Value = v8ValueObject.get(PROPERTY_CODE)) {
             if (v8Value instanceof V8ValueBoolean v8ValueBoolean) {
                 code = v8ValueBoolean.getValue();
+            }
+        }
+    }
+
+    private void deserializeContext(V8ValueObject v8ValueObject) throws JavetException {
+        try (V8Value v8Value = v8ValueObject.get(PROPERTY_CONTEXT)) {
+            if (v8Value instanceof V8ValueObject v8ValueObjectContext) {
+                context = v8ValueObjectContext.toClone();
             }
         }
     }
@@ -143,6 +157,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
         }
     }
 
+    public V8ValueObject getContext() {
+        return context;
+    }
+
     public String getFileName() {
         return fileName;
     }
@@ -178,6 +196,10 @@ public final class V8JaspilerOptions implements IJavetClosable {
 
     public void setCode(boolean code) {
         this.code = code;
+    }
+
+    public void setContext(V8ValueObject context) {
+        this.context = context;
     }
 
     public void setFileName(String fileName) {

@@ -31,7 +31,7 @@ interface IA extends Serializable, AutoCloseable {
 }
 
 @AA
-@SuppressWarnings("preview")
+@SuppressWarnings(value = "preview")
 public class MockForScan implements IA {
     protected int a;
 

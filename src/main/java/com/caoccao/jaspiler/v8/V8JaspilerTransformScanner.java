@@ -54,7 +54,7 @@ public class V8JaspilerTransformScanner
                     .filter(Objects::nonNull)
                     .forEach(v8ValueFunction -> {
                         try {
-                            v8ValueFunction.call(null, node);
+                            v8ValueFunction.call(null, node, options.getContext());
                         } catch (Throwable t) {
                             getExceptions().add(t);
                             if (t instanceof BaseJavetScriptingException baseJavetScriptingException) {

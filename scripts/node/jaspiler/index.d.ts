@@ -614,6 +614,12 @@ interface TransformOptions {
    */
   code?: boolean | null | undefined;
   /**
+   * Context for evaluation
+   *
+   * Default: undefined
+   */
+  context?: object | null | undefined;
+  /**
    * Specify the file name in source type 'string' mode
    *
    * Default: `undefined`
@@ -644,73 +650,73 @@ interface TransformOptionsPlugin {
 }
 
 interface TransformOptionsPluginVisitor {
-  AnnotatedType(node: JTAnnotatedType): void;
-  Annotation(node: JTAnnotation): void;
-  ArrayAccess(node: JTArrayAccess): void;
-  ArrayType(node: JTArrayType): void;
-  Assert(node: JTAssert): void;
-  Assignment(node: JTAssign): void;
-  Binary(node: JTBinary): void;
-  BindingPattern(node: JTBindingPattern): void;
-  Block(node: JTBlock): void;
-  Break(node: JTBreak): void;
-  Case(node: JTCase): void;
-  Catch(node: JTCatch): void;
-  Class(node: JTClassDecl): void;
-  CompilationUnit(node: JTCompilationUnit): void;
-  CompoundAssignment(node: JTAssignOp): void;
-  ConditionalExpression(node: JTConditional): void;
-  Continue(node: JTContinue): void;
-  DefaultCaseLabel(node: JTDefaultCaseLabel): void;
-  DoWhileLoop(node: JTDoWhileLoop): void;
-  EmptyStatement(node: JTSkip): void;
-  EnhancedForLoop(node: JTEnhancedForLoop): void;
-  Erroneous(node: JTErroneous): void;
-  Exports(node: JTExports): void;
-  ExpressionStatement(node: JTExpressionStatement): void;
-  ForLoop(node: JTForLoop): void;
-  GuardedPattern(node: JTGuardedPattern): void;
-  Identifier(node: JTIdent): void;
-  If(node: JTIf): void;
-  Import(node: JTImport): void;
-  InstanceOf(node: JTInstanceOf): void;
-  IntersectionType(node: JTTypeIntersection): void;
-  LabeledStatement(node: JTLabeledStatement): void;
-  LambdaExpression(node: JTLambda): void;
-  Literal(node: JTLiteral): void;
-  MemberReference(node: JTMemberReference): void;
-  MemberSelect(node: JTFieldAccess): void;
-  Method(node: JTMethodDecl): void;
-  MethodInvocation(node: JTMethodInvocation): void;
-  Modifiers(node: JTModifiers): void;
-  Module(node: JTModuleDecl): void;
-  NewArray(node: JTNewArray): void;
-  NewClass(node: JTNewClass): void;
-  Opens(node: JTOpens): void;
-  Other(node: JTTree): void;
-  Package(node: JTPackageDecl): void;
-  ParameterizedType(node: JTTypeApply): void;
-  Parenthesized(node: JTParens): void;
-  ParenthesizedPattern(node: JTParenthesizedPattern): void;
-  PrimitiveType(node: JTPrimitiveType): void;
-  Provides(node: JTProvides): void;
-  Requires(node: JTRequires): void;
-  Return(node: JTReturn): void;
-  Scan(node: JTTree): void;
-  Switch(node: JTSwitch): void;
-  SwitchExpression(node: JTSwitchExpression): void;
-  Synchronized(node: JTSynchronized): void;
-  Throw(node: JTThrow): void;
-  Try(node: JTTry): void;
-  TypeCast(node: JTTypeCast): void;
-  TypeParameter(node: JTTypeParameter): void;
-  Unary(node: JTUnary): void;
-  UnionType(node: JTTypeUnion): void;
-  Uses(node: JTUses): void;
-  Variable(node: JTVariableDecl): void;
-  WhileLoop(node: JTWhileLoop): void;
-  Wildcard(node: JTWildcard): void;
-  Yield(node: JTYield): void;
+  AnnotatedType(node: JTAnnotatedType, context?: object | null | undefined): void;
+  Annotation(node: JTAnnotation, context?: object | null | undefined): void;
+  ArrayAccess(node: JTArrayAccess, context?: object | null | undefined): void;
+  ArrayType(node: JTArrayType, context?: object | null | undefined): void;
+  Assert(node: JTAssert, context?: object | null | undefined): void;
+  Assignment(node: JTAssign, context?: object | null | undefined): void;
+  Binary(node: JTBinary, context?: object | null | undefined): void;
+  BindingPattern(node: JTBindingPattern, context?: object | null | undefined): void;
+  Block(node: JTBlock, context?: object | null | undefined): void;
+  Break(node: JTBreak, context?: object | null | undefined): void;
+  Case(node: JTCase, context?: object | null | undefined): void;
+  Catch(node: JTCatch, context?: object | null | undefined): void;
+  Class(node: JTClassDecl, context?: object | null | undefined): void;
+  CompilationUnit(node: JTCompilationUnit, context?: object | null | undefined): void;
+  CompoundAssignment(node: JTAssignOp, context?: object | null | undefined): void;
+  ConditionalExpression(node: JTConditional, context?: object | null | undefined): void;
+  Continue(node: JTContinue, context?: object | null | undefined): void;
+  DefaultCaseLabel(node: JTDefaultCaseLabel, context?: object | null | undefined): void;
+  DoWhileLoop(node: JTDoWhileLoop, context?: object | null | undefined): void;
+  EmptyStatement(node: JTSkip, context?: object | null | undefined): void;
+  EnhancedForLoop(node: JTEnhancedForLoop, context?: object | null | undefined): void;
+  Erroneous(node: JTErroneous, context?: object | null | undefined): void;
+  Exports(node: JTExports, context?: object | null | undefined): void;
+  ExpressionStatement(node: JTExpressionStatement, context?: object | null | undefined): void;
+  ForLoop(node: JTForLoop, context?: object | null | undefined): void;
+  GuardedPattern(node: JTGuardedPattern, context?: object | null | undefined): void;
+  Identifier(node: JTIdent, context?: object | null | undefined): void;
+  If(node: JTIf, context?: object | null | undefined): void;
+  Import(node: JTImport, context?: object | null | undefined): void;
+  InstanceOf(node: JTInstanceOf, context?: object | null | undefined): void;
+  IntersectionType(node: JTTypeIntersection, context?: object | null | undefined): void;
+  LabeledStatement(node: JTLabeledStatement, context?: object | null | undefined): void;
+  LambdaExpression(node: JTLambda, context?: object | null | undefined): void;
+  Literal(node: JTLiteral, context?: object | null | undefined): void;
+  MemberReference(node: JTMemberReference, context?: object | null | undefined): void;
+  MemberSelect(node: JTFieldAccess, context?: object | null | undefined): void;
+  Method(node: JTMethodDecl, context?: object | null | undefined): void;
+  MethodInvocation(node: JTMethodInvocation, context?: object | null | undefined): void;
+  Modifiers(node: JTModifiers, context?: object | null | undefined): void;
+  Module(node: JTModuleDecl, context?: object | null | undefined): void;
+  NewArray(node: JTNewArray, context?: object | null | undefined): void;
+  NewClass(node: JTNewClass, context?: object | null | undefined): void;
+  Opens(node: JTOpens, context?: object | null | undefined): void;
+  Other(node: JTTree, context?: object | null | undefined): void;
+  Package(node: JTPackageDecl, context?: object | null | undefined): void;
+  ParameterizedType(node: JTTypeApply, context?: object | null | undefined): void;
+  Parenthesized(node: JTParens, context?: object | null | undefined): void;
+  ParenthesizedPattern(node: JTParenthesizedPattern, context?: object | null | undefined): void;
+  PrimitiveType(node: JTPrimitiveType, context?: object | null | undefined): void;
+  Provides(node: JTProvides, context?: object | null | undefined): void;
+  Requires(node: JTRequires, context?: object | null | undefined): void;
+  Return(node: JTReturn, context?: object | null | undefined): void;
+  Scan(node: JTTree, context?: object | null | undefined): void;
+  Switch(node: JTSwitch, context?: object | null | undefined): void;
+  SwitchExpression(node: JTSwitchExpression, context?: object | null | undefined): void;
+  Synchronized(node: JTSynchronized, context?: object | null | undefined): void;
+  Throw(node: JTThrow, context?: object | null | undefined): void;
+  Try(node: JTTry, context?: object | null | undefined): void;
+  TypeCast(node: JTTypeCast, context?: object | null | undefined): void;
+  TypeParameter(node: JTTypeParameter, context?: object | null | undefined): void;
+  Unary(node: JTUnary, context?: object | null | undefined): void;
+  UnionType(node: JTTypeUnion, context?: object | null | undefined): void;
+  Uses(node: JTUses, context?: object | null | undefined): void;
+  Variable(node: JTVariableDecl, context?: object | null | undefined): void;
+  WhileLoop(node: JTWhileLoop, context?: object | null | undefined): void;
+  Wildcard(node: JTWildcard, context?: object | null | undefined): void;
+  Yield(node: JTYield, context?: object | null | undefined): void;
 }
 
 interface TransformOptionStyle {
