@@ -19,7 +19,6 @@
 const assert = require('chai').assert;
 const path = require('path');
 const process = require('process');
-const vm = require('vm');
 const { JTKind, PluginContractIgnore } = require('./jaspiler/jaspiler');
 
 const workingDirectory = process.cwd();
@@ -129,7 +128,6 @@ function testContractIgnoreMethod() {
 
 function testContractIgnoreVariable() {
   const context = { hideB: false };
-  vm.createContext(context);
   const result = jaspiler.transformSync(
     `package a.b.c;
     public class A {

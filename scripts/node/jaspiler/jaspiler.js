@@ -204,20 +204,28 @@ const JTTypeKind = Object.freeze({
 function canBeIgnoredByAnnotations(annotations, context) {
   if (annotations) {
     const annotation = annotations.find(annotation => annotation.annotationType.toString() == 'JaspilerContract.Ignore');
-    if (annotation) {
-      const args = annotation.arguments;
-      for (let i = 0; i < args.length; ++i) {
-        const arg = args[i];
-        if (arg.kind == JTKind.ASSIGNMENT && arg.variable.toString() == 'condition') {
-          const expression = arg.expression;
-          if (expression.kind == JTKind.STRING_LITERAL) {
-            const script = new vm.Script(arg.expression.value);
-            return script.runInContext(context);
+    return evaluateAnnotationCondition(annotation, context);
+  }
+  return false;
+}
+
+function evaluateAnnotationCondition(annotation, context) {
+  if (annotation) {
+    const args = annotation.arguments;
+    for (let i = 0; i < args.length; ++i) {
+      const arg = args[i];
+      if (arg.kind == JTKind.ASSIGNMENT && arg.variable.toString() == 'condition') {
+        const expression = arg.expression;
+        if (expression.kind == JTKind.STRING_LITERAL) {
+          const script = new vm.Script(arg.expression.value);
+          if (!vm.isContext(context)) {
+            vm.createContext(context);
           }
+          return script.runInContext(context);
         }
       }
-      return true;
     }
+    return true;
   }
   return false;
 }
