@@ -56,6 +56,7 @@ public final class V8Jaspiler
     private static final String FUNCTION_CREATE_FIELD_ACCESS = "createFieldAccess";
     private static final String FUNCTION_CREATE_FLOAT = "createFloat";
     private static final String FUNCTION_CREATE_IDENT = "createIdent";
+    private static final String FUNCTION_CREATE_LITERAL = "createLiteral";
     private static final String FUNCTION_CREATE_NAME = "createName";
     private static final String FUNCTION_TRANSFORM_SYNC = "transformSync";
     private static final String PROPERTIES_AST = "ast";
@@ -142,6 +143,7 @@ public final class V8Jaspiler
         creatorMap.put(FUNCTION_CREATE_FIELD_ACCESS, this::createFieldAccess);
         creatorMap.put(FUNCTION_CREATE_FLOAT, this::createFloat);
         creatorMap.put(FUNCTION_CREATE_IDENT, this::createIdent);
+        creatorMap.put(FUNCTION_CREATE_LITERAL, this::createLiteral);
         creatorMap.put(FUNCTION_CREATE_NAME, this::createName);
         creatorMap.put(FUNCTION_TRANSFORM_SYNC, this::transformSync);
         jaspilerCompiler = new JaspilerCompiler();
@@ -179,6 +181,12 @@ public final class V8Jaspiler
         validateLength(FUNCTION_CREATE_IDENT, v8Values, 1);
         String value = validateString(FUNCTION_CREATE_IDENT, v8Values, 0);
         return v8Runtime.toV8Value(JTTreeFactory.createIdent(value));
+    }
+
+    public V8Value createLiteral(V8Value... v8Values) throws JavetException, JaspilerArgumentException {
+        validateLength(FUNCTION_CREATE_LITERAL, v8Values, 1);
+        Object value = v8Runtime.toObject(v8Values[0]);
+        return v8Runtime.toV8Value(JTTreeFactory.createLiteral(value));
     }
 
     public V8Value createName(V8Value... v8Values) throws JavetException, JaspilerArgumentException {

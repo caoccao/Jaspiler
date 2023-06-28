@@ -119,10 +119,9 @@ public final class JTBlock
             writer.increaseDepth();
             ForEachUtils.forEach(
                     statements.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
-                    tree -> writer.appendIndent().append(tree),
-                    tree -> writer.appendLineSeparator());
+                    tree -> writer.appendIndent().append(tree).appendLineSeparator());
             writer.decreaseDepth();
-            writer.appendLineSeparator().appendIndent().appendBlockClose();
+            writer.appendIndent().appendBlockClose();
             return true;
         }
         return super.serialize(writer);

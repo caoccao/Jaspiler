@@ -21,7 +21,7 @@
  *   You will get the intellisense in VS Code.
  *
  *   const { JTBodyKind, JTCaseKind, JTKind, JTModifier, JTReferenceMode, JTTypeKind } = require('./jaspiler/jaspiler');
- *   const { PluginContractIgnore } = require('./jaspiler/jaspiler');
+ *   const { PluginContractIgnore, PluginContractChangeMethod } = require('./jaspiler/jaspiler');
  */
 
 const vm = require('vm');
@@ -204,20 +204,23 @@ const JTTypeKind = Object.freeze({
 function canBeIgnoredByAnnotations(annotations, context) {
   if (annotations) {
     const annotation = annotations.find(annotation => annotation.annotationType.toString() == 'JaspilerContract.Ignore');
-    return evaluateAnnotationCondition(annotation, context);
+    return evaluateAnnotationAttribute(annotation, context, 'condition', true, false);
   }
   return false;
 }
 
-function evaluateAnnotationCondition(annotation, context) {
+function evaluateAnnotationAttribute(annotation, context, attributeName, defaultValueForAttributeFound, defaultValueForAttributeNotFound) {
   if (annotation) {
     const args = annotation.arguments;
     for (let i = 0; i < args.length; ++i) {
       const arg = args[i];
-      if (arg.kind == JTKind.ASSIGNMENT && arg.variable.toString() == 'condition') {
+      if (arg.kind == JTKind.ASSIGNMENT && arg.variable.toString() == attributeName) {
         const expression = arg.expression;
         if (expression.kind == JTKind.STRING_LITERAL) {
           const script = new vm.Script(arg.expression.value);
+          if (!(context instanceof Object)) {
+            context = {};
+          }
           if (!vm.isContext(context)) {
             vm.createContext(context);
           }
@@ -225,9 +228,17 @@ function evaluateAnnotationCondition(annotation, context) {
         }
       }
     }
-    return true;
+    return defaultValueForAttributeFound;
   }
-  return false;
+  return defaultValueForAttributeNotFound;
+}
+
+function getChangeInstructionByAnnotations(annotations, context) {
+  if (annotations) {
+    const annotation = annotations.find(annotation => annotation.annotationType.toString() == 'JaspilerContract.Change');
+    return evaluateAnnotationAttribute(annotation, context, 'instruction', undefined, undefined);
+  }
+  return undefined;
 }
 
 const PluginContractIgnore = Object.freeze({
@@ -289,6 +300,46 @@ const PluginContractIgnore = Object.freeze({
   }),
 });
 
+const PluginContractChangeMethod = Object.freeze({
+  visitor: Object.freeze({
+    Method(node, context) {
+      const instruction = getChangeInstructionByAnnotations(node.modifiers?.annotations, context);
+      if (instruction) {
+        if (instruction.type == 'clear') {
+          const body = node.body;
+          // There is no need to clear the method if the body is absent.
+          if (body) {
+            const returnType = node.returnType;
+            const blockStatement = jaspiler.newBlock();
+            const isPrimitiveType = returnType.classSimpleName == 'JTPrimitiveType';
+            const primitiveTypeKind = isPrimitiveType ? returnType.primitiveTypeKind : null;
+            if (!isPrimitiveType || primitiveTypeKind != JTTypeKind.VOID) {
+              const returnStatement = jaspiler.newReturn();
+              const literalExpression = jaspiler.createLiteral(null);
+              if (isPrimitiveType) {
+                let kind = JTKind.NULL_LITERAL;
+                switch (primitiveTypeKind) {
+                  case JTTypeKind.BOOLEAN: kind = JTKind.BOOLEAN_LITERAL; break;
+                  case JTTypeKind.CHAR: kind = JTKind.CHAR_LITERAL; break;
+                  case JTTypeKind.DOUBLE: kind = JTKind.DOUBLE_LITERAL; break;
+                  case JTTypeKind.FLOAT: kind = JTKind.FLOAT_LITERAL; break;
+                  case JTTypeKind.INT: kind = JTKind.INT_LITERAL; break;
+                  case JTTypeKind.LONG: kind = JTKind.LONG_LITERAL; break;
+                  case JTTypeKind.NULL: kind = JTKind.NULL_LITERAL; break;
+                }
+                literalExpression.kind = kind;
+              }
+              returnStatement.expression = literalExpression;
+              blockStatement.statements = [returnStatement];
+            }
+            node.body = blockStatement;
+          }
+        }
+      }
+    },
+  }),
+});
+
 module.exports = Object.freeze({
   JTBodyKind: JTBodyKind,
   JTCaseKind: JTCaseKind,
@@ -297,4 +348,5 @@ module.exports = Object.freeze({
   JTReferenceMode: JTReferenceMode,
   JTTypeKind: JTTypeKind,
   PluginContractIgnore: PluginContractIgnore,
+  PluginContractChangeMethod: PluginContractChangeMethod,
 });

@@ -19,7 +19,7 @@
 const assert = require('chai').assert;
 const path = require('path');
 const process = require('process');
-const { JTKind, PluginContractIgnore } = require('./jaspiler/jaspiler');
+const { JTKind, PluginContractIgnore, PluginContractChangeMethod } = require('./jaspiler/jaspiler');
 
 const workingDirectory = process.cwd();
 const pathMockAllInOnePublicClass = path.join(
@@ -143,6 +143,46 @@ function testContractIgnoreProperty() {
   assert.include(result.code, 'public class A {');
   assert.notInclude(result.code, 'private int a;');
   assert.include(result.code, 'private int b;');
+}
+
+function testContractChangeMethod() {
+  const context = { method: {} };
+  const result = jaspiler.transformSync(
+    `package a.b.c;
+    public class A {
+        @JaspilerContract.Change(instruction = "method = { type: 'clear' }")
+        public void testVoid() { 1 + 1; }
+        @JaspilerContract.Change(instruction = "method = { type: 'clear' }")
+        public boolean testBoolean() { return true; }
+        @JaspilerContract.Change(instruction = "method = { type: 'clear' }")
+        public char testChar() { return 'a'; }
+        @JaspilerContract.Change(instruction = "method = { type: 'clear' }")
+        public double testDouble() { return 1.23D; }
+        @JaspilerContract.Change(instruction = "method = { type: 'clear' }")
+        public float testFloat() { return 1.23F; }
+        @JaspilerContract.Change(instruction = "method = { type: 'clear' }")
+        public int testInt() { return 1; }
+        @JaspilerContract.Change(instruction = "method = { type: 'clear' }")
+        public long testLong() { return 1L; }
+        @JaspilerContract.Change(instruction = "method = { type: 'clear' }")
+        public Object testObject() { return new Object(); }
+        @JaspilerContract.Change(instruction = "method = { type: 'clear' }")
+        public String testString() { return "123"; }
+    }
+    `,
+    { plugins: [PluginContractChangeMethod], context: context, ast: true, fileName: 'A', sourceType: 'string' });
+  // Assert { ast, code }
+  assert.isObject(result);
+  console.info(result.code);
+  assert.include(result.code, 'public void testVoid() {\n    }');
+  assert.include(result.code, 'public boolean testBoolean() {\n        return false;\n    }');
+  assert.include(result.code, 'public char testChar() {\n        return \'\\0\';\n    }');
+  assert.include(result.code, 'public double testDouble() {\n        return 0D;\n    }');
+  assert.include(result.code, 'public float testFloat() {\n        return 0F;\n    }');
+  assert.include(result.code, 'public int testInt() {\n        return 0;\n    }');
+  assert.include(result.code, 'public long testLong() {\n        return 0L;\n    }');
+  assert.include(result.code, 'public Object testObject() {\n        return null;\n    }');
+  assert.include(result.code, 'public String testString() {\n        return null;\n    }');
 }
 
 // Package
@@ -493,6 +533,7 @@ testContractIgnoreCompilationUnit();
 testContractIgnoreClass();
 testContractIgnoreMethod();
 testContractIgnoreProperty();
+testContractChangeMethod();
 // Package
 testIgnorePackage();
 testReplacePackage();

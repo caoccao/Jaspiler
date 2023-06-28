@@ -35,6 +35,7 @@ import com.caoccao.javet.values.reference.V8ValueSymbol;
 import com.caoccao.javet.values.reference.builtin.V8ValueBuiltInSymbol;
 import com.sun.source.tree.Tree;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -473,7 +474,10 @@ public abstract class JTTree<
             return false;
         }
         if (isActionChange()) {
-            throw new JaspilerNotImplementedException(getClass().getSimpleName() + "{} is not implemented yet.");
+            throw new JaspilerNotImplementedException(
+                    MessageFormat.format(
+                            "{0} serialize() has not been implemented yet. You may either file an issue, or submit a pull request.",
+                            getClass().getSimpleName()));
         }
         if (!getOriginalPosition().isValid()) {
             return false;

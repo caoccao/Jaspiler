@@ -24,6 +24,9 @@ object Config {
         // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
         const val COMMONS_LANG3 = "org.apache.commons:commons-lang3:${Versions.COMMONS_LANG3}"
 
+        // https://mvnrepository.com/artifact/org.apache.commons/commons-text
+        const val COMMONS_TEXT = "org.apache.commons:commons-text:${Versions.COMMONS_TEXT}"
+
         // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
         const val JACKSON_DATABIND = "com.fasterxml.jackson.core:jackson-databind:${Versions.JACKSON}"
 
@@ -45,6 +48,7 @@ object Config {
     object Versions {
         const val COMMONS_COLLECTIONS4 = "4.4"
         const val COMMONS_LANG3 = "3.12.0"
+        const val COMMONS_TEXT = "1.10.0"
         const val JACKSON = "2.15.2"
         const val JAVET = "2.2.0"
         const val JUNIT = "5.9.1"
@@ -67,6 +71,7 @@ repositories {
 dependencies {
     implementation(Config.Projects.COMMONS_COLLECTIONS4)
     implementation(Config.Projects.COMMONS_LANG3)
+    implementation(Config.Projects.COMMONS_TEXT)
     implementation(Config.Projects.JACKSON_DATABIND)
     implementation(Config.Projects.JACKSON_DATATYPE_JSR310)
     if (OperatingSystem.current().isMacOsX) {

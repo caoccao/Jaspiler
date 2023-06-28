@@ -397,6 +397,7 @@ interface JTLambda extends JTFunctionalExpression<JTLambda> {
 }
 
 interface JTLiteral extends JTExpression<JTLiteral> {
+  kind: JTKind;
   value: number | string | boolean | JTFloat | JTCharacter | null;
 }
 
@@ -762,6 +763,7 @@ declare namespace jaspiler {
   function createFieldAccess(...values: string[]): JTFieldAccess;
   function createFloat(value: string): JTFloat;
   function createIdent(value: string): JTIdent;
+  function createLiteral(value: string): JTLiteral;
   function createName(value: string): JTName;
 
   function newAnnotatedType(): JTAnnotatedType;

@@ -17,6 +17,7 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
+import com.caoccao.jaspiler.styles.IStyleWriter;
 import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
@@ -28,11 +29,16 @@ import com.sun.source.tree.LiteralTree;
 import com.sun.source.tree.TreeVisitor;
 
 import java.util.Map;
-import java.util.Objects;
 
 public final class JTLiteral
         extends JTExpression<LiteralTree, JTLiteral>
         implements LiteralTree {
+    private static final String DEFAULT_BOOLEAN = "false";
+    private static final String DEFAULT_CHAR = "\\0";
+    private static final String DEFAULT_DOUBLE = "0D";
+    private static final String DEFAULT_FLOAT = "0F";
+    private static final String DEFAULT_INT = "0";
+    private static final String DEFAULT_LONG = "0L";
     private static final String PROPERTY_VALUE = "value";
     private Kind kind;
     private Object value;
@@ -44,7 +50,7 @@ public final class JTLiteral
 
     JTLiteral(LiteralTree literalTree, JTTree<?, ?> parentTree) {
         super(literalTree, parentTree);
-        kind = null;
+        kind = Kind.NULL_LITERAL;
         value = null;
     }
 
@@ -139,8 +145,50 @@ public final class JTLiteral
             super.proxyGetStringSetterMap();
             V8Register.putStringSetter(stringSetterMap, PROPERTY_VALUE,
                     (propertyName, propertyValue) -> setValue(propertyValue));
+            V8Register.putStringSetter(stringSetterMap, PROPERTY_KIND,
+                    (propertyName, propertyValue) -> replaceKind(this::setKind, propertyValue));
         }
         return stringSetterMap;
+    }
+
+    @Override
+    public boolean serialize(IStyleWriter<?> writer) {
+        if (isActionChange()) {
+            switch (kind) {
+                case BOOLEAN_LITERAL -> writer.append(value == null ? DEFAULT_BOOLEAN : String.valueOf(value));
+                case CHAR_LITERAL -> {
+                    String charString = DEFAULT_CHAR;
+                    if (value instanceof Character character) {
+                        charString = character.toString();
+                    } else if (value != null) {
+                        charString = String.valueOf(value);
+                    }
+                    writer.appendJavaCharacter(charString);
+                }
+                case DOUBLE_LITERAL -> writer.append(value == null ? DEFAULT_DOUBLE : String.valueOf(value));
+                case FLOAT_LITERAL -> writer.append(value == null ? DEFAULT_FLOAT : String.valueOf(value));
+                case INT_LITERAL -> writer.append(value == null ? DEFAULT_INT : String.valueOf(value));
+                case LONG_LITERAL -> writer.append(value == null ? DEFAULT_LONG : String.valueOf(value));
+                case NULL_LITERAL -> writer.append((String) null);
+                case STRING_LITERAL -> {
+                    if (value == null) {
+                        writer.append((String) null);
+                    } else {
+                        writer.appendJavaString(String.valueOf(value));
+                    }
+                }
+            }
+            return true;
+        }
+        return super.serialize(writer);
+    }
+
+    public JTLiteral setKind(Kind kind) {
+        switch (kind) {
+            case INT_LITERAL, LONG_LITERAL, FLOAT_LITERAL, DOUBLE_LITERAL, BOOLEAN_LITERAL,
+                    CHAR_LITERAL, STRING_LITERAL, NULL_LITERAL -> this.kind = kind;
+        }
+        return setActionChange();
     }
 
     private boolean setValue(V8Value v8Value) throws JavetException {
@@ -169,7 +217,7 @@ public final class JTLiteral
         if (this.value == value) {
             return this;
         }
-        this.value = Objects.requireNonNull(value);
+        this.value = value;
         kind = parseKind(this.value);
         return setActionChange();
     }

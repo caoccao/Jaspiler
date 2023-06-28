@@ -39,7 +39,7 @@ public class TestJTMethodDecl extends BaseTestSuite {
                     jtMethodDecl.setName(new JTName(newMethodNames[0]));
                     var jtBody = jtMethodDecl.getBody();
                     jtBody.getStatements().clear();
-                    jtBody.getStatements().add(new JTReturn().setExpression(JTTreeFactory.createFieldAccess("null")));
+                    jtBody.getStatements().add(new JTReturn().setExpression(JTTreeFactory.createLiteral(null)));
                     jtBody.setActionChange();
                 } else if ("names".equals(jtMethodDecl.getName().getValue())) {
                     jtMethodDecl.setName(new JTName(newMethodNames[1]));

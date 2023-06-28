@@ -17,6 +17,7 @@
 package com.caoccao.jaspiler.styles;
 
 import com.caoccao.jaspiler.enums.JavaKeyword;
+import org.apache.commons.text.StringEscapeUtils;
 
 public class StandardStyleWriter extends BaseStyleWriter<StandardStyleWriter> {
 
@@ -50,11 +51,39 @@ public class StandardStyleWriter extends BaseStyleWriter<StandardStyleWriter> {
     }
 
     @Override
+    public StandardStyleWriter appendJavaCharacter(char c) {
+        return appendSingleQuote().append(c).appendSingleQuote();
+    }
+
+    @Override
+    public StandardStyleWriter appendJavaCharacter(String str) {
+        return appendSingleQuote().append(str).appendSingleQuote();
+    }
+
+    @Override
+    public StandardStyleWriter appendJavaString(String str) {
+        if (str == null) {
+            return append((String) null);
+        }
+        return appendQuote().append(StringEscapeUtils.escapeJava(str)).appendQuote();
+    }
+
+    @Override
     public StandardStyleWriter appendKeyword(JavaKeyword javaKeyword) {
         if (stringBuilder.length() + javaKeyword.getLength() >= options.getWordWrapColumn()) {
             appendLineSeparator().appendIndent(getDepth()).appendContinuationIndent();
         }
         return super.appendKeyword(javaKeyword);
+    }
+
+    @Override
+    public StandardStyleWriter appendQuote() {
+        return append(QUOTE);
+    }
+
+    @Override
+    public StandardStyleWriter appendSingleQuote() {
+        return append(SINGLE_QUOTE);
     }
 
     @Override

@@ -30,10 +30,12 @@ public interface IStyleWriter<StyleWriter extends IStyleWriter<StyleWriter>> {
     String LEFT_CURLY_BRACKET = "{";
     String LEFT_PARENTHESIS = "(";
     String LINE_SEPARATOR = "\n";
+    String QUOTE = "\"";
     String RIGHT_ARROW = ">";
     String RIGHT_CURLY_BRACKET = "}";
     String RIGHT_PARENTHESIS = ")";
     String SEMI_COLON = ";";
+    String SINGLE_QUOTE = "'";
     String SPACE = " ";
 
     StyleWriter append(boolean b);
@@ -74,6 +76,12 @@ public interface IStyleWriter<StyleWriter extends IStyleWriter<StyleWriter>> {
 
     StyleWriter appendIndent(int depth);
 
+    StyleWriter appendJavaCharacter(char c);
+
+    StyleWriter appendJavaCharacter(String str);
+
+    StyleWriter appendJavaString(String str);
+
     StyleWriter appendKeyword(JavaKeyword javaKeyword);
 
     StyleWriter appendLeftArrow();
@@ -82,11 +90,15 @@ public interface IStyleWriter<StyleWriter extends IStyleWriter<StyleWriter>> {
 
     StyleWriter appendLineSeparator();
 
+    StyleWriter appendQuote();
+
     StyleWriter appendRightArrow();
 
     StyleWriter appendRightParenthesis();
 
     StyleWriter appendSemiColon();
+
+    StyleWriter appendSingleQuote();
 
     StyleWriter appendSpace();
 

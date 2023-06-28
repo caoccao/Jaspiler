@@ -52,14 +52,32 @@ public final class JaspilerContract {
     }
 
     /**
-     * The annotation Ignore provides conditional ignore over decorated class, method, etc.
+     * The annotation Change provides conditional change over decorated class, method, property, etc.
+     *
+     * @since 0.1.0
+     */
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Change {
+        /**
+         * Instruction is a JavaScript expression / statement / statements that returns anything
+         * instructing the plugins how to make the changes.
+         *
+         * @return the instruction string
+         * @since 0.1.0
+         */
+        String instruction() default "";
+    }
+
+    /**
+     * The annotation Ignore provides conditional ignore over decorated class, method, property, etc.
      *
      * @since 0.1.0
      */
     @Retention(RetentionPolicy.SOURCE)
     public @interface Ignore {
         /**
-         * Condition string.
+         * Condition is a JavaScript expression / statement / statements that returns a boolean
+         * indicating whether certain condition is true or false.
          *
          * @return the condition string
          * @since 0.1.0
