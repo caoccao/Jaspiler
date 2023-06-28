@@ -183,7 +183,7 @@ public final class JTClassDecl
     }
 
     @Override
-    public boolean save(IStyleWriter<?> writer) {
+    public boolean serialize(IStyleWriter<?> writer) {
         if (isActionChange()) {
             writer.increaseDepth();
             Optional.ofNullable(modifiers).ifPresent(writer::append);
@@ -228,7 +228,7 @@ public final class JTClassDecl
             writer.appendClassClose();
             return true;
         }
-        return super.save(writer);
+        return super.serialize(writer);
     }
 
     public JTClassDecl setExtendsClause(JTExpression<?, ?> extendsClause) {

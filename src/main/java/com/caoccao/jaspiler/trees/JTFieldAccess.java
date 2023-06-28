@@ -112,7 +112,7 @@ public final class JTFieldAccess
     }
 
     @Override
-    public boolean save(IStyleWriter<?> writer) {
+    public boolean serialize(IStyleWriter<?> writer) {
         if (isActionChange()) {
             if (expression != null) {
                 writer.append(expression).appendDot();
@@ -122,7 +122,7 @@ public final class JTFieldAccess
             }
             return true;
         }
-        return super.save(writer);
+        return super.serialize(writer);
     }
 
     public JTFieldAccess setExpression(JTExpression<?, ?> expression) {

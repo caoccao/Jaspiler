@@ -112,7 +112,7 @@ public final class JTAnnotation
     }
 
     @Override
-    public boolean save(IStyleWriter<?> writer) {
+    public boolean serialize(IStyleWriter<?> writer) {
         if (isActionChange()) {
             writer.appendAt().append(annotationType);
             ForEachUtils.forEach(
@@ -123,7 +123,7 @@ public final class JTAnnotation
                     trees -> writer.appendRightParenthesis());
             return true;
         }
-        return super.save(writer);
+        return super.serialize(writer);
     }
 
     public JTAnnotation setAnnotationType(JTTree<?, ?> annotationType) {

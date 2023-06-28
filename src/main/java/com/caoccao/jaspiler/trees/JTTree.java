@@ -468,7 +468,7 @@ public abstract class JTTree<
     }
 
     @Override
-    public boolean save(IStyleWriter<?> writer) {
+    public boolean serialize(IStyleWriter<?> writer) {
         if (isActionIgnore()) {
             return false;
         }
@@ -505,7 +505,7 @@ public abstract class JTTree<
     @Override
     public String toString() {
         var writer = new StandardStyleWriter(StyleOptions.Default);
-        save(writer);
+        serialize(writer);
         return writer.toString();
     }
 }

@@ -204,7 +204,7 @@ public final class JTMethodDecl
     }
 
     @Override
-    public boolean save(IStyleWriter<?> writer) {
+    public boolean serialize(IStyleWriter<?> writer) {
         if (isActionChange()) {
             Optional.ofNullable(modifiers).ifPresent(writer::append);
             ForEachUtils.forEach(
@@ -240,7 +240,7 @@ public final class JTMethodDecl
             }
             return true;
         }
-        return super.save(writer);
+        return super.serialize(writer);
     }
 
     public JTMethodDecl setBody(JTBlock body) {

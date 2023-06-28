@@ -109,7 +109,7 @@ public abstract class BaseStyleWriter<StyleWriter extends BaseStyleWriter<StyleW
 
     @Override
     public StyleWriter append(IJTTree<?, ?> jtTree) {
-        jtTree.save(this);
+        jtTree.serialize(this);
         return (StyleWriter) this;
     }
 

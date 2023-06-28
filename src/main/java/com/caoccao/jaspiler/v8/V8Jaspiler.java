@@ -236,7 +236,7 @@ public final class V8Jaspiler
                 }
                 if (v8JaspilerOptions.isCode()) {
                     var writer = new StandardStyleWriter(v8JaspilerOptions.getStyleOptions());
-                    if (compilationUnitTree.save(writer)) {
+                    if (compilationUnitTree.serialize(writer)) {
                         v8ValueObjectResult.set(PROPERTIES_CODE, writer.toString());
                     }
                 }

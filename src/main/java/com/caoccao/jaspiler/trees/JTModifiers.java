@@ -123,7 +123,7 @@ public final class JTModifiers
     }
 
     @Override
-    public boolean save(IStyleWriter<?> writer) {
+    public boolean serialize(IStyleWriter<?> writer) {
         if (isActionChange()) {
             int annotationDepth = writer.getDepth() - 1;
             ForEachUtils.forEach(
@@ -141,7 +141,7 @@ public final class JTModifiers
                     trees -> writer.appendSpaceIfNeeded());
             return true;
         }
-        return super.save(writer);
+        return super.serialize(writer);
     }
 
     private boolean setFlags(V8Value v8Value) throws JavetException {

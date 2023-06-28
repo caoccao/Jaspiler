@@ -48,7 +48,7 @@ public interface IJTTree<
         return !isActionIgnore() && !isActionChange();
     }
 
-    boolean save(IStyleWriter<?> writer);
+    boolean serialize(IStyleWriter<?> writer);
 
     NewTree setAction(JaspilerContract.Action action);
 

@@ -61,7 +61,7 @@ public abstract class BaseTestSuite extends BaseLoggingObject {
         compiler.addJavaFileObjects(MockUtils.getSourcePath(clazz));
         compiler.transform(transformScanner, docScanner);
         var writer = new StandardStyleWriter(StyleOptions.Default);
-        compiler.getTransformContexts().get(0).getCompilationUnitTree().save(writer);
+        compiler.getTransformContexts().get(0).getCompilationUnitTree().serialize(writer);
         return writer.toString();
     }
 }

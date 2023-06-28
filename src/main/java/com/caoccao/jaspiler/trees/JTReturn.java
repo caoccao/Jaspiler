@@ -97,14 +97,14 @@ public final class JTReturn
     }
 
     @Override
-    public boolean save(IStyleWriter<?> writer) {
+    public boolean serialize(IStyleWriter<?> writer) {
         if (isActionChange()) {
             writer.appendKeyword(JavaKeyword.RETURN);
             Optional.ofNullable(expression).ifPresent(tree -> writer.appendSpace().append(tree));
             writer.appendSemiColon();
             return true;
         }
-        return super.save(writer);
+        return super.serialize(writer);
     }
 
     public JTReturn setExpression(JTExpression<?, ?> expression) {

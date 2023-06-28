@@ -91,14 +91,14 @@ public final class JTIdent
     }
 
     @Override
-    public boolean save(IStyleWriter<?> writer) {
+    public boolean serialize(IStyleWriter<?> writer) {
         if (isActionChange()) {
             if (name != null) {
                 writer.append(name);
             }
             return true;
         }
-        return super.save(writer);
+        return super.serialize(writer);
     }
 
     public JTIdent setName(JTName name) {

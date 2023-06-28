@@ -126,7 +126,7 @@ function testContractIgnoreMethod() {
   assert.notInclude(result.code, 'public void test()');
 }
 
-function testContractIgnoreVariable() {
+function testContractIgnoreProperty() {
   const context = { hideB: false };
   const result = jaspiler.transformSync(
     `package a.b.c;
@@ -492,7 +492,7 @@ testAstForString();
 testContractIgnoreCompilationUnit();
 testContractIgnoreClass();
 testContractIgnoreMethod();
-testContractIgnoreVariable();
+testContractIgnoreProperty();
 // Package
 testIgnorePackage();
 testReplacePackage();

@@ -247,7 +247,7 @@ public final class JTCompilationUnit
     }
 
     @Override
-    public boolean save(IStyleWriter<?> writer) {
+    public boolean serialize(IStyleWriter<?> writer) {
         if (isActionChange()) {
             if (writer.getOptions().isPreserveCopyrights()
                     && getOriginalPosition().isValid()

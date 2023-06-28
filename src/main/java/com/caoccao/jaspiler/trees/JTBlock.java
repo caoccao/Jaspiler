@@ -110,7 +110,7 @@ public final class JTBlock
     }
 
     @Override
-    public boolean save(IStyleWriter<?> writer) {
+    public boolean serialize(IStyleWriter<?> writer) {
         if (isActionChange()) {
             if (staticBlock) {
                 writer.appendLineSeparator().appendIndent().appendKeyword(JavaKeyword.STATIC).appendSpace();
@@ -125,7 +125,7 @@ public final class JTBlock
             writer.appendLineSeparator().appendIndent().appendBlockClose();
             return true;
         }
-        return super.save(writer);
+        return super.serialize(writer);
     }
 
     public JTBlock setStatic(boolean staticBlock) {

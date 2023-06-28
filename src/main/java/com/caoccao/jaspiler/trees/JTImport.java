@@ -20,11 +20,9 @@ import com.caoccao.jaspiler.enums.JavaKeyword;
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.styles.IStyleWriter;
 import com.caoccao.jaspiler.utils.V8Register;
-import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
-import com.caoccao.javet.values.primitive.V8ValueBoolean;
 import com.sun.source.tree.ImportTree;
 import com.sun.source.tree.TreeVisitor;
 
@@ -113,7 +111,7 @@ public final class JTImport
     }
 
     @Override
-    public boolean save(IStyleWriter<?> writer) {
+    public boolean serialize(IStyleWriter<?> writer) {
         if (isActionChange()) {
             writer.appendKeyword(JavaKeyword.IMPORT).appendSpace();
             if (staticImport) {
@@ -122,7 +120,7 @@ public final class JTImport
             writer.append(qualifiedIdentifier).appendSemiColon();
             return true;
         }
-        return super.save(writer);
+        return super.serialize(writer);
     }
 
     public JTImport setQualifiedIdentifier(JTTree<?, ?> qualifiedIdentifier) {

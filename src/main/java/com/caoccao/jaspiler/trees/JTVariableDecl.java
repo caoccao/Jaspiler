@@ -148,7 +148,7 @@ public final class JTVariableDecl
     }
 
     @Override
-    public boolean save(IStyleWriter<?> writer) {
+    public boolean serialize(IStyleWriter<?> writer) {
         if (isActionChange()) {
             Optional.ofNullable(modifiers).ifPresent(writer::append);
             Optional.ofNullable(type).ifPresent(tree -> writer.appendSpaceIfNeeded().append(tree));
@@ -161,7 +161,7 @@ public final class JTVariableDecl
             }
             return true;
         }
-        return super.save(writer);
+        return super.serialize(writer);
     }
 
     private boolean setInitialValue(V8Value v8Value) throws JavetException {

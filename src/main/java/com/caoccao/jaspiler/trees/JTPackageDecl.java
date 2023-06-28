@@ -112,7 +112,7 @@ public final class JTPackageDecl
     }
 
     @Override
-    public boolean save(IStyleWriter<?> writer) {
+    public boolean serialize(IStyleWriter<?> writer) {
         if (isActionChange()) {
             ForEachUtils.forEach(
                     annotations.stream().filter(Objects::nonNull).filter(tree -> !tree.isActionIgnore()).toList(),
@@ -124,7 +124,7 @@ public final class JTPackageDecl
                     .ifPresent(tree -> writer.appendKeyword(JavaKeyword.PACKAGE).appendSpace().append(tree).appendSemiColon());
             return true;
         }
-        return super.save(writer);
+        return super.serialize(writer);
     }
 
     public JTPackageDecl setPackageName(JTExpression<?, ?> packageName) {
