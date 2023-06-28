@@ -14,18 +14,38 @@
  * limitations under the License.
  */
 
-// Tutorial 01: Quick Start
+// Tutorial 02: Play with Types
+
+/// <reference types="../jaspiler/index.d.ts"/>
+
+const { JTKind } = require('./jaspiler/jaspiler');
 
 const result = jaspiler.transformSync(
   `package com.test;
-  public class A {
-  }
+  public class A {}
+  public interface B {}
+  public record C() {}
+  public class D {}
   `,
   {
     plugins: [{
       visitor: {
         Class(node) {
-          node.simpleName = jaspiler.createName('B');
+          const simpleName = node.simpleName.value;
+          switch (simpleName) {
+            case 'A':
+              node.kind = JTKind.INTERFACE;
+              break;
+            case 'B':
+              node.kind = JTKind.CLASS;
+              break;
+            case 'C':
+              node.kind = JTKind.ENUM;
+              break;
+            case 'D':
+              node.kind = JTKind.RECORD;
+              break;
+          }
         },
       },
     }],

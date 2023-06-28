@@ -276,7 +276,7 @@ interface JTCharacter {
 interface JTClassDecl extends JTStatement<JTClassDecl> {
   extendsClause: JTExpression<?>;
   implementsClauses: JTExpression<?>[];
-  kind: JTKind.ANNOTATED_TYPE | JTKind.CLASS | JTKind.ENUM | JTKind.INTERFACE | JTKind.RECORD;
+  kind: JTKind.ANNOTATION_TYPE | JTKind.CLASS | JTKind.ENUM | JTKind.INTERFACE | JTKind.RECORD;
   members: JTTree<?>[];
   modifiers: JTModifiers;
   permitsClauses: JTExpression<?>[];
@@ -397,7 +397,7 @@ interface JTLambda extends JTFunctionalExpression<JTLambda> {
 }
 
 interface JTLiteral extends JTExpression<JTLiteral> {
-  kind: JTKind;
+  kind: JTKind.BOOLEAN_LITERAL | JTKind.CHAR_LITERAL | JTKind.DOUBLE_LITERAL | JTKind.FLOAT_LITERAL | JTKind.INT_LITERAL | JTKind.LONG_LITERAL | JTKind.NULL_LITERAL | JTKind.STRING_LITERAL;
   value: number | string | boolean | JTFloat | JTCharacter | null;
 }
 

@@ -173,7 +173,6 @@ function testContractChangeMethod() {
     { plugins: [PluginContractChangeMethod], context: context, ast: true, fileName: 'A', sourceType: 'string' });
   // Assert { ast, code }
   assert.isObject(result);
-  console.info(result.code);
   assert.include(result.code, 'public void testVoid() {\n    }');
   assert.include(result.code, 'public boolean testBoolean() {\n        return false;\n    }');
   assert.include(result.code, 'public char testChar() {\n        return \'\\0\';\n    }');
