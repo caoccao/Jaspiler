@@ -44,7 +44,9 @@ import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public final class V8Jaspiler
@@ -58,8 +60,9 @@ public final class V8Jaspiler
     private static final String FUNCTION_CREATE_LITERAL = "createLiteral";
     private static final String FUNCTION_CREATE_NAME = "createName";
     private static final String FUNCTION_TRANSFORM_SYNC = "transformSync";
-    private static final String PROPERTIES_AST = "ast";
-    private static final String PROPERTIES_CODE = "code";
+    private static final String PROPERTY_ARGV = "argv";
+    private static final String PROPERTY_AST = "ast";
+    private static final String PROPERTY_CODE = "code";
     private static final Map<String, Supplier<JTTree<?, ?>>> constructorMap;
 
     static {
@@ -130,13 +133,15 @@ public final class V8Jaspiler
         constructorMap.put("newYield", JTYield::new);
     }
 
+    private final List<String> argv;
     private final Map<String, IJavetDirectCallable.NoThisAndResult<?>> creatorMap;
     private final V8Runtime v8Runtime;
     private JaspilerCompiler jaspilerCompiler;
     private Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> stringGetterMap;
 
-    public V8Jaspiler(V8Runtime v8Runtime) {
+    public V8Jaspiler(List<String> argv, V8Runtime v8Runtime) {
         super();
+        this.argv = List.copyOf(Objects.requireNonNull(argv));
         creatorMap = new HashMap<>();
         creatorMap.put(FUNCTION_CREATE_CHARACTER, this::createCharacter);
         creatorMap.put(FUNCTION_CREATE_FIELD_ACCESS, this::createFieldAccess);
@@ -194,6 +199,10 @@ public final class V8Jaspiler
         return v8Runtime.toV8Value(new JTName(value));
     }
 
+    public List<String> getArgv() {
+        return argv;
+    }
+
     @Override
     public V8Runtime getV8Runtime() {
         return v8Runtime;
@@ -210,6 +219,7 @@ public final class V8Jaspiler
             stringGetterMap = new HashMap<>();
             constructorMap.forEach((key, value) -> registerStringGetterFunction(key, v8Values -> v8Runtime.toV8Value(value.get())));
             creatorMap.forEach(this::registerStringGetterFunction);
+            registerStringGetter(PROPERTY_ARGV, propertyName -> v8Runtime.toV8Value(getArgv()));
         }
         return stringGetterMap;
     }
@@ -238,12 +248,12 @@ public final class V8Jaspiler
             try (V8Scope v8Scope = v8Runtime.getV8Scope()) {
                 var v8ValueObjectResult = v8Scope.createV8ValueObject();
                 if (v8JaspilerOptions.isAst()) {
-                    v8ValueObjectResult.set(PROPERTIES_AST, compilationUnitTree);
+                    v8ValueObjectResult.set(PROPERTY_AST, compilationUnitTree);
                 }
                 if (v8JaspilerOptions.isCode()) {
                     var writer = new StandardStyleWriter(v8JaspilerOptions.getStyleOptions());
                     if (compilationUnitTree.serialize(writer)) {
-                        v8ValueObjectResult.set(PROPERTIES_CODE, writer.toString());
+                        v8ValueObjectResult.set(PROPERTY_CODE, writer.toString());
                     }
                 }
                 v8Scope.setEscapable();

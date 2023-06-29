@@ -26,6 +26,8 @@ import com.caoccao.javet.interop.converters.JavetProxyConverter;
 import picocli.CommandLine;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 @CommandLine.Command(
@@ -34,11 +36,14 @@ import java.util.concurrent.Callable;
         version = JaspilerContract.VERSION,
         description = JaspilerContract.DESCRIPTION)
 public final class JaspilerMain extends BaseLoggingObject implements Callable<Integer> {
+    @CommandLine.Parameters(hidden = true)
+    private List<String> argv;
     @CommandLine.Parameters(index = "0", description = "The JavaScript file to be executed.")
     private File file;
 
     public JaspilerMain() {
         super();
+        argv = new ArrayList<>();
         file = null;
     }
 
@@ -62,7 +67,7 @@ public final class JaspilerMain extends BaseLoggingObject implements Callable<In
             try (NodeRuntime nodeRuntime = V8Host.getNodeInstance().createV8Runtime()) {
                 var javetProxyConverter = new JavetProxyConverter();
                 nodeRuntime.setConverter(javetProxyConverter);
-                try (V8Jaspiler v8Jaspiler = new V8Jaspiler(nodeRuntime)) {
+                try (V8Jaspiler v8Jaspiler = new V8Jaspiler(argv, nodeRuntime)) {
                     nodeRuntime.getGlobalObject().set(V8Jaspiler.NAME, v8Jaspiler);
                     nodeRuntime.getExecutor(file).executeVoid();
                 } finally {

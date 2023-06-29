@@ -759,6 +759,8 @@ interface TransformResult {
 }
 
 declare namespace jaspiler {
+  argv: Array<string>;
+
   function createCharacter(value: string): JTCharacter;
   function createFieldAccess(...values: string[]): JTFieldAccess;
   function createFloat(value: string): JTFloat;

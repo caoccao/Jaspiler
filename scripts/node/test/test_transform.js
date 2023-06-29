@@ -16,7 +16,7 @@
 
 /// <reference types="../jaspiler/index.d.ts"/>
 
-const assert = require('chai').assert;
+const { assert } = require('chai');
 const path = require('path');
 const process = require('process');
 const { JTKind, PluginContractIgnore, PluginContractChangeMethod } = require('./jaspiler/jaspiler');

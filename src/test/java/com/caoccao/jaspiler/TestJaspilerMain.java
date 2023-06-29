@@ -18,10 +18,21 @@ package com.caoccao.jaspiler;
 
 import com.caoccao.jaspiler.utils.SystemUtils;
 import org.junit.jupiter.api.Test;
+import picocli.CommandLine;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestJaspilerMain {
+    @Test
+    public void testArgv() throws Exception {
+        String scriptPath = SystemUtils.INITIAL_WORKING_DIRECTORY.resolve("scripts/node/test/test_argv.js")
+                .toAbsolutePath().toFile().getAbsolutePath();
+        List<String> args = List.of(scriptPath, "a", "b", "c");
+        assertEquals(0, new CommandLine(new JaspilerMain()).execute(args.toArray(String[]::new)));
+    }
+
     @Test
     public void testTransform() throws Exception {
         var jaspilerMain = new JaspilerMain();
