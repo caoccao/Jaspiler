@@ -48,4 +48,13 @@ public class TestJaspilerMain {
                         .toAbsolutePath().toFile());
         assertEquals(0, jaspilerMain.call());
     }
+
+    @Test
+    public void testTutorials03BuiltinAnnotations() throws Exception {
+        var jaspilerMain = new JaspilerMain();
+        jaspilerMain.setFile(
+                SystemUtils.INITIAL_WORKING_DIRECTORY.resolve("scripts/node/tutorials/03_builtin_annotations.js")
+                        .toAbsolutePath().toFile());
+        assertEquals(0, jaspilerMain.call());
+    }
 }

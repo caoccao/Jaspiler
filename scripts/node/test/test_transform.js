@@ -146,27 +146,27 @@ function testContractIgnoreProperty() {
 }
 
 function testContractChangeMethod() {
-  const context = { method: {} };
+  const context = { options: {} };
   const result = jaspiler.transformSync(
     `package a.b.c;
     public class A {
-        @JaspilerContract.Change(instruction = "method = { type: 'clear' }")
+        @JaspilerContract.Change(instruction = "options = { type: 'clear' }")
         public void testVoid() { 1 + 1; }
-        @JaspilerContract.Change(instruction = "method = { type: 'clear' }")
+        @JaspilerContract.Change(instruction = "options = { type: 'clear' }")
         public boolean testBoolean() { return true; }
-        @JaspilerContract.Change(instruction = "method = { type: 'clear' }")
+        @JaspilerContract.Change(instruction = "options = { type: 'clear' }")
         public char testChar() { return 'a'; }
-        @JaspilerContract.Change(instruction = "method = { type: 'clear' }")
+        @JaspilerContract.Change(instruction = "options = { type: 'clear' }")
         public double testDouble() { return 1.23D; }
-        @JaspilerContract.Change(instruction = "method = { type: 'clear' }")
+        @JaspilerContract.Change(instruction = "options = { type: 'clear' }")
         public float testFloat() { return 1.23F; }
-        @JaspilerContract.Change(instruction = "method = { type: 'clear' }")
+        @JaspilerContract.Change(instruction = "options = { type: 'clear' }")
         public int testInt() { return 1; }
-        @JaspilerContract.Change(instruction = "method = { type: 'clear' }")
+        @JaspilerContract.Change(instruction = "options = { type: 'clear' }")
         public long testLong() { return 1L; }
-        @JaspilerContract.Change(instruction = "method = { type: 'clear' }")
+        @JaspilerContract.Change(instruction = "options = { type: 'clear' }")
         public Object testObject() { return new Object(); }
-        @JaspilerContract.Change(instruction = "method = { type: 'clear' }")
+        @JaspilerContract.Change(instruction = "options = { type: 'clear' }")
         public String testString() { return "123"; }
     }
     `,
