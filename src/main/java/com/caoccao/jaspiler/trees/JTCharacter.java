@@ -17,7 +17,6 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
-import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.interop.V8Runtime;
 import com.caoccao.javet.interop.proxy.IJavetDirectProxyHandler;
