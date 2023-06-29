@@ -43,10 +43,10 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 public final class V8Jaspiler
@@ -139,9 +139,9 @@ public final class V8Jaspiler
     private JaspilerCompiler jaspilerCompiler;
     private Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> stringGetterMap;
 
-    public V8Jaspiler(List<String> argv, V8Runtime v8Runtime) {
+    public V8Jaspiler(String[] args, V8Runtime v8Runtime) {
         super();
-        this.argv = List.copyOf(Objects.requireNonNull(argv));
+        argv = Arrays.asList(args);
         creatorMap = new HashMap<>();
         creatorMap.put(FUNCTION_CREATE_CHARACTER, this::createCharacter);
         creatorMap.put(FUNCTION_CREATE_FIELD_ACCESS, this::createFieldAccess);

@@ -20,6 +20,6 @@ const argv = jaspiler.argv;
 
 assert.equal(4, argv.length);
 assert.include(argv[0], 'test_argv.js');
-assert.equal('a', argv[1]);
+assert.equal('-a', argv[1]);
 assert.equal('b', argv[2]);
-assert.equal('c', argv[3]);
+assert.equal('-c', argv[3]);

@@ -38,9 +38,6 @@ object Config {
         const val JUNIT_BOM = "org.junit:junit-bom:${Versions.JUNIT}"
         const val JUNIT_JUPITER = "org.junit.jupiter:junit-jupiter"
 
-        // https://mvnrepository.com/artifact/info.picocli/picocli
-        const val PICOCLI = "info.picocli:picocli:${Versions.PICOCLI}"
-
         const val SLF4J_API = "org.slf4j:slf4j-api:${Versions.SLF4J}"
         const val SLF4J_LOG4J12 = "org.slf4j:slf4j-log4j12:${Versions.SLF4J}"
     }
@@ -52,7 +49,6 @@ object Config {
         const val JACKSON = "2.15.2"
         const val JAVET = "2.2.1"
         const val JUNIT = "5.9.1"
-        const val PICOCLI = "4.7.4"
         const val SLF4J = "2.0.7"
     }
 }
@@ -79,7 +75,6 @@ dependencies {
     } else {
         implementation(Config.Projects.JAVET)
     }
-    implementation(Config.Projects.PICOCLI)
     implementation(Config.Projects.SLF4J_API)
     implementation(Config.Projects.SLF4J_LOG4J12)
     testImplementation(platform(Config.Projects.JUNIT_BOM))

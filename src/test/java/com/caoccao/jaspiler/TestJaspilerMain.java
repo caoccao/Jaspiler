@@ -16,56 +16,60 @@
 
 package com.caoccao.jaspiler;
 
+import com.caoccao.jaspiler.enums.JaspilerExitCode;
 import com.caoccao.jaspiler.utils.SystemUtils;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestJaspilerMain {
     @Test
     public void testArgv() throws Exception {
-        String scriptPath = SystemUtils.INITIAL_WORKING_DIRECTORY.resolve("scripts/node/test/test_argv.js")
+        String scriptPath = SystemUtils.INITIAL_WORKING_DIRECTORY
+                .resolve("scripts/node/test/test_argv.js")
                 .toAbsolutePath().toFile().getAbsolutePath();
-        List<String> args = List.of(scriptPath, "a", "b", "c");
-        assertEquals(0, JaspilerMain.internalMain(args.toArray(String[]::new)));
+        assertEquals(
+                JaspilerExitCode.NoError,
+                new JaspilerMain().execute(new String[]{scriptPath, "-a", "b", "-c"}));
     }
 
     @Test
     public void testTransform() throws Exception {
-        var jaspilerMain = new JaspilerMain();
-        jaspilerMain.setFile(
-                SystemUtils.INITIAL_WORKING_DIRECTORY.resolve("scripts/node/test/test_transform.js")
-                        .toAbsolutePath().toFile());
-        assertEquals(0, jaspilerMain.call());
+        String scriptPath = SystemUtils.INITIAL_WORKING_DIRECTORY
+                .resolve("scripts/node/test/test_transform.js")
+                .toAbsolutePath().toFile().getAbsolutePath();
+        assertEquals(
+                JaspilerExitCode.NoError,
+                new JaspilerMain().execute(new String[]{scriptPath}));
     }
 
     @Test
     public void testTutorials01QuickStart() throws Exception {
-        var jaspilerMain = new JaspilerMain();
-        jaspilerMain.setFile(
-                SystemUtils.INITIAL_WORKING_DIRECTORY.resolve("scripts/node/tutorials/01_quick_start.js")
-                        .toAbsolutePath().toFile());
-        assertEquals(0, jaspilerMain.call());
+        String scriptPath = SystemUtils.INITIAL_WORKING_DIRECTORY
+                .resolve("scripts/node/tutorials/01_quick_start.js")
+                .toAbsolutePath().toFile().getAbsolutePath();
+        assertEquals(
+                JaspilerExitCode.NoError,
+                new JaspilerMain().execute(new String[]{scriptPath}));
     }
 
     @Test
     public void testTutorials02PlayWithTypes() throws Exception {
-        var jaspilerMain = new JaspilerMain();
-        jaspilerMain.setFile(
-                SystemUtils.INITIAL_WORKING_DIRECTORY.resolve("scripts/node/tutorials/02_play_with_types.js")
-                        .toAbsolutePath().toFile());
-        assertEquals(0, jaspilerMain.call());
+        String scriptPath = SystemUtils.INITIAL_WORKING_DIRECTORY
+                .resolve("scripts/node/tutorials/02_play_with_types.js")
+                .toAbsolutePath().toFile().getAbsolutePath();
+        assertEquals(
+                JaspilerExitCode.NoError,
+                new JaspilerMain().execute(new String[]{scriptPath}));
     }
 
     @Test
     public void testTutorials03BuiltinAnnotations() throws Exception {
-        var jaspilerMain = new JaspilerMain();
-        jaspilerMain.setFile(
-                SystemUtils.INITIAL_WORKING_DIRECTORY.resolve("scripts/node/tutorials/03_builtin_annotations.js")
-                        .toAbsolutePath().toFile());
-        assertEquals(0, jaspilerMain.call());
+        String scriptPath = SystemUtils.INITIAL_WORKING_DIRECTORY
+                .resolve("scripts/node/tutorials/03_builtin_annotations.js")
+                .toAbsolutePath().toFile().getAbsolutePath();
+        assertEquals(
+                JaspilerExitCode.NoError,
+                new JaspilerMain().execute(new String[]{scriptPath}));
     }
 }

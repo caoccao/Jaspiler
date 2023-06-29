@@ -19,9 +19,9 @@ package com.caoccao.jaspiler.enums;
 public enum JaspilerExitCode {
     UnknownError(1, "The is an unknown error: {}"),
     OptionsInvalid(2, "The options is invalid."),
-    ConfigInvalid(101, "The config is invalid."),
-    ConfigNotFound(102, "The config [{}] is not found."),
-    ConfigEmpty(103, "The config [{}] is empty."),
+    ScriptAbsent(101, "The script is absent."),
+    ScriptNotFound(102, "The script [{}] is not found."),
+    ScriptEmpty(103, "The script [{}] is empty."),
     EngineUnknownError(201, "The Node.js engine met an unknown error: {}"),
     NoError(0, "There is no error.");
 

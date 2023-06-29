@@ -23,77 +23,56 @@ import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interop.NodeRuntime;
 import com.caoccao.javet.interop.V8Host;
 import com.caoccao.javet.interop.converters.JavetProxyConverter;
-import picocli.CommandLine;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
 
-@CommandLine.Command(
-        name = JaspilerContract.NAME,
-        mixinStandardHelpOptions = true,
-        version = JaspilerContract.VERSION,
-        description = JaspilerContract.DESCRIPTION)
-public final class JaspilerMain extends BaseLoggingObject implements Callable<Integer> {
-    @CommandLine.Parameters(hidden = true)
-    private final List<String> argv;
-    @CommandLine.Parameters(index = "0", description = "The JavaScript file to be executed.")
-    private File file;
-
-    public JaspilerMain() {
-        super();
-        argv = new ArrayList<>();
-        file = null;
-    }
-
-    public static int internalMain(String[] args) {
-        return new CommandLine(new JaspilerMain()).execute(args);
-    }
-
+public final class JaspilerMain extends BaseLoggingObject {
     public static void main(String[] args) {
-        System.exit(internalMain(args));
+        JaspilerExitCode jaspilerExitCode = new JaspilerMain().execute(args);
+        System.exit(jaspilerExitCode.getExitCode());
     }
 
-    @Override
-    public Integer call() throws Exception {
+    public JaspilerExitCode execute(String[] args) {
         JaspilerExitCode jaspilerExitCode = JaspilerExitCode.NoError;
-        if (file == null) {
-            logger.error(JaspilerExitCode.ConfigInvalid.getMessageFormat());
-            jaspilerExitCode = JaspilerExitCode.ConfigInvalid;
-        } else if (!file.exists() || !file.isFile() || !file.canRead()) {
-            logger.error(JaspilerExitCode.ConfigNotFound.getMessageFormat(), file.getAbsolutePath());
-            jaspilerExitCode = JaspilerExitCode.ConfigNotFound;
+        if (args.length == 0) {
+            printHelp();
+            jaspilerExitCode = JaspilerExitCode.ScriptAbsent;
+            logger.error(jaspilerExitCode.getMessageFormat());
         } else {
-            // Covert the file to an absolute file to avoid the impact from the working directory changes.
-            file = file.getAbsoluteFile();
-            logger.info("Executing [{}]...", file.getPath());
-            try (NodeRuntime nodeRuntime = V8Host.getNodeInstance().createV8Runtime()) {
-                var javetProxyConverter = new JavetProxyConverter();
-                nodeRuntime.setConverter(javetProxyConverter);
-                try (V8Jaspiler v8Jaspiler = new V8Jaspiler(argv, nodeRuntime)) {
-                    nodeRuntime.getGlobalObject().set(V8Jaspiler.NAME, v8Jaspiler);
-                    nodeRuntime.getExecutor(file).executeVoid();
-                } finally {
-                    nodeRuntime.getGlobalObject().delete(V8Jaspiler.NAME);
-                    nodeRuntime.lowMemoryNotification();
+            File file = new File(args[0]);
+            if (!file.exists() || !file.isFile() || !file.canRead()) {
+                jaspilerExitCode = JaspilerExitCode.ScriptNotFound;
+                logger.error(jaspilerExitCode.getMessageFormat(), file.getAbsolutePath());
+            } else {
+                // Covert the file to an absolute file to avoid the impact from the working directory changes.
+                file = file.getAbsoluteFile();
+                logger.info("Executing [{}]...", file.getPath());
+                try (NodeRuntime nodeRuntime = V8Host.getNodeInstance().createV8Runtime()) {
+                    var javetProxyConverter = new JavetProxyConverter();
+                    nodeRuntime.setConverter(javetProxyConverter);
+                    try (V8Jaspiler v8Jaspiler = new V8Jaspiler(args, nodeRuntime)) {
+                        nodeRuntime.getGlobalObject().set(V8Jaspiler.NAME, v8Jaspiler);
+                        nodeRuntime.getExecutor(file).executeVoid();
+                    } finally {
+                        nodeRuntime.getGlobalObject().delete(V8Jaspiler.NAME);
+                        nodeRuntime.lowMemoryNotification();
+                    }
+                } catch (JavetException e) {
+                    logger.error(JaspilerExitCode.EngineUnknownError.getMessageFormat(), e.getMessage());
+                    jaspilerExitCode = JaspilerExitCode.EngineUnknownError;
+                } catch (Throwable t) {
+                    logger.error(JaspilerExitCode.UnknownError.getMessageFormat(), t.getMessage());
+                    jaspilerExitCode = JaspilerExitCode.UnknownError;
                 }
-            } catch (JavetException e) {
-                logger.error(JaspilerExitCode.EngineUnknownError.getMessageFormat(), e.getMessage());
-                jaspilerExitCode = JaspilerExitCode.EngineUnknownError;
-            } catch (Throwable t) {
-                logger.error(JaspilerExitCode.UnknownError.getMessageFormat(), t.getMessage());
-                jaspilerExitCode = JaspilerExitCode.UnknownError;
             }
         }
-        return jaspilerExitCode.getExitCode();
+        return jaspilerExitCode;
     }
 
-    public File getFile() {
-        return file;
-    }
-
-    public void setFile(File file) {
-        this.file = file;
+    private void printHelp() {
+        logger.info("{} v{}", JaspilerContract.NAME, JaspilerContract.VERSION);
+        logger.info("{}\n", JaspilerContract.DESCRIPTION);
+        logger.info("Usage:");
+        logger.info("  java -jar jaspiler.*.jar <scriptFilePath> args...");
     }
 }
