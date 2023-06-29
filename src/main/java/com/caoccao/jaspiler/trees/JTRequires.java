@@ -17,7 +17,6 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
-import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -97,9 +96,9 @@ public final class JTRequires
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_MODULE_NAME, propertyName -> v8Runtime.toV8Value(getModuleName()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_STATIC, propertyName -> v8Runtime.createV8ValueBoolean(isStatic()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_TRANSITIVE, propertyName -> v8Runtime.createV8ValueBoolean(isTransitive()));
+            registerStringGetter(PROPERTY_MODULE_NAME, propertyName -> v8Runtime.toV8Value(getModuleName()));
+            registerStringGetter(PROPERTY_STATIC, propertyName -> v8Runtime.createV8ValueBoolean(isStatic()));
+            registerStringGetter(PROPERTY_TRANSITIVE, propertyName -> v8Runtime.createV8ValueBoolean(isTransitive()));
         }
         return stringGetterMap;
     }
@@ -108,12 +107,9 @@ public final class JTRequires
     public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_MODULE_NAME,
-                    (propertyName, propertyValue) -> replaceExpression(this::setModuleName, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_STATIC,
-                    (propertyName, propertyValue) -> replaceBoolean(this::setStaticPhase, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_TRANSITIVE,
-                    (propertyName, propertyValue) -> replaceBoolean(this::setTransitive, propertyValue));
+            registerStringSetter(PROPERTY_MODULE_NAME, (propertyName, propertyValue) -> replaceExpression(this::setModuleName, propertyValue));
+            registerStringSetter(PROPERTY_STATIC, (propertyName, propertyValue) -> replaceBoolean(this::setStaticPhase, propertyValue));
+            registerStringSetter(PROPERTY_TRANSITIVE, (propertyName, propertyValue) -> replaceBoolean(this::setTransitive, propertyValue));
         }
         return stringSetterMap;
     }

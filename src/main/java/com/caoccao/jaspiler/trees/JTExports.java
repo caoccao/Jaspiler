@@ -17,7 +17,6 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
-import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -87,8 +86,8 @@ public final class JTExports
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_MODULE_NAMES, propertyName -> v8Runtime.toV8Value(getModuleNames()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_PACKAGE_NAME, propertyName -> v8Runtime.toV8Value(getPackageName()));
+            registerStringGetter(PROPERTY_MODULE_NAMES, propertyName -> v8Runtime.toV8Value(getModuleNames()));
+            registerStringGetter(PROPERTY_PACKAGE_NAME, propertyName -> v8Runtime.toV8Value(getPackageName()));
         }
         return stringGetterMap;
     }
@@ -97,10 +96,8 @@ public final class JTExports
     public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_MODULE_NAMES,
-                    (propertyName, propertyValue) -> replaceExpressions(moduleNames, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_PACKAGE_NAME,
-                    (propertyName, propertyValue) -> replaceExpression(this::setPackageName, propertyValue));
+            registerStringSetter(PROPERTY_MODULE_NAMES, (propertyName, propertyValue) -> replaceExpressions(moduleNames, propertyValue));
+            registerStringSetter(PROPERTY_PACKAGE_NAME, (propertyName, propertyValue) -> replaceExpression(this::setPackageName, propertyValue));
         }
         return stringSetterMap;
     }

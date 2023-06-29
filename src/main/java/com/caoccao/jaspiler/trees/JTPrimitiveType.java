@@ -18,7 +18,6 @@ package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.exceptions.JaspilerNotSupportedException;
-import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -72,7 +71,7 @@ public final class JTPrimitiveType
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_PRIMITIVE_TYPE_KIND, propertyName -> v8Runtime.createV8ValueString(getPrimitiveTypeKind().name()));
+            registerStringGetter(PROPERTY_PRIMITIVE_TYPE_KIND, propertyName -> v8Runtime.createV8ValueString(getPrimitiveTypeKind().name()));
         }
         return stringGetterMap;
     }
@@ -81,8 +80,7 @@ public final class JTPrimitiveType
     public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_PRIMITIVE_TYPE_KIND,
-                    (propertyName, propertyValue) -> setPrimitiveTypeKind(propertyValue));
+            registerStringSetter(PROPERTY_PRIMITIVE_TYPE_KIND, (propertyName, propertyValue) -> setPrimitiveTypeKind(propertyValue));
         }
         return stringSetterMap;
     }

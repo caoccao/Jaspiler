@@ -20,7 +20,6 @@ import com.caoccao.jaspiler.enums.JavaKeyword;
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.styles.IStyleWriter;
 import com.caoccao.jaspiler.utils.ForEachUtils;
-import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -164,15 +163,15 @@ public final class JTMethodDecl
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_BODY, propertyName -> v8Runtime.toV8Value(getBody()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_DEFAULT_VALUE, propertyName -> v8Runtime.toV8Value(getDefaultValue()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_MODIFIERS, propertyName -> v8Runtime.toV8Value(getModifiers()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_NAME, propertyName -> v8Runtime.toV8Value(getName()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_PARAMETERS, propertyName -> v8Runtime.toV8Value(getParameters()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_RECEIVER_PARAMETER, propertyName -> v8Runtime.toV8Value(getReceiverParameter()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_RETURN_TYPE, propertyName -> v8Runtime.toV8Value(getReturnType()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_THROW_EXPRESSIONS, propertyName -> v8Runtime.toV8Value(getThrows()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_TYPE_PARAMETERS, propertyName -> v8Runtime.toV8Value(getTypeParameters()));
+            registerStringGetter(PROPERTY_BODY, propertyName -> v8Runtime.toV8Value(getBody()));
+            registerStringGetter(PROPERTY_DEFAULT_VALUE, propertyName -> v8Runtime.toV8Value(getDefaultValue()));
+            registerStringGetter(PROPERTY_MODIFIERS, propertyName -> v8Runtime.toV8Value(getModifiers()));
+            registerStringGetter(PROPERTY_NAME, propertyName -> v8Runtime.toV8Value(getName()));
+            registerStringGetter(PROPERTY_PARAMETERS, propertyName -> v8Runtime.toV8Value(getParameters()));
+            registerStringGetter(PROPERTY_RECEIVER_PARAMETER, propertyName -> v8Runtime.toV8Value(getReceiverParameter()));
+            registerStringGetter(PROPERTY_RETURN_TYPE, propertyName -> v8Runtime.toV8Value(getReturnType()));
+            registerStringGetter(PROPERTY_THROW_EXPRESSIONS, propertyName -> v8Runtime.toV8Value(getThrows()));
+            registerStringGetter(PROPERTY_TYPE_PARAMETERS, propertyName -> v8Runtime.toV8Value(getTypeParameters()));
         }
         return stringGetterMap;
     }
@@ -181,24 +180,15 @@ public final class JTMethodDecl
     public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_BODY,
-                    (propertyName, propertyValue) -> replaceBlock(this::setBody, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_DEFAULT_VALUE,
-                    (propertyName, propertyValue) -> replaceExpression(this::setDefaultValue, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_MODIFIERS,
-                    (propertyName, propertyValue) -> replaceModifiers(this::setModifiers, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_NAME,
-                    (propertyName, propertyValue) -> replaceName(this::setName, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_PARAMETERS,
-                    (propertyName, propertyValue) -> replaceVariableDecls(parameters, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_RECEIVER_PARAMETER,
-                    (propertyName, propertyValue) -> replaceVariableDecl(this::setReceiverParameter, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_RETURN_TYPE,
-                    (propertyName, propertyValue) -> replaceExpression(this::setReturnType, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_THROW_EXPRESSIONS,
-                    (propertyName, propertyValue) -> replaceExpressions(throwExpressions, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_TYPE_PARAMETERS,
-                    (propertyName, propertyValue) -> replaceTypeParameters(typeParameters, propertyValue));
+            registerStringSetter(PROPERTY_BODY, (propertyName, propertyValue) -> replaceBlock(this::setBody, propertyValue));
+            registerStringSetter(PROPERTY_DEFAULT_VALUE, (propertyName, propertyValue) -> replaceExpression(this::setDefaultValue, propertyValue));
+            registerStringSetter(PROPERTY_MODIFIERS, (propertyName, propertyValue) -> replaceModifiers(this::setModifiers, propertyValue));
+            registerStringSetter(PROPERTY_NAME, (propertyName, propertyValue) -> replaceName(this::setName, propertyValue));
+            registerStringSetter(PROPERTY_PARAMETERS, (propertyName, propertyValue) -> replaceVariableDecls(parameters, propertyValue));
+            registerStringSetter(PROPERTY_RECEIVER_PARAMETER, (propertyName, propertyValue) -> replaceVariableDecl(this::setReceiverParameter, propertyValue));
+            registerStringSetter(PROPERTY_RETURN_TYPE, (propertyName, propertyValue) -> replaceExpression(this::setReturnType, propertyValue));
+            registerStringSetter(PROPERTY_THROW_EXPRESSIONS, (propertyName, propertyValue) -> replaceExpressions(throwExpressions, propertyValue));
+            registerStringSetter(PROPERTY_TYPE_PARAMETERS, (propertyName, propertyValue) -> replaceTypeParameters(typeParameters, propertyValue));
         }
         return stringSetterMap;
     }

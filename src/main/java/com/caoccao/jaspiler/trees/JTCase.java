@@ -17,7 +17,6 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
-import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -133,10 +132,10 @@ public final class JTCase
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_BODY, propertyName -> v8Runtime.toV8Value(getBody()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_CASE_KIND, propertyName -> v8Runtime.createV8ValueString(getCaseKind().name()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_LABELS, propertyName -> v8Runtime.toV8Value(getLabels()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_STATEMENTS, propertyName -> v8Runtime.toV8Value(getStatements()));
+            registerStringGetter(PROPERTY_BODY, propertyName -> v8Runtime.toV8Value(getBody()));
+            registerStringGetter(PROPERTY_CASE_KIND, propertyName -> v8Runtime.createV8ValueString(getCaseKind().name()));
+            registerStringGetter(PROPERTY_LABELS, propertyName -> v8Runtime.toV8Value(getLabels()));
+            registerStringGetter(PROPERTY_STATEMENTS, propertyName -> v8Runtime.toV8Value(getStatements()));
         }
         return stringGetterMap;
     }
@@ -145,14 +144,10 @@ public final class JTCase
     public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_BODY,
-                    (propertyName, propertyValue) -> replaceTree(this::setBody, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_CASE_KIND,
-                    (propertyName, propertyValue) -> setCaseKind(propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_LABELS,
-                    (propertyName, propertyValue) -> replaceCaseLabels(labels, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_STATEMENTS,
-                    (propertyName, propertyValue) -> replaceStatements(statements, propertyValue));
+            registerStringSetter(PROPERTY_BODY, (propertyName, propertyValue) -> replaceTree(this::setBody, propertyValue));
+            registerStringSetter(PROPERTY_CASE_KIND, (propertyName, propertyValue) -> setCaseKind(propertyValue));
+            registerStringSetter(PROPERTY_LABELS, (propertyName, propertyValue) -> replaceCaseLabels(labels, propertyValue));
+            registerStringSetter(PROPERTY_STATEMENTS, (propertyName, propertyValue) -> replaceStatements(statements, propertyValue));
         }
         return stringSetterMap;
     }

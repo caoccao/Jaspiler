@@ -17,7 +17,6 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
-import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -89,8 +88,8 @@ public final class JTAssign
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_EXPRESSION, propertyName -> v8Runtime.toV8Value(getExpression()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_VARIABLE, propertyName -> v8Runtime.toV8Value(getVariable()));
+            registerStringGetter(PROPERTY_EXPRESSION, propertyName -> v8Runtime.toV8Value(getExpression()));
+            registerStringGetter(PROPERTY_VARIABLE, propertyName -> v8Runtime.toV8Value(getVariable()));
         }
         return stringGetterMap;
     }
@@ -99,10 +98,8 @@ public final class JTAssign
     public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_EXPRESSION,
-                    (propertyName, propertyValue) -> replaceExpression(this::setExpression, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_VARIABLE,
-                    (propertyName, propertyValue) -> replaceExpression(this::setVariable, propertyValue));
+            registerStringSetter(PROPERTY_EXPRESSION, (propertyName, propertyValue) -> replaceExpression(this::setExpression, propertyValue));
+            registerStringSetter(PROPERTY_VARIABLE, (propertyName, propertyValue) -> replaceExpression(this::setVariable, propertyValue));
         }
         return stringSetterMap;
     }

@@ -17,7 +17,6 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
-import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -76,7 +75,7 @@ public final class JTErroneous
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_ERROR_TREES, propertyName -> v8Runtime.toV8Value(getErrorTrees()));
+            registerStringGetter(PROPERTY_ERROR_TREES, propertyName -> v8Runtime.toV8Value(getErrorTrees()));
         }
         return stringGetterMap;
     }
@@ -85,8 +84,7 @@ public final class JTErroneous
     public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_ERROR_TREES,
-                    (propertyName, propertyValue) -> replaceTrees(errorTrees, propertyValue));
+            registerStringSetter(PROPERTY_ERROR_TREES, (propertyName, propertyValue) -> replaceTrees(errorTrees, propertyValue));
         }
         return stringSetterMap;
     }

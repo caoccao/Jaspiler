@@ -50,7 +50,7 @@ object Config {
         const val COMMONS_LANG3 = "3.12.0"
         const val COMMONS_TEXT = "1.10.0"
         const val JACKSON = "2.15.2"
-        const val JAVET = "2.2.0"
+        const val JAVET = "2.2.1"
         const val JUNIT = "5.9.1"
         const val PICOCLI = "4.7.4"
         const val SLF4J = "2.0.7"

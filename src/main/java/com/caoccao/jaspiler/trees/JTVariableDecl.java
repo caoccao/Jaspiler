@@ -18,7 +18,6 @@ package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.styles.IStyleWriter;
-import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
@@ -120,11 +119,11 @@ public final class JTVariableDecl
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_INITIALIZER, propertyName -> v8Runtime.toV8Value(getInitializer()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_MODIFIERS, propertyName -> v8Runtime.toV8Value(getModifiers()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_NAME, propertyName -> v8Runtime.toV8Value(getName()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_NAME_EXPRESSION, propertyName -> v8Runtime.toV8Value(getNameExpression()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_TYPE, propertyName -> v8Runtime.toV8Value(getType()));
+            registerStringGetter(PROPERTY_INITIALIZER, propertyName -> v8Runtime.toV8Value(getInitializer()));
+            registerStringGetter(PROPERTY_MODIFIERS, propertyName -> v8Runtime.toV8Value(getModifiers()));
+            registerStringGetter(PROPERTY_NAME, propertyName -> v8Runtime.toV8Value(getName()));
+            registerStringGetter(PROPERTY_NAME_EXPRESSION, propertyName -> v8Runtime.toV8Value(getNameExpression()));
+            registerStringGetter(PROPERTY_TYPE, propertyName -> v8Runtime.toV8Value(getType()));
         }
         return stringGetterMap;
     }
@@ -133,16 +132,11 @@ public final class JTVariableDecl
     public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_INITIALIZER,
-                    (propertyName, propertyValue) -> replaceExpression(this::setInitializer, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_MODIFIERS,
-                    (propertyName, propertyValue) -> replaceModifiers(this::setModifiers, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_NAME,
-                    (propertyName, propertyValue) -> replaceName(this::setName, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_NAME_EXPRESSION,
-                    (propertyName, propertyValue) -> replaceExpression(this::setNameExpression, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_TYPE,
-                    (propertyName, propertyValue) -> replaceExpression(this::setType, propertyValue));
+            registerStringSetter(PROPERTY_INITIALIZER, (propertyName, propertyValue) -> replaceExpression(this::setInitializer, propertyValue));
+            registerStringSetter(PROPERTY_MODIFIERS, (propertyName, propertyValue) -> replaceModifiers(this::setModifiers, propertyValue));
+            registerStringSetter(PROPERTY_NAME, (propertyName, propertyValue) -> replaceName(this::setName, propertyValue));
+            registerStringSetter(PROPERTY_NAME_EXPRESSION, (propertyName, propertyValue) -> replaceExpression(this::setNameExpression, propertyValue));
+            registerStringSetter(PROPERTY_TYPE, (propertyName, propertyValue) -> replaceExpression(this::setType, propertyValue));
         }
         return stringSetterMap;
     }

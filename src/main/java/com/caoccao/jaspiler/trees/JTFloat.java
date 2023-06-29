@@ -52,7 +52,7 @@ public final class JTFloat
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             stringGetterMap = new HashMap<>();
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_VALUE, propertyName -> v8Runtime.createV8ValueDouble(getValue()));
+            registerStringGetter(PROPERTY_VALUE, propertyName -> v8Runtime.createV8ValueDouble(getValue()));
         }
         return stringGetterMap;
     }

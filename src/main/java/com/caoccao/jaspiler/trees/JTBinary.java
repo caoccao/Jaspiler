@@ -18,7 +18,6 @@ package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.exceptions.JaspilerNotSupportedException;
-import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -94,8 +93,8 @@ public final class JTBinary
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_LEFT_OPERAND, propertyName -> v8Runtime.toV8Value(getLeftOperand()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_RIGHT_OPERAND, propertyName -> v8Runtime.toV8Value(getRightOperand()));
+            registerStringGetter(PROPERTY_LEFT_OPERAND, propertyName -> v8Runtime.toV8Value(getLeftOperand()));
+            registerStringGetter(PROPERTY_RIGHT_OPERAND, propertyName -> v8Runtime.toV8Value(getRightOperand()));
         }
         return stringGetterMap;
     }
@@ -104,12 +103,9 @@ public final class JTBinary
     public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_LEFT_OPERAND,
-                    (propertyName, propertyValue) -> replaceExpression(this::setLeftOperand, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_KIND,
-                    (propertyName, propertyValue) -> replaceKind(this::setKind, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_RIGHT_OPERAND,
-                    (propertyName, propertyValue) -> replaceExpression(this::setRightOperand, propertyValue));
+            registerStringSetter(PROPERTY_LEFT_OPERAND, (propertyName, propertyValue) -> replaceExpression(this::setLeftOperand, propertyValue));
+            registerStringSetter(PROPERTY_KIND, (propertyName, propertyValue) -> replaceKind(this::setKind, propertyValue));
+            registerStringSetter(PROPERTY_RIGHT_OPERAND, (propertyName, propertyValue) -> replaceExpression(this::setRightOperand, propertyValue));
         }
         return stringSetterMap;
     }

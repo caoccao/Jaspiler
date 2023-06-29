@@ -18,7 +18,6 @@ package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.styles.IStyleWriter;
-import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -75,7 +74,7 @@ public final class JTIdent
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_NAME, propertyName -> v8Runtime.toV8Value(getName()));
+            registerStringGetter(PROPERTY_NAME, propertyName -> v8Runtime.toV8Value(getName()));
         }
         return stringGetterMap;
     }
@@ -84,8 +83,7 @@ public final class JTIdent
     public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_NAME,
-                    (propertyName, propertyValue) -> replaceName(this::setName, propertyValue));
+            registerStringSetter(PROPERTY_NAME, (propertyName, propertyValue) -> replaceName(this::setName, propertyValue));
         }
         return stringSetterMap;
     }

@@ -52,7 +52,7 @@ public final class JTCharacter
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             stringGetterMap = new HashMap<>();
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_VALUE, propertyName -> v8Runtime.createV8ValueString(Character.toString(getValue())));
+            registerStringGetter(PROPERTY_VALUE, propertyName -> v8Runtime.createV8ValueString(Character.toString(getValue())));
         }
         return stringGetterMap;
     }

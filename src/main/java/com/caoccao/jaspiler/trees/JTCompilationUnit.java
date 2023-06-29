@@ -19,7 +19,6 @@ package com.caoccao.jaspiler.trees;
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.styles.IStyleWriter;
 import com.caoccao.jaspiler.utils.ForEachUtils;
-import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -216,16 +215,11 @@ public final class JTCompilationUnit
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_IMPORTS,
-                    propertyName -> v8Runtime.toV8Value(getImports()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_MODULE,
-                    propertyName -> v8Runtime.toV8Value(getModule()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_PACKAGE,
-                    propertyName -> v8Runtime.toV8Value(getPackage()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_SOURCE_FILE,
-                    propertyName -> v8Runtime.createV8ValueString(getSourceFile().getName()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_TYPE_DECLS,
-                    propertyName -> v8Runtime.toV8Value(getTypeDecls()));
+            registerStringGetter(PROPERTY_IMPORTS, propertyName -> v8Runtime.toV8Value(getImports()));
+            registerStringGetter(PROPERTY_MODULE, propertyName -> v8Runtime.toV8Value(getModule()));
+            registerStringGetter(PROPERTY_PACKAGE, propertyName -> v8Runtime.toV8Value(getPackage()));
+            registerStringGetter(PROPERTY_SOURCE_FILE, propertyName -> v8Runtime.createV8ValueString(getSourceFile().getName()));
+            registerStringGetter(PROPERTY_TYPE_DECLS, propertyName -> v8Runtime.toV8Value(getTypeDecls()));
         }
         return stringGetterMap;
     }
@@ -234,14 +228,10 @@ public final class JTCompilationUnit
     public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_IMPORTS,
-                    (propertyName, propertyValue) -> replaceImports(imports, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_MODULE,
-                    (propertyName, propertyValue) -> replaceModuleDecl(this::setModule, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_PACKAGE,
-                    (propertyName, propertyValue) -> replacePackageDecl(this::setPackageTree, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_TYPE_DECLS,
-                    (propertyName, propertyValue) -> replaceTrees(typeDecls, propertyValue));
+            registerStringSetter(PROPERTY_IMPORTS, (propertyName, propertyValue) -> replaceImports(imports, propertyValue));
+            registerStringSetter(PROPERTY_MODULE, (propertyName, propertyValue) -> replaceModuleDecl(this::setModule, propertyValue));
+            registerStringSetter(PROPERTY_PACKAGE, (propertyName, propertyValue) -> replacePackageDecl(this::setPackageTree, propertyValue));
+            registerStringSetter(PROPERTY_TYPE_DECLS, (propertyName, propertyValue) -> replaceTrees(typeDecls, propertyValue));
         }
         return stringSetterMap;
     }

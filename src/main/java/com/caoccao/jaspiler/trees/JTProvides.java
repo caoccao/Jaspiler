@@ -17,7 +17,6 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
-import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -87,8 +86,8 @@ public final class JTProvides
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_IMPLEMENTATION_NAMES, propertyName -> v8Runtime.toV8Value(getImplementationNames()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_SERVICE_NAME, propertyName -> v8Runtime.toV8Value(getServiceName()));
+            registerStringGetter(PROPERTY_IMPLEMENTATION_NAMES, propertyName -> v8Runtime.toV8Value(getImplementationNames()));
+            registerStringGetter(PROPERTY_SERVICE_NAME, propertyName -> v8Runtime.toV8Value(getServiceName()));
         }
         return stringGetterMap;
     }
@@ -97,10 +96,8 @@ public final class JTProvides
     public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_IMPLEMENTATION_NAMES,
-                    (propertyName, propertyValue) -> replaceExpressions(implementationNames, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_SERVICE_NAME,
-                    (propertyName, propertyValue) -> replaceExpression(this::setServiceName, propertyValue));
+            registerStringSetter(PROPERTY_IMPLEMENTATION_NAMES, (propertyName, propertyValue) -> replaceExpressions(implementationNames, propertyValue));
+            registerStringSetter(PROPERTY_SERVICE_NAME, (propertyName, propertyValue) -> replaceExpression(this::setServiceName, propertyValue));
         }
         return stringSetterMap;
     }

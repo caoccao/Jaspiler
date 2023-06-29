@@ -17,7 +17,6 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
-import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -89,8 +88,8 @@ public final class JTAssert
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_CONDITION, propertyName -> v8Runtime.toV8Value(getCondition()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_DETAIL, propertyName -> v8Runtime.toV8Value(getDetail()));
+            registerStringGetter(PROPERTY_CONDITION, propertyName -> v8Runtime.toV8Value(getCondition()));
+            registerStringGetter(PROPERTY_DETAIL, propertyName -> v8Runtime.toV8Value(getDetail()));
         }
         return stringGetterMap;
     }
@@ -99,10 +98,8 @@ public final class JTAssert
     public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_CONDITION,
-                    (propertyName, propertyValue) -> replaceExpression(this::setCondition, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_DETAIL,
-                    (propertyName, propertyValue) -> replaceExpression(this::setDetail, propertyValue));
+            registerStringSetter(PROPERTY_CONDITION, (propertyName, propertyValue) -> replaceExpression(this::setCondition, propertyValue));
+            registerStringSetter(PROPERTY_DETAIL, (propertyName, propertyValue) -> replaceExpression(this::setDetail, propertyValue));
         }
         return stringSetterMap;
     }

@@ -19,7 +19,6 @@ package com.caoccao.jaspiler.trees;
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.styles.IStyleWriter;
 import com.caoccao.jaspiler.utils.ForEachUtils;
-import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -93,8 +92,8 @@ public final class JTAnnotation
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_ANNOTATION_TYPE, propertyName -> v8Runtime.toV8Value(getAnnotationType()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_ARGUMENTS, propertyName -> v8Runtime.toV8Value(getArguments()));
+            registerStringGetter(PROPERTY_ANNOTATION_TYPE, propertyName -> v8Runtime.toV8Value(getAnnotationType()));
+            registerStringGetter(PROPERTY_ARGUMENTS, propertyName -> v8Runtime.toV8Value(getArguments()));
         }
         return stringGetterMap;
     }
@@ -103,10 +102,8 @@ public final class JTAnnotation
     public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_ANNOTATION_TYPE,
-                    (propertyName, propertyValue) -> replaceTree(this::setAnnotationType, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_ARGUMENTS,
-                    (propertyName, propertyValue) -> replaceExpressions(arguments, propertyValue));
+            registerStringSetter(PROPERTY_ANNOTATION_TYPE, (propertyName, propertyValue) -> replaceTree(this::setAnnotationType, propertyValue));
+            registerStringSetter(PROPERTY_ARGUMENTS, (propertyName, propertyValue) -> replaceExpressions(arguments, propertyValue));
         }
         return stringSetterMap;
     }

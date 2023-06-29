@@ -17,7 +17,6 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
-import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -98,9 +97,9 @@ public final class JTMethodInvocation
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_ARGUMENTS, propertyName -> v8Runtime.toV8Value(getArguments()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_METHOD_SELECT, propertyName -> v8Runtime.toV8Value(getMethodSelect()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_TYPE_ARGUMENTS, propertyName -> v8Runtime.toV8Value(getTypeArguments()));
+            registerStringGetter(PROPERTY_ARGUMENTS, propertyName -> v8Runtime.toV8Value(getArguments()));
+            registerStringGetter(PROPERTY_METHOD_SELECT, propertyName -> v8Runtime.toV8Value(getMethodSelect()));
+            registerStringGetter(PROPERTY_TYPE_ARGUMENTS, propertyName -> v8Runtime.toV8Value(getTypeArguments()));
         }
         return stringGetterMap;
     }
@@ -109,12 +108,9 @@ public final class JTMethodInvocation
     public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_ARGUMENTS,
-                    (propertyName, propertyValue) -> replaceExpressions(arguments, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_METHOD_SELECT,
-                    (propertyName, propertyValue) -> replaceExpression(this::setMethodSelect, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_TYPE_ARGUMENTS,
-                    (propertyName, propertyValue) -> replaceExpressions(typeArguments, propertyValue));
+            registerStringSetter(PROPERTY_ARGUMENTS, (propertyName, propertyValue) -> replaceExpressions(arguments, propertyValue));
+            registerStringSetter(PROPERTY_METHOD_SELECT, (propertyName, propertyValue) -> replaceExpression(this::setMethodSelect, propertyValue));
+            registerStringSetter(PROPERTY_TYPE_ARGUMENTS, (propertyName, propertyValue) -> replaceExpressions(typeArguments, propertyValue));
         }
         return stringSetterMap;
     }

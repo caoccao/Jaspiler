@@ -17,7 +17,6 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
-import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.interop.V8Runtime;
@@ -80,10 +79,8 @@ public final class JTName implements Name, IJavetDirectProxyHandler<JaspilerChec
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             stringGetterMap = new HashMap<>();
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_VALUE,
-                    property -> v8Runtime.createV8ValueString(getValue()));
-            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_TO_STRING,
-                    property -> v8Runtime.createV8ValueString(toString()));
+            registerStringGetter(PROPERTY_VALUE, property -> v8Runtime.createV8ValueString(getValue()));
+            registerStringGetterFunction(FUNCTION_TO_STRING, property -> v8Runtime.createV8ValueString(toString()));
         }
         return stringGetterMap;
     }
@@ -92,8 +89,7 @@ public final class JTName implements Name, IJavetDirectProxyHandler<JaspilerChec
     public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
         if (stringSetterMap == null) {
             stringSetterMap = new HashMap<>();
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_VALUE,
-                    (propertyName, propertyValue) -> setValue(propertyValue));
+            registerStringSetter(PROPERTY_VALUE, (propertyName, propertyValue) -> setValue(propertyValue));
         }
         return stringSetterMap;
     }
@@ -102,8 +98,7 @@ public final class JTName implements Name, IJavetDirectProxyHandler<JaspilerChec
     public Map<String, IJavetUniFunction<V8ValueSymbol, ? extends V8Value, JaspilerCheckedException>> proxyGetSymbolGetterMap() {
         if (symbolGetterMap == null) {
             symbolGetterMap = new HashMap<>();
-            V8Register.putSymbolGetter(v8Runtime, symbolGetterMap, V8ValueBuiltInSymbol.SYMBOL_PROPERTY_TO_PRIMITIVE,
-                    description -> v8Runtime.createV8ValueString(toString()));
+            registerSymbolGetterFunction(V8ValueBuiltInSymbol.SYMBOL_PROPERTY_TO_PRIMITIVE, description -> v8Runtime.createV8ValueString(toString()));
         }
         return symbolGetterMap;
     }

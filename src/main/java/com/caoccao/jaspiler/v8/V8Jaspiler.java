@@ -24,7 +24,6 @@ import com.caoccao.jaspiler.exceptions.JaspilerParseException;
 import com.caoccao.jaspiler.styles.StandardStyleWriter;
 import com.caoccao.jaspiler.trees.*;
 import com.caoccao.jaspiler.utils.BaseLoggingObject;
-import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interfaces.IJavetClosable;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
@@ -209,9 +208,8 @@ public final class V8Jaspiler
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             stringGetterMap = new HashMap<>();
-            constructorMap.forEach((key, value) -> V8Register.putStringGetter(
-                    v8Runtime, stringGetterMap, key, v8Values -> v8Runtime.toV8Value(value.get())));
-            creatorMap.forEach((key, value) -> V8Register.putStringGetter(v8Runtime, stringGetterMap, key, value));
+            constructorMap.forEach((key, value) -> registerStringGetterFunction(key, v8Values -> v8Runtime.toV8Value(value.get())));
+            creatorMap.forEach(this::registerStringGetterFunction);
         }
         return stringGetterMap;
     }

@@ -17,7 +17,6 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
-import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -80,7 +79,7 @@ public final class JTTypeIntersection
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_BOUNDS, propertyName -> v8Runtime.toV8Value(getBounds()));
+            registerStringGetter(PROPERTY_BOUNDS, propertyName -> v8Runtime.toV8Value(getBounds()));
         }
         return stringGetterMap;
     }
@@ -89,8 +88,7 @@ public final class JTTypeIntersection
     public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_BOUNDS,
-                    (propertyName, propertyValue) -> replaceExpressions(bounds, propertyValue));
+            registerStringSetter(PROPERTY_BOUNDS, (propertyName, propertyValue) -> replaceExpressions(bounds, propertyValue));
         }
         return stringSetterMap;
     }

@@ -17,7 +17,6 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
-import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -118,11 +117,11 @@ public final class JTNewClass
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_ARGUMENTS, propertyName -> v8Runtime.toV8Value(getArguments()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_CLASS_BODY, propertyName -> v8Runtime.toV8Value(getClassBody()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_ENCLOSING_EXPRESSION, propertyName -> v8Runtime.toV8Value(getEnclosingExpression()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_IDENTIFIER, propertyName -> v8Runtime.toV8Value(getIdentifier()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_TYPE_ARGUMENTS, propertyName -> v8Runtime.toV8Value(getTypeArguments()));
+            registerStringGetter(PROPERTY_ARGUMENTS, propertyName -> v8Runtime.toV8Value(getArguments()));
+            registerStringGetter(PROPERTY_CLASS_BODY, propertyName -> v8Runtime.toV8Value(getClassBody()));
+            registerStringGetter(PROPERTY_ENCLOSING_EXPRESSION, propertyName -> v8Runtime.toV8Value(getEnclosingExpression()));
+            registerStringGetter(PROPERTY_IDENTIFIER, propertyName -> v8Runtime.toV8Value(getIdentifier()));
+            registerStringGetter(PROPERTY_TYPE_ARGUMENTS, propertyName -> v8Runtime.toV8Value(getTypeArguments()));
         }
         return stringGetterMap;
     }
@@ -131,16 +130,11 @@ public final class JTNewClass
     public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_ARGUMENTS,
-                    (propertyName, propertyValue) -> replaceExpressions(arguments, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_CLASS_BODY,
-                    (propertyName, propertyValue) -> replaceClassDecl(this::setClassBody, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_ENCLOSING_EXPRESSION,
-                    (propertyName, propertyValue) -> replaceExpression(this::setEnclosingExpression, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_IDENTIFIER,
-                    (propertyName, propertyValue) -> replaceExpression(this::setIdentifier, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_TYPE_ARGUMENTS,
-                    (propertyName, propertyValue) -> replaceExpressions(typeArguments, propertyValue));
+            registerStringSetter(PROPERTY_ARGUMENTS, (propertyName, propertyValue) -> replaceExpressions(arguments, propertyValue));
+            registerStringSetter(PROPERTY_CLASS_BODY, (propertyName, propertyValue) -> replaceClassDecl(this::setClassBody, propertyValue));
+            registerStringSetter(PROPERTY_ENCLOSING_EXPRESSION, (propertyName, propertyValue) -> replaceExpression(this::setEnclosingExpression, propertyValue));
+            registerStringSetter(PROPERTY_IDENTIFIER, (propertyName, propertyValue) -> replaceExpression(this::setIdentifier, propertyValue));
+            registerStringSetter(PROPERTY_TYPE_ARGUMENTS, (propertyName, propertyValue) -> replaceExpressions(typeArguments, propertyValue));
         }
         return stringSetterMap;
     }

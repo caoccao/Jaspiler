@@ -23,7 +23,6 @@ import com.caoccao.jaspiler.styles.IStyleWriter;
 import com.caoccao.jaspiler.styles.StandardStyleWriter;
 import com.caoccao.jaspiler.styles.StyleOptions;
 import com.caoccao.jaspiler.utils.BaseLoggingObject;
-import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
@@ -139,37 +138,26 @@ public abstract class JTTree<
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             stringGetterMap = new HashMap<>();
-            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_IS_ACTION_CHANGE,
-                    property -> v8Runtime.createV8ValueBoolean(isActionChange()));
-            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_IS_ACTION_IGNORE,
-                    property -> v8Runtime.createV8ValueBoolean(isActionIgnore()));
-            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_IS_ACTION_NO_CHANGE,
-                    property -> v8Runtime.createV8ValueBoolean(isActionNoChange()));
-            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_SET_ACTION_CHANGE,
-                    property -> {
-                        setActionChange();
-                        return v8Runtime.createV8ValueBoolean(true);
-                    });
-            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_SET_ACTION_IGNORE,
-                    property -> {
-                        setActionIgnore();
-                        return v8Runtime.createV8ValueBoolean(true);
-                    });
-            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_SET_ACTION_NO_CHANGE,
-                    property -> {
-                        setActionNoChange();
-                        return v8Runtime.createV8ValueBoolean(true);
-                    });
-            V8Register.putStringGetter(v8Runtime, stringGetterMap, FUNCTION_TO_STRING,
-                    property -> v8Runtime.createV8ValueString(toString()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_CLASS_NAME,
-                    property -> v8Runtime.createV8ValueString(getClass().getName()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_CLASS_SIMPLE_NAME,
-                    property -> v8Runtime.createV8ValueString(getClass().getSimpleName()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_KIND,
-                    property -> v8Runtime.createV8ValueString(getKind().name()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_PARENT_TREE,
-                    property -> v8Runtime.toV8Value(getParentTree()));
+            registerStringGetterFunction(FUNCTION_IS_ACTION_CHANGE, property -> v8Runtime.createV8ValueBoolean(isActionChange()));
+            registerStringGetterFunction(FUNCTION_IS_ACTION_IGNORE, property -> v8Runtime.createV8ValueBoolean(isActionIgnore()));
+            registerStringGetterFunction(FUNCTION_IS_ACTION_NO_CHANGE, property -> v8Runtime.createV8ValueBoolean(isActionNoChange()));
+            registerStringGetterFunction(FUNCTION_SET_ACTION_CHANGE, property -> {
+                setActionChange();
+                return v8Runtime.createV8ValueBoolean(true);
+            });
+            registerStringGetterFunction(FUNCTION_SET_ACTION_IGNORE, property -> {
+                setActionIgnore();
+                return v8Runtime.createV8ValueBoolean(true);
+            });
+            registerStringGetterFunction(FUNCTION_SET_ACTION_NO_CHANGE, property -> {
+                setActionNoChange();
+                return v8Runtime.createV8ValueBoolean(true);
+            });
+            registerStringGetterFunction(FUNCTION_TO_STRING, property -> v8Runtime.createV8ValueString(toString()));
+            registerStringGetter(PROPERTY_CLASS_NAME, property -> v8Runtime.createV8ValueString(getClass().getName()));
+            registerStringGetter(PROPERTY_CLASS_SIMPLE_NAME, property -> v8Runtime.createV8ValueString(getClass().getSimpleName()));
+            registerStringGetter(PROPERTY_KIND, property -> v8Runtime.createV8ValueString(getKind().name()));
+            registerStringGetter(PROPERTY_PARENT_TREE, property -> v8Runtime.toV8Value(getParentTree()));
         }
         return stringGetterMap;
     }
@@ -186,8 +174,7 @@ public abstract class JTTree<
     public Map<String, IJavetUniFunction<V8ValueSymbol, ? extends V8Value, JaspilerCheckedException>> proxyGetSymbolGetterMap() {
         if (symbolGetterMap == null) {
             symbolGetterMap = new HashMap<>();
-            V8Register.putSymbolGetter(v8Runtime, symbolGetterMap, V8ValueBuiltInSymbol.SYMBOL_PROPERTY_TO_PRIMITIVE,
-                    description -> v8Runtime.createV8ValueString(toString()));
+            registerSymbolGetterFunction(V8ValueBuiltInSymbol.SYMBOL_PROPERTY_TO_PRIMITIVE, description -> v8Runtime.createV8ValueString(toString()));
         }
         return symbolGetterMap;
     }

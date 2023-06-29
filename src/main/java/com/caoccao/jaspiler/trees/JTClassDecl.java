@@ -21,7 +21,6 @@ import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
 import com.caoccao.jaspiler.exceptions.JaspilerNotSupportedException;
 import com.caoccao.jaspiler.styles.IStyleWriter;
 import com.caoccao.jaspiler.utils.ForEachUtils;
-import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -147,13 +146,13 @@ public final class JTClassDecl
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_EXTENDS_CLAUSE, propertyName -> v8Runtime.toV8Value(getExtendsClause()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_IMPLEMENTS_CLAUSES, propertyName -> v8Runtime.toV8Value(getImplementsClause()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_MEMBERS, propertyName -> v8Runtime.toV8Value(getMembers()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_MODIFIERS, propertyName -> v8Runtime.toV8Value(getModifiers()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_PERMITS_CLAUSES, propertyName -> v8Runtime.toV8Value(getPermitsClause()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_SIMPLE_NAME, propertyName -> v8Runtime.toV8Value(getSimpleName()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_TYPE_PARAMETERS, propertyName -> v8Runtime.toV8Value(getTypeParameters()));
+            registerStringGetter(PROPERTY_EXTENDS_CLAUSE, propertyName -> v8Runtime.toV8Value(getExtendsClause()));
+            registerStringGetter(PROPERTY_IMPLEMENTS_CLAUSES, propertyName -> v8Runtime.toV8Value(getImplementsClause()));
+            registerStringGetter(PROPERTY_MEMBERS, propertyName -> v8Runtime.toV8Value(getMembers()));
+            registerStringGetter(PROPERTY_MODIFIERS, propertyName -> v8Runtime.toV8Value(getModifiers()));
+            registerStringGetter(PROPERTY_PERMITS_CLAUSES, propertyName -> v8Runtime.toV8Value(getPermitsClause()));
+            registerStringGetter(PROPERTY_SIMPLE_NAME, propertyName -> v8Runtime.toV8Value(getSimpleName()));
+            registerStringGetter(PROPERTY_TYPE_PARAMETERS, propertyName -> v8Runtime.toV8Value(getTypeParameters()));
         }
         return stringGetterMap;
     }
@@ -162,22 +161,14 @@ public final class JTClassDecl
     public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_EXTENDS_CLAUSE,
-                    (propertyName, propertyValue) -> replaceExpression(this::setExtendsClause, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_IMPLEMENTS_CLAUSES,
-                    (propertyName, propertyValue) -> replaceExpressions(implementsClauses, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_KIND,
-                    (propertyName, propertyValue) -> replaceKind(this::setKind, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_MEMBERS,
-                    (propertyName, propertyValue) -> replaceTrees(members, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_MODIFIERS,
-                    (propertyName, propertyValue) -> replaceModifiers(this::setModifiers, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_PERMITS_CLAUSES,
-                    (propertyName, propertyValue) -> replaceExpressions(permitsClauses, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_SIMPLE_NAME,
-                    (propertyName, propertyValue) -> replaceName(this::setSimpleName, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_TYPE_PARAMETERS,
-                    (propertyName, propertyValue) -> replaceTypeParameters(typeParameters, propertyValue));
+            registerStringSetter(PROPERTY_EXTENDS_CLAUSE, (propertyName, propertyValue) -> replaceExpression(this::setExtendsClause, propertyValue));
+            registerStringSetter(PROPERTY_IMPLEMENTS_CLAUSES, (propertyName, propertyValue) -> replaceExpressions(implementsClauses, propertyValue));
+            registerStringSetter(PROPERTY_KIND, (propertyName, propertyValue) -> replaceKind(this::setKind, propertyValue));
+            registerStringSetter(PROPERTY_MEMBERS, (propertyName, propertyValue) -> replaceTrees(members, propertyValue));
+            registerStringSetter(PROPERTY_MODIFIERS, (propertyName, propertyValue) -> replaceModifiers(this::setModifiers, propertyValue));
+            registerStringSetter(PROPERTY_PERMITS_CLAUSES, (propertyName, propertyValue) -> replaceExpressions(permitsClauses, propertyValue));
+            registerStringSetter(PROPERTY_SIMPLE_NAME, (propertyName, propertyValue) -> replaceName(this::setSimpleName, propertyValue));
+            registerStringSetter(PROPERTY_TYPE_PARAMETERS, (propertyName, propertyValue) -> replaceTypeParameters(typeParameters, propertyValue));
         }
         return stringSetterMap;
     }

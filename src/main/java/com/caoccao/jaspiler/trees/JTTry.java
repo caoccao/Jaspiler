@@ -17,7 +17,6 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
-import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -109,10 +108,10 @@ public final class JTTry
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_BLOCK, propertyName -> v8Runtime.toV8Value(getBlock()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_CATCHES, propertyName -> v8Runtime.toV8Value(getCatches()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_FINALLY_BLOCK, propertyName -> v8Runtime.toV8Value(getFinallyBlock()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_RESOURCES, propertyName -> v8Runtime.toV8Value(getResources()));
+            registerStringGetter(PROPERTY_BLOCK, propertyName -> v8Runtime.toV8Value(getBlock()));
+            registerStringGetter(PROPERTY_CATCHES, propertyName -> v8Runtime.toV8Value(getCatches()));
+            registerStringGetter(PROPERTY_FINALLY_BLOCK, propertyName -> v8Runtime.toV8Value(getFinallyBlock()));
+            registerStringGetter(PROPERTY_RESOURCES, propertyName -> v8Runtime.toV8Value(getResources()));
         }
         return stringGetterMap;
     }
@@ -121,14 +120,10 @@ public final class JTTry
     public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_BLOCK,
-                    (propertyName, propertyValue) -> replaceBlock(this::setBlock, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_CATCHES,
-                    (propertyName, propertyValue) -> replaceCatches(catches, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_FINALLY_BLOCK,
-                    (propertyName, propertyValue) -> replaceBlock(this::setFinallyBlock, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_RESOURCES,
-                    (propertyName, propertyValue) -> replaceTrees(resources, propertyValue));
+            registerStringSetter(PROPERTY_BLOCK, (propertyName, propertyValue) -> replaceBlock(this::setBlock, propertyValue));
+            registerStringSetter(PROPERTY_CATCHES, (propertyName, propertyValue) -> replaceCatches(catches, propertyValue));
+            registerStringSetter(PROPERTY_FINALLY_BLOCK, (propertyName, propertyValue) -> replaceBlock(this::setFinallyBlock, propertyValue));
+            registerStringSetter(PROPERTY_RESOURCES, (propertyName, propertyValue) -> replaceTrees(resources, propertyValue));
         }
         return stringSetterMap;
     }

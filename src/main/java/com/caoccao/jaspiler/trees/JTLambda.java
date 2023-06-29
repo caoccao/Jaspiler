@@ -17,7 +17,6 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
-import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -97,9 +96,9 @@ public final class JTLambda
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_BODY, propertyName -> v8Runtime.toV8Value(getBody()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_BODY_KIND, propertyName -> v8Runtime.createV8ValueString(getBodyKind().name()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_PARAMETERS, propertyName -> v8Runtime.toV8Value(getParameters()));
+            registerStringGetter(PROPERTY_BODY, propertyName -> v8Runtime.toV8Value(getBody()));
+            registerStringGetter(PROPERTY_BODY_KIND, propertyName -> v8Runtime.createV8ValueString(getBodyKind().name()));
+            registerStringGetter(PROPERTY_PARAMETERS, propertyName -> v8Runtime.toV8Value(getParameters()));
         }
         return stringGetterMap;
     }
@@ -108,12 +107,9 @@ public final class JTLambda
     public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_BODY,
-                    (propertyName, propertyValue) -> replaceLambda(this::setBody, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_BODY_KIND,
-                    (propertyName, propertyValue) -> setBodyKind(propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_PARAMETERS,
-                    (propertyName, propertyValue) -> replaceVariableDecls(parameters, propertyValue));
+            registerStringSetter(PROPERTY_BODY, (propertyName, propertyValue) -> replaceLambda(this::setBody, propertyValue));
+            registerStringSetter(PROPERTY_BODY_KIND, (propertyName, propertyValue) -> setBodyKind(propertyValue));
+            registerStringSetter(PROPERTY_PARAMETERS, (propertyName, propertyValue) -> replaceVariableDecls(parameters, propertyValue));
         }
         return stringSetterMap;
     }

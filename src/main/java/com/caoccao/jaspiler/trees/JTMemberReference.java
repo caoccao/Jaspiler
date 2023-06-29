@@ -17,7 +17,6 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
-import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -106,10 +105,10 @@ public final class JTMemberReference
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_MODE, propertyName -> v8Runtime.createV8ValueString(getMode().name()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_NAME, propertyName -> v8Runtime.toV8Value(getName()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_QUALIFIED_EXPRESSION, propertyName -> v8Runtime.toV8Value(getQualifierExpression()));
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_TYPE_ARGUMENTS, propertyName -> v8Runtime.toV8Value(getTypeArguments()));
+            registerStringGetter(PROPERTY_MODE, propertyName -> v8Runtime.createV8ValueString(getMode().name()));
+            registerStringGetter(PROPERTY_NAME, propertyName -> v8Runtime.toV8Value(getName()));
+            registerStringGetter(PROPERTY_QUALIFIED_EXPRESSION, propertyName -> v8Runtime.toV8Value(getQualifierExpression()));
+            registerStringGetter(PROPERTY_TYPE_ARGUMENTS, propertyName -> v8Runtime.toV8Value(getTypeArguments()));
         }
         return stringGetterMap;
     }
@@ -118,14 +117,10 @@ public final class JTMemberReference
     public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_MODE,
-                    (propertyName, propertyValue) -> setMode(propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_NAME,
-                    (propertyName, propertyValue) -> replaceName(this::setName, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_QUALIFIED_EXPRESSION,
-                    (propertyName, propertyValue) -> replaceExpression(this::setQualifiedExpression, propertyValue));
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_TYPE_ARGUMENTS,
-                    (propertyName, propertyValue) -> replaceExpressions(typeArguments, propertyValue));
+            registerStringSetter(PROPERTY_MODE, (propertyName, propertyValue) -> setMode(propertyValue));
+            registerStringSetter(PROPERTY_NAME, (propertyName, propertyValue) -> replaceName(this::setName, propertyValue));
+            registerStringSetter(PROPERTY_QUALIFIED_EXPRESSION, (propertyName, propertyValue) -> replaceExpression(this::setQualifiedExpression, propertyValue));
+            registerStringSetter(PROPERTY_TYPE_ARGUMENTS, (propertyName, propertyValue) -> replaceExpressions(typeArguments, propertyValue));
         }
         return stringSetterMap;
     }

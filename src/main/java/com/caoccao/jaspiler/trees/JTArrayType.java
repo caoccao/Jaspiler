@@ -17,7 +17,6 @@
 package com.caoccao.jaspiler.trees;
 
 import com.caoccao.jaspiler.exceptions.JaspilerCheckedException;
-import com.caoccao.jaspiler.utils.V8Register;
 import com.caoccao.javet.interfaces.IJavetBiFunction;
 import com.caoccao.javet.interfaces.IJavetUniFunction;
 import com.caoccao.javet.values.V8Value;
@@ -79,7 +78,7 @@ public final class JTArrayType
     public Map<String, IJavetUniFunction<String, ? extends V8Value, JaspilerCheckedException>> proxyGetStringGetterMap() {
         if (stringGetterMap == null) {
             super.proxyGetStringGetterMap();
-            V8Register.putStringGetter(stringGetterMap, PROPERTY_TYPE, propertyName -> v8Runtime.toV8Value(getType()));
+            registerStringGetter(PROPERTY_TYPE, propertyName -> v8Runtime.toV8Value(getType()));
         }
         return stringGetterMap;
     }
@@ -88,8 +87,7 @@ public final class JTArrayType
     public Map<String, IJavetBiFunction<String, V8Value, Boolean, JaspilerCheckedException>> proxyGetStringSetterMap() {
         if (stringSetterMap == null) {
             super.proxyGetStringSetterMap();
-            V8Register.putStringSetter(stringSetterMap, PROPERTY_TYPE,
-                    (propertyName, propertyValue) -> replaceExpression(this::setType, propertyValue));
+            registerStringSetter(PROPERTY_TYPE, (propertyName, propertyValue) -> replaceExpression(this::setType, propertyValue));
         }
         return stringSetterMap;
     }
