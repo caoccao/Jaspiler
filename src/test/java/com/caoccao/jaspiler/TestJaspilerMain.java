@@ -30,7 +30,7 @@ public class TestJaspilerMain {
         String scriptPath = SystemUtils.INITIAL_WORKING_DIRECTORY.resolve("scripts/node/test/test_argv.js")
                 .toAbsolutePath().toFile().getAbsolutePath();
         List<String> args = List.of(scriptPath, "a", "b", "c");
-        assertEquals(0, new CommandLine(new JaspilerMain()).execute(args.toArray(String[]::new)));
+        assertEquals(0, JaspilerMain.internalMain(args.toArray(String[]::new)));
     }
 
     @Test

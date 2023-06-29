@@ -37,7 +37,7 @@ import java.util.concurrent.Callable;
         description = JaspilerContract.DESCRIPTION)
 public final class JaspilerMain extends BaseLoggingObject implements Callable<Integer> {
     @CommandLine.Parameters(hidden = true)
-    private List<String> argv;
+    private final List<String> argv;
     @CommandLine.Parameters(index = "0", description = "The JavaScript file to be executed.")
     private File file;
 
@@ -47,8 +47,12 @@ public final class JaspilerMain extends BaseLoggingObject implements Callable<In
         file = null;
     }
 
+    public static int internalMain(String[] args) {
+        return new CommandLine(new JaspilerMain()).execute(args);
+    }
+
     public static void main(String[] args) {
-        System.exit(new CommandLine(new JaspilerMain()).execute(args));
+        System.exit(internalMain(args));
     }
 
     @Override
