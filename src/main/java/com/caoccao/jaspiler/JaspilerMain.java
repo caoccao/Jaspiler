@@ -19,6 +19,7 @@ package com.caoccao.jaspiler;
 import com.caoccao.jaspiler.enums.JaspilerExitCode;
 import com.caoccao.jaspiler.utils.BaseLoggingObject;
 import com.caoccao.jaspiler.v8.V8Jaspiler;
+import com.caoccao.jaspiler.v8.V8PatchedFileExecutor;
 import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interop.NodeRuntime;
 import com.caoccao.javet.interop.V8Host;
@@ -52,7 +53,8 @@ public final class JaspilerMain extends BaseLoggingObject {
                     nodeRuntime.setConverter(javetProxyConverter);
                     try (V8Jaspiler v8Jaspiler = new V8Jaspiler(args, nodeRuntime)) {
                         nodeRuntime.getGlobalObject().set(V8Jaspiler.NAME, v8Jaspiler);
-                        nodeRuntime.getExecutor(file).executeVoid();
+                        var executor = new V8PatchedFileExecutor(nodeRuntime, file);
+                        executor.executeVoid();
                     } finally {
                         nodeRuntime.getGlobalObject().delete(V8Jaspiler.NAME);
                         nodeRuntime.lowMemoryNotification();

@@ -19,7 +19,7 @@
 /// <reference types="../jaspiler/index.d.ts"/>
 
 process.argv = [process.argv[0], ...jaspiler.argv];
-
+process.chdir('../')
 const yargs = require('yargs');
 
 const argv = yargs

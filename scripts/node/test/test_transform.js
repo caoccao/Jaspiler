@@ -19,7 +19,7 @@
 const { assert } = require('chai');
 const path = require('path');
 const process = require('process');
-const { JTKind, PluginContractIgnore, PluginContractChangeMethod } = require('./jaspiler/jaspiler');
+const { JTKind, PluginContractIgnore, PluginContractChangeMethod } = require('../jaspiler/jaspiler');
 
 const workingDirectory = process.cwd();
 const pathMockAllInOnePublicClass = path.join(

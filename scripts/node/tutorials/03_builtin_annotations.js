@@ -18,7 +18,7 @@
 
 /// <reference types="../jaspiler/index.d.ts"/>
 
-const { PluginContractIgnore, PluginContractChangeMethod } = require('./jaspiler/jaspiler');
+const { PluginContractIgnore, PluginContractChangeMethod } = require('../jaspiler/jaspiler');
 
 const result = jaspiler.transformSync(
   `package com.test;

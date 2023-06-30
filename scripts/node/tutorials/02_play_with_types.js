@@ -18,7 +18,7 @@
 
 /// <reference types="../jaspiler/index.d.ts"/>
 
-const { JTKind } = require('./jaspiler/jaspiler');
+const { JTKind } = require('../jaspiler/jaspiler');
 
 const result = jaspiler.transformSync(
   `package com.test;
