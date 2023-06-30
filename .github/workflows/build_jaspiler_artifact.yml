@@ -44,10 +44,15 @@ jobs:
           node-version: 18
 
       - name: NPM Install
-        run: cd scripts/node && npm install && cd ../../
+        run: |
+          cd scripts/node
+          npm install
+          cd ../../
 
       - name: Build the Artifact
-        run: gradle build test && zip -d build/libs/Jaspiler-${{ env.JASPILER_VERSION }}.jar "*-v8-*.dll" "*-v8-*.so"
+        run: |
+          gradle build test
+          zip -d build/libs/Jaspiler-${{ env.JASPILER_VERSION }}.jar "*-v8-*.dll" "*-v8-*.so"
 
       - name: Upload the Artifact
         uses: actions/upload-artifact@v3
@@ -79,10 +84,15 @@ jobs:
           node-version: 18
 
       - name: NPM Install
-        run: cd scripts/node && npm install && cd ../../
+        run: |
+          cd scripts/node
+          npm install
+          cd ../../
 
       - name: Build the Artifact
-        run: gradle build test && zip -d build/libs/Jaspiler-macos-${{ env.JASPILER_VERSION }}.jar "*-v8-*.dylib"
+        run: |
+          gradle build test
+          zip -d build/libs/Jaspiler-macos-${{ env.JASPILER_VERSION }}.jar "*-v8-*.dylib"
 
       - name: Upload the Artifact
         uses: actions/upload-artifact@v3

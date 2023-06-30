@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-// Tutorial 02: Play with Types
+// Tutorial 03: Built-in Annotations
 
 /// <reference types="../jaspiler/index.d.ts"/>
 

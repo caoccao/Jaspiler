@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestJaspilerMain {
     @Test
-    public void testArgv() throws Exception {
+    public void testArgv() {
         String scriptPath = SystemUtils.INITIAL_WORKING_DIRECTORY
                 .resolve("scripts/node/test/test_argv.js")
                 .toAbsolutePath().toFile().getAbsolutePath();
@@ -34,7 +34,7 @@ public class TestJaspilerMain {
     }
 
     @Test
-    public void testTransform() throws Exception {
+    public void testTransform() {
         String scriptPath = SystemUtils.INITIAL_WORKING_DIRECTORY
                 .resolve("scripts/node/test/test_transform.js")
                 .toAbsolutePath().toFile().getAbsolutePath();
@@ -44,7 +44,7 @@ public class TestJaspilerMain {
     }
 
     @Test
-    public void testTutorials01QuickStart() throws Exception {
+    public void testTutorials01QuickStart() {
         String scriptPath = SystemUtils.INITIAL_WORKING_DIRECTORY
                 .resolve("scripts/node/tutorials/01_quick_start.js")
                 .toAbsolutePath().toFile().getAbsolutePath();
@@ -54,7 +54,7 @@ public class TestJaspilerMain {
     }
 
     @Test
-    public void testTutorials02PlayWithTypes() throws Exception {
+    public void testTutorials02PlayWithTypes() {
         String scriptPath = SystemUtils.INITIAL_WORKING_DIRECTORY
                 .resolve("scripts/node/tutorials/02_play_with_types.js")
                 .toAbsolutePath().toFile().getAbsolutePath();
@@ -64,12 +64,22 @@ public class TestJaspilerMain {
     }
 
     @Test
-    public void testTutorials03BuiltinAnnotations() throws Exception {
+    public void testTutorials03BuiltinAnnotations() {
         String scriptPath = SystemUtils.INITIAL_WORKING_DIRECTORY
                 .resolve("scripts/node/tutorials/03_builtin_annotations.js")
                 .toAbsolutePath().toFile().getAbsolutePath();
         assertEquals(
                 JaspilerExitCode.NoError,
                 new JaspilerMain().execute(new String[]{scriptPath}));
+    }
+
+    @Test
+    public void testTutorials04ParseArgv() {
+        String scriptPath = SystemUtils.INITIAL_WORKING_DIRECTORY
+                .resolve("scripts/node/tutorials/04_parse_argv.js")
+                .toAbsolutePath().toFile().getAbsolutePath();
+        assertEquals(
+                JaspilerExitCode.NoError,
+                new JaspilerMain().execute(new String[]{scriptPath, "-i", "a", "-o", "b"}));
     }
 }
