@@ -236,7 +236,9 @@ function evaluateAnnotationAttribute(annotation, context, attributeName, default
 function getChangeInstructionByAnnotations(annotations, context) {
   if (annotations) {
     const annotation = annotations.find(annotation => annotation.annotationType.toString() == 'JaspilerContract.Change');
-    return evaluateAnnotationAttribute(annotation, context, 'instruction', undefined, undefined);
+    if (evaluateAnnotationAttribute(annotation, context, 'condition', true, false)) {
+      return evaluateAnnotationAttribute(annotation, context, 'instruction', undefined, undefined);
+    }
   }
   return undefined;
 }

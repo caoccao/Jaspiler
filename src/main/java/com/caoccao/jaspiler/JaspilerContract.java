@@ -59,6 +59,15 @@ public final class JaspilerContract {
     @Retention(RetentionPolicy.SOURCE)
     public @interface Change {
         /**
+         * Condition is a JavaScript expression / statement / statements that returns a boolean
+         * indicating whether certain condition is true or false.
+         *
+         * @return the condition string
+         * @since 0.1.0
+         */
+        String condition() default "";
+
+        /**
          * Instruction is a JavaScript expression / statement / statements that returns anything
          * instructing the plugins how to make the changes.
          *

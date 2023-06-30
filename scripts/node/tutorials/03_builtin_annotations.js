@@ -43,9 +43,14 @@ const result = jaspiler.transformSync(
       System.out.println(str); // This method is cleared.
     }
 
-    @JaspilerContract.Change(instruction = "options = { type: 'clear' }")
+    @JaspilerContract.Change(condition = "x == 1", instruction = "options = { type: 'clear' }")
     public int f(int x, int y) {
       return x + y; // This method is cleared.
+    }
+
+    @JaspilerContract.Change(condition = "x == 2", instruction = "options = { type: 'clear' }")
+    public int g(int x, int y) {
+      return x + y; // This method is not cleared.
     }
   }
 
