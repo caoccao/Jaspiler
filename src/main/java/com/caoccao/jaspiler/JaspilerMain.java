@@ -55,6 +55,7 @@ public final class JaspilerMain extends BaseLoggingObject {
                         nodeRuntime.getGlobalObject().set(V8Jaspiler.NAME, v8Jaspiler);
                         var executor = new V8PatchedFileExecutor(nodeRuntime, file);
                         executor.executeVoid();
+                        nodeRuntime.await();
                     } finally {
                         nodeRuntime.getGlobalObject().delete(V8Jaspiler.NAME);
                         nodeRuntime.lowMemoryNotification();
