@@ -59,14 +59,6 @@ public final class JaspilerContract {
     @Retention(RetentionPolicy.SOURCE)
     public @interface Change {
         /**
-         * Identifier.
-         *
-         * @return the identifier
-         * @since 0.1.0
-         */
-        String id() default "";
-
-        /**
          * Condition is a JavaScript expression / statement / statements that returns a boolean
          * indicating whether certain condition is true or false.
          *
@@ -86,6 +78,30 @@ public final class JaspilerContract {
     }
 
     /**
+     * The interface Feature provides .
+     *
+     * @since 0.1.0
+     */
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Feature {
+        /**
+         * Feature identifier.
+         *
+         * @return the feature identifier
+         * @since 0.1.0
+         */
+        String id() default "";
+
+        /**
+         * Feature name.
+         *
+         * @return the feature name
+         * @since 0.1.0
+         */
+        String name() default "";
+    }
+
+    /**
      * The annotation Ignore provides conditional ignore over decorated class, method, property, etc.
      *
      * @since 0.1.0
@@ -100,13 +116,5 @@ public final class JaspilerContract {
          * @since 0.1.0
          */
         String condition() default "";
-
-        /**
-         * Identifier.
-         *
-         * @return the identifier
-         * @since 0.1.0
-         */
-        String id() default "";
     }
 }

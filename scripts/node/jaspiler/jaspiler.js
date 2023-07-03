@@ -203,7 +203,7 @@ const JTTypeKind = Object.freeze({
 
 function canBeIgnoredByAnnotations(annotations, context) {
   if (annotations) {
-    const annotation = annotations.find(annotation => annotation.annotationType.toString() == 'JaspilerContract.Ignore');
+    const annotation = findAnnotation(annotations, 'JaspilerContract.Ignore');
     return evaluateAnnotationAttribute(annotation, context, 'condition', true, false);
   }
   return false;
@@ -211,31 +211,45 @@ function canBeIgnoredByAnnotations(annotations, context) {
 
 function evaluateAnnotationAttribute(annotation, context, attributeName, defaultValueForAttributeFound, defaultValueForAttributeNotFound) {
   if (annotation) {
-    const args = annotation.arguments;
-    for (let i = 0; i < args.length; ++i) {
-      const arg = args[i];
-      if (arg.kind == JTKind.ASSIGNMENT && arg.variable.toString() == attributeName) {
-        const expression = arg.expression;
-        if (expression.kind == JTKind.STRING_LITERAL) {
-          const script = new vm.Script(arg.expression.value);
-          if (!(context instanceof Object)) {
-            context = {};
-          }
-          if (!vm.isContext(context)) {
-            vm.createContext(context);
-          }
-          return script.runInContext(context);
-        }
+    const attributeValue = getAnnotationAttributeValueByName(annotation, attributeName);
+    if (attributeValue && attributeValue.kind == JTKind.STRING_LITERAL) {
+      const script = new vm.Script(attributeValue.value);
+      if (!(context instanceof Object)) {
+        context = {};
       }
+      if (!vm.isContext(context)) {
+        vm.createContext(context);
+      }
+      return script.runInContext(context);
     }
     return defaultValueForAttributeFound;
   }
   return defaultValueForAttributeNotFound;
 }
 
+function findAnnotation(annotations, annotationName) {
+  if (annotations) {
+    return annotations.find(annotation => annotation.annotationType.toString() == annotationName);
+  }
+  return undefined;
+}
+
+function getAnnotationAttributeValueByName(annotation, attributeName) {
+  if (annotation) {
+    const args = annotation.arguments;
+    for (let i = 0; i < args.length; ++i) {
+      const arg = args[i];
+      if (arg.kind == JTKind.ASSIGNMENT && arg.variable.toString() == attributeName) {
+        return arg.expression;
+      }
+    }
+  }
+  return undefined;
+}
+
 function getChangeInstructionByAnnotations(annotations, context) {
   if (annotations) {
-    const annotation = annotations.find(annotation => annotation.annotationType.toString() == 'JaspilerContract.Change');
+    const annotation = findAnnotation(annotations, 'JaspilerContract.Change');
     if (evaluateAnnotationAttribute(annotation, context, 'condition', true, false)) {
       return evaluateAnnotationAttribute(annotation, context, 'instruction', undefined, undefined);
     }
@@ -343,6 +357,11 @@ const PluginContractChangeMethod = Object.freeze({
 });
 
 module.exports = Object.freeze({
+  helpers: Object.freeze({
+    evaluateAnnotationAttribute: evaluateAnnotationAttribute,
+    findAnnotation: findAnnotation,
+    getAnnotationAttributeValueByName: getAnnotationAttributeValueByName,
+  }),
   JTBodyKind: JTBodyKind,
   JTCaseKind: JTCaseKind,
   JTKind: JTKind,
