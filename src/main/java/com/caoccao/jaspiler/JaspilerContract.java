@@ -59,6 +59,14 @@ public final class JaspilerContract {
     @Retention(RetentionPolicy.SOURCE)
     public @interface Change {
         /**
+         * Identifier.
+         *
+         * @return the identifier
+         * @since 0.1.0
+         */
+        String id() default "";
+
+        /**
          * Condition is a JavaScript expression / statement / statements that returns a boolean
          * indicating whether certain condition is true or false.
          *
@@ -92,5 +100,13 @@ public final class JaspilerContract {
          * @since 0.1.0
          */
         String condition() default "";
+
+        /**
+         * Identifier.
+         *
+         * @return the identifier
+         * @since 0.1.0
+         */
+        String id() default "";
     }
 }
