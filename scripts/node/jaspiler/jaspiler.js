@@ -202,11 +202,8 @@ const JTTypeKind = Object.freeze({
 });
 
 function canBeIgnoredByAnnotations(annotations, context) {
-  if (annotations) {
-    const annotation = findAnnotation(annotations, 'JaspilerContract.Ignore');
-    return evaluateAnnotationAttribute(annotation, context, 'condition', true, false);
-  }
-  return false;
+  const annotation = findAnnotation(annotations, 'JaspilerContract.Ignore');
+  return evaluateAnnotationAttribute(annotation, context, 'condition', true, false);
 }
 
 function evaluateAnnotationAttribute(annotation, context, attributeName, defaultValueForAttributeFound, defaultValueForAttributeNotFound) {
@@ -248,11 +245,9 @@ function getAnnotationAttributeValueByName(annotation, attributeName) {
 }
 
 function getChangeInstructionByAnnotations(annotations, context) {
-  if (annotations) {
-    const annotation = findAnnotation(annotations, 'JaspilerContract.Change');
-    if (evaluateAnnotationAttribute(annotation, context, 'condition', true, false)) {
-      return evaluateAnnotationAttribute(annotation, context, 'instruction', undefined, undefined);
-    }
+  const annotation = findAnnotation(annotations, 'JaspilerContract.Change');
+  if (evaluateAnnotationAttribute(annotation, context, 'condition', true, false)) {
+    return evaluateAnnotationAttribute(annotation, context, 'instruction', undefined, undefined);
   }
   return undefined;
 }
