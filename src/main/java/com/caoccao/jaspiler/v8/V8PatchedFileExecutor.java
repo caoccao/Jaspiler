@@ -41,7 +41,7 @@ public class V8PatchedFileExecutor extends V8FileExecutor {
             File parentFile = resourceFile.getParentFile();
             nodeRuntime.getGlobalObject().set(NodeRuntime.PROPERTY_DIRNAME, parentFile.getAbsolutePath());
             nodeRuntime.getGlobalObject().set(NodeRuntime.PROPERTY_FILENAME, resourceFile.getAbsolutePath());
-            nodeRuntime.getNodeModule(NodeModuleModule.class).setRequireRootDirectory(resourceFile.getAbsolutePath());
+            nodeRuntime.getNodeModule(NodeModuleModule.class).setRequireRootDirectory(parentFile.getAbsoluteFile() + File.separator);
             nodeRuntime.getNodeModule(NodeModuleProcess.class).setWorkingDirectory(parentFile.getAbsolutePath());
         }
         return this;
