@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Jaspiler.iml" filepath="$PROJECT_DIR$/.idea/Jaspiler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.caoccao.jaspiler.Jaspiler.iml" filepath="$PROJECT_DIR$/.idea/modules/com.caoccao.jaspiler.Jaspiler.iml" />
     </modules>
   </component>
 </project>

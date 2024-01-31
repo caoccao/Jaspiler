@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. caoccao.com Sam Cao
+ * Copyright (c) 2023-2024. caoccao.com Sam Cao
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,21 +35,28 @@ object Config {
 
         const val JAVET = "com.caoccao.javet:javet:${Versions.JAVET}"
         const val JAVET_MACOS = "com.caoccao.javet:javet-macos:${Versions.JAVET}"
+
+        // https://mvnrepository.com/artifact/org.junit/junit-bom
         const val JUNIT_BOM = "org.junit:junit-bom:${Versions.JUNIT}"
+
+        // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter
         const val JUNIT_JUPITER = "org.junit.jupiter:junit-jupiter"
 
+        // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
         const val SLF4J_API = "org.slf4j:slf4j-api:${Versions.SLF4J}"
+        
+        // https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12
         const val SLF4J_LOG4J12 = "org.slf4j:slf4j-log4j12:${Versions.SLF4J}"
     }
 
     object Versions {
         const val COMMONS_COLLECTIONS4 = "4.4"
-        const val COMMONS_LANG3 = "3.12.0"
-        const val COMMONS_TEXT = "1.10.0"
-        const val JACKSON = "2.15.2"
-        const val JAVET = "2.2.1"
-        const val JUNIT = "5.9.1"
-        const val SLF4J = "2.0.7"
+        const val COMMONS_LANG3 = "3.14.0"
+        const val COMMONS_TEXT = "1.11.0"
+        const val JACKSON = "2.16.1"
+        const val JAVET = "3.0.3"
+        const val JUNIT = "5.10.1"
+        const val SLF4J = "2.0.11"
     }
 }
 

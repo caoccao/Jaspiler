@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. caoccao.com Sam Cao
+ * Copyright (c) 2023-2024. caoccao.com Sam Cao
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,6 +61,6 @@ public class TestJTMethodDecl extends BaseTestSuite {
                         "    }\n",
                 "String[] mockNames() default {\"A\", \"B\"};",
                 "String mockValue() default \"value\";");
-        texts.forEach(text -> assertTrue(code.contains(text)));
+        texts.forEach(text -> assertTrue(code.contains(text), text + " is not founded."));
     }
 }
