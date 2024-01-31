@@ -81,4 +81,4 @@ Jaspiler is at its early stage with limited feature set. You are welcome taking 
 License
 =======
 
-`APACHE LICENSE, VERSION 2.0 <LICENSE>`_.
+`APACHE LICENSE, VERSION 2.0 <LICENSE>`_
