@@ -424,14 +424,14 @@ function testMethod() {
           methodNames.push(methodName);
           if (methodName == 'names') {
             const modifiers = node.modifiers;
-            assert.isEmpty(modifiers.toString());
-            assert.isEmpty(modifiers.annotations);
-            assert.isEmpty(modifiers.flags);
-            assert.isEmpty(node.parameters);
+            assert.isEmpty(modifiers.toString(), 'modifiers.toString() should be empty');
+            assert.isEmpty(modifiers.annotations, 'modifiers.annotations should be empty');
+            assert.isEmpty(modifiers.flags, 'modifiers.flags should be empty');
+            assert.isEmpty(node.parameters, 'node.parameters should be empty');
             assert.isNull(node.receiverParameter);
-            assert.isEmpty(node.returnType);
-            assert.isEmpty(node.throwExpressions);
-            assert.isEmpty(node.typeParameters);
+            assert.equal('String[]', node.returnType.toString(), 'node.returnType should be String[]');
+            assert.isEmpty(node.throwExpressions, 'node.throwExpressions should be empty');
+            assert.isEmpty(node.typeParameters, 'node.typeParameters should be empty');
             assert.equal('com.caoccao.jaspiler.trees.JTNewArray', node.defaultValue.className);
             assert.equal('{"A", "B"}', node.defaultValue.toString());
             node.defaultValue = jaspiler.createFieldAccess('ABC');
