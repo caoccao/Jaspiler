@@ -54,7 +54,7 @@ object Config {
         const val COMMONS_LANG3 = "3.14.0"
         const val COMMONS_TEXT = "1.11.0"
         const val JACKSON = "2.16.1"
-        const val JAVET = "3.0.4"
+        const val JAVET = "3.1.0"
         const val JUNIT = "5.10.1"
         const val SLF4J = "2.0.11"
     }
